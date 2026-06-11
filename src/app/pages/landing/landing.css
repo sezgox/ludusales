@@ -1358,3 +1358,201 @@ section {
         gap: 42px;
     }
 }
+
+@media (max-width: 767px) {
+    section {
+        min-height: auto;
+        padding: 24px 16px;
+    }
+
+    #hero {
+        min-height: calc(100vh - 72px);
+        height: auto;
+        justify-content: center;
+        gap: 24px;
+        padding-top: 40px;
+        padding-bottom: 40px;
+    }
+
+    #hero h2 {
+        font-size: 2.5rem;
+        line-height: 1.05;
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    #hero > p:first-of-type,
+    #hero > p:last-of-type {
+        font-size: 1rem;
+        line-height: 1.5;
+        max-width: 34rem;
+    }
+
+    #hero > p:last-of-type {
+        font-size: 1.5rem;
+    }
+
+    #hero > div:nth-of-type(2) {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    #hero > div:nth-of-type(2) button {
+        width: 100%;
+        font-size: 1rem;
+        line-height: 1.25;
+    }
+
+    #hero > div:nth-of-type(3) {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    #hero > div:nth-of-type(4) {
+        max-width: 100%;
+        margin-bottom: 0;
+    }
+
+    .chip {
+        justify-content: center;
+        width: 100%;
+        padding: 10px 16px;
+        text-align: center;
+        flex-wrap: wrap;
+    }
+
+    #gamification {
+        gap: 24px;
+    }
+
+    #gamification > h2 {
+        font-size: 2.25rem;
+        line-height: 1.1;
+        text-align: center;
+    }
+
+    #gamification > div {
+        gap: 24px;
+        margin-bottom: 0;
+    }
+
+    #gamification article:first-child,
+    #gamification article:last-child > div:first-child,
+    .pilot-card,
+    .difference-problem-title,
+    .testimonial-person {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    #gamification article:first-child {
+        gap: 20px;
+    }
+
+    #gamification article:last-child > div:last-child {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    #gamification article:last-child > div:last-child > div {
+        width: 100%;
+    }
+
+    #gamification img[alt="Mobile"] {
+        width: min(100%, 320px);
+        margin: 0 auto;
+    }
+
+    .gap-card,
+    .gap-note,
+    .solution-progress-header,
+    .type-wide,
+    .difference-cta,
+    .contact-meta {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .gap-center-inner {
+        width: min(100%, 280px);
+        padding: 24px;
+    }
+
+    .solution-card,
+    .solution-progress,
+    .how-card,
+    .success-context,
+    .success-results,
+    .pilot-price-card,
+    .about-card,
+    .contact-card,
+    .testimonial-card {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .solution-track {
+        display: none;
+    }
+
+    .dashboard-hero,
+    .dashboard-cta,
+    #success-case,
+    #gamification-types,
+    #pilot-campaign,
+    #testimonials,
+    #difference,
+    #about-us,
+    #contact {
+        padding-top: 48px;
+        padding-bottom: 56px;
+    }
+
+    .pilot-pill {
+        border-radius: 24px;
+        padding: 18px 20px;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .testimonials-grid,
+    .difference-compare,
+    .about-metrics-grid,
+    .footer-grid {
+        gap: 20px;
+    }
+
+    .difference-note {
+        font-size: 1.125rem;
+        line-height: 1.5;
+    }
+
+    .difference-note svg {
+        flex-shrink: 0;
+        margin-top: 4px;
+    }
+
+    .contact-meta {
+        align-items: flex-start;
+    }
+
+    .contact-meta-text {
+        font-size: 1rem;
+    }
+
+    #site-footer {
+        padding: 32px 16px 24px;
+    }
+
+    .footer-column a,
+    .footer-column p,
+    .footer-brand p,
+    #site-footer > p {
+        word-break: break-word;
+    }
+}
