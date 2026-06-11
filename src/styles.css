@@ -1,0 +1,27 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import 'tailwindcss';
+
+@theme {
+  --color-body: #4a5565;
+  --color-subtitle: #0a0a0a;
+  --color-secondary: #0a1b0c;
+  --color-title: #1e5125;
+  --color-primary: #278537;
+}
+
+.hover-button {
+  transition: filter 150ms ease;
+}
+
+.hover-button:hover {
+  filter: brightness(1.08) saturate(1.05);
+}
+
+.active-button {
+  transition: filter 120ms ease;
+}
+
+.active-button:active {
+  filter: brightness(0.94) saturate(0.98);
+}
