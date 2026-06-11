@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "deploy": "wrangler deploy",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:gamification-front": "node dist/gamification-front/server/server.mjs"
@@ -36,6 +37,7 @@
     "prettier": "^3.8.1",
     "tailwindcss": "^4.1.12",
     "typescript": "~5.9.2",
-    "vitest": "^4.0.8"
+    "vitest": "^4.0.8",
+    "wrangler": "^4.100.0"
   }
 }
