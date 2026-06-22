@@ -778,15 +778,15 @@ section {
 }
 
 .type-green {
-    background: linear-gradient(135deg, #85c74f 0%, #009d6b 100%);
+    background: linear-gradient(135deg, #b8e06a 0%, #68ae45 100%);
 }
 
 .type-blue {
-    background: linear-gradient(135deg, #5fa8ff 0%, #1f63ff 100%);
+    background: linear-gradient(135deg, #278537 0%, #1e5125 100%);
 }
 
 .type-purple {
-    background: linear-gradient(135deg, #c983ff 0%, #8a00d4 100%);
+    background: linear-gradient(135deg, #68ae45 0%, #f9d21c 100%);
 }
 
 .type-orange {
@@ -795,7 +795,7 @@ section {
 
 .type-dark {
     width: min(100%, 1120px);
-    background: linear-gradient(90deg, #667997 0%, #141f39 100%);
+    background: linear-gradient(90deg, #98c556 0%, #1e2939 100%);
     box-shadow: 0 24px 48px rgba(12, 18, 32, 0.3), 0 12px 24px rgba(12, 18, 32, 0.2);
 }
 
