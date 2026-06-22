@@ -100,7 +100,7 @@ section {
 }
 
 .custom-gr {
-    background: linear-gradient(180deg, #278537 0%, #1E5125 100%);
+    background: linear-gradient(90deg, #278537 0%, #1E5125 35%, #f9d21c 100%);
 }
 
 #motivation-gap {
