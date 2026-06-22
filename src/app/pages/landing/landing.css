@@ -230,8 +230,8 @@ section {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--color-primary);
-    color: white;
+    background-color: var(--color-accent-yellow);
+    color: var(--color-title);
     font-size: 28px;
     line-height: 1;
 }
