@@ -407,6 +407,7 @@ section {
     display: grid;
     grid-template-columns: 1fr;
     gap: 20px;
+    width: 100%;
 }
 
 .solution-week {
@@ -652,7 +653,7 @@ section {
 .square-warning {
     width: 24px;
     height: 24px;
-    background: #FFB900;
+    background: linear-gradient(180deg, #fff5c5 0%, #f9d21c 100%);
     border-radius: 4px;
 }
 
@@ -769,6 +770,8 @@ section {
 }
 
 .type-card {
+    width: 100%;
+    min-width: 0;
     border-radius: 26px;
     padding: 30px 28px 34px;
     display: flex;
@@ -1372,6 +1375,12 @@ section {
     color: var(--color-title);
     font-size: 22px;
     cursor: pointer;
+}
+
+.contact-form-feedback {
+    color: #fef3c7;
+    font-size: 0.95rem;
+    line-height: 1.5;
 }
 
 .contact-divider {

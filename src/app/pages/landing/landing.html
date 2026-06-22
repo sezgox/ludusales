@@ -10,8 +10,8 @@
             <p class="text-body text-center text-xl lg:max-w-[40vw]">Un enfoque moderno para motivar a los equipos de ventas, impulsar un rendimiento constante y construir una cultura del logro.</p>
 
             <div class="flex gap-4 mt-4">
-                <button class="px-4 py-2 hover-button active-button btn-accent text-xl rounded-lg btn-piloto cursor-pointer">Prueba piloto 30-Días →</button>
-                <button class="px-4 py-2 hover-button active-button text-black text-xl rounded-lg bg-white border-[#BBD1F8] border cursor-pointer">Lo quiero para mi equipo</button>
+                <a href="#pilot-campaign" class="px-4 py-2 hover-button active-button btn-accent text-xl rounded-lg btn-piloto cursor-pointer text-center no-underline">Prueba piloto 30-Días →</a>
+                <a href="#contact" class="px-4 py-2 hover-button active-button text-black text-xl rounded-lg bg-white border-[#BBD1F8] border cursor-pointer text-center no-underline">Lo quiero para mi equipo</a>
             </div>
 
             <p class="text-body text-cente font-bold text-3xl">Más actividad. Más constancia. Más ventas.</p>
@@ -41,7 +41,7 @@
             <div class="flex gap-8 flex-col md:flex-row w-full justify-center mb-[10vh]">
                 <div class="flex flex-col max-w-2xl gap-4">
                     <article class="flex bg-white border border-primary px-4 py-8 gap-8 rounded-2xl">
-                        <img src="assets/pages/landing/gamification/controller.webp" alt="Controller" class="w-20 h-20">
+                        <img ngSrc="assets/pages/landing/gamification/controller.webp" width="512" height="512" alt="Mando que representa dinámicas de juego" class="w-20 h-20">
                         <div class="flex flex-col">
                             <p class="text-title text-2xl">La <b>gamificación</b> consiste en aplicar <b>dinámicas de juego al trabajo</b></p>
                             <p class="text-title text-[16px]">(Puntos, niveles, retos, rankings, recompensas...)</p>
@@ -97,7 +97,7 @@
                         </div>
                     </article>
                 </div>
-                <img src="assets/pages/landing/gamification/mobile.webp" alt="Mobile" class="max-w-sm">
+                <img ngSrc="assets/pages/landing/gamification/mobile.webp" width="640" height="741" alt="Vista móvil de la experiencia gamificada" class="max-w-sm w-full h-auto" sizes="(max-width: 767px) 82vw, 33vw">
             </div>
         </section>
     </div>
@@ -112,7 +112,7 @@
             <div class="gap-column">
                 <article class="gap-card">
                     <div class="gap-icon" aria-hidden="true">
-                        <img src="assets/pages/landing/motivation-gap/decrease-arrow.png" alt="" />
+                        <img ngSrc="assets/pages/landing/motivation-gap/decrease-arrow.png" width="64" height="64" alt="" />
                     </div>
                     <div>
                         <h3 class="text-subtitle text-2xl font-semibold">Rendimiento inconsistente</h3>
@@ -121,7 +121,7 @@
                 </article>
                 <article class="gap-card">
                     <div class="gap-icon" aria-hidden="true">
-                        <img src="assets/pages/landing/motivation-gap/present.webp" alt="" />
+                        <img ngSrc="assets/pages/landing/motivation-gap/present.webp" width="50" height="50" alt="" />
                     </div>
                     <div>
                         <h3 class="text-subtitle text-2xl font-semibold">Incentivos genéricos</h3>
@@ -140,7 +140,7 @@
             <div class="gap-center">
                 <div class="gap-center-inner">
                     <div class="gap-icon gap-icon-lg" aria-hidden="true">
-                        <img src="assets/pages/landing/motivation-gap/chart-arrow.webp" alt="" />
+                        <img ngSrc="assets/pages/landing/motivation-gap/chart-arrow.webp" width="100" height="100" alt="" />
                     </div>
                     <p class="text-subtitle text-3xl md:text-4xl font-semibold text-center">Equipos con resultados irregulares</p>
                 </div>
@@ -156,7 +156,7 @@
             <div class="gap-column">
                 <article class="gap-card">
                     <div class="gap-icon" aria-hidden="true">
-                        <img src="assets/pages/landing/motivation-gap/sign.webp" alt="" />
+                        <img ngSrc="assets/pages/landing/motivation-gap/sign.webp" width="48" height="48" alt="" />
                     </div>
                     <div>
                         <h3 class="text-subtitle text-2xl font-semibold">Bajo compromiso</h3>
@@ -319,13 +319,13 @@
     <section id="dashboard">
         <div class="dashboard-hero">
             <h2 class="text-white text-4xl md:text-5xl lg:text-6xl font-semibold text-center">Ranking, Progreso y Actividad en Tiempo Real</h2>
-            <img src="assets/pages/landing/dashboard/dashboard.webp" alt="Dashboard de ranking, progreso y actividad en tiempo real" class="dashboard-image rounded-2xl">
+            <img ngSrc="assets/pages/landing/dashboard/dashboard.webp" width="1200" height="721" alt="Dashboard de ranking, progreso y actividad en tiempo real" class="dashboard-image rounded-2xl" priority sizes="(max-width: 768px) 100vw, 80vw">
         </div>
 
         <div class="dashboard-cta">
             <p class="text-white text-2xl md:text-3xl font-semibold text-center">¿Listo para transformar tu equipo de ventas?</p>
             <p class="text-white/85 text-lg md:text-2xl text-center">Únete a otras empresas que ya confían en la Gamificación para obtener resultados</p>
-            <button class="btn-accent text-title px-8 py-3 rounded-lg text-lg font-medium cursor-pointer hover-button active-button">Prueba Piloto</button>
+            <a href="#pilot-campaign" class="btn-accent text-title px-8 py-3 rounded-lg text-lg font-medium cursor-pointer hover-button active-button text-center no-underline">Prueba Piloto</a>
         </div>
     </section>
 
@@ -498,7 +498,7 @@
         </div>
 
         <div class="types-grid">
-            <article class="type-card type-green">
+            <article class="type-card type-green w-full min-w-0">
                 <div class="type-icon" aria-hidden="true"><svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M40 73.3332C58.4095 73.3332 73.3334 58.4093 73.3334 39.9998C73.3334 21.5903 58.4095 6.6665 40 6.6665C21.5905 6.6665 6.66669 21.5903 6.66669 39.9998C6.66669 58.4093 21.5905 73.3332 40 73.3332Z" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M40 60C51.0457 60 60 51.0457 60 40C60 28.9543 51.0457 20 40 20C28.9543 20 20 28.9543 20 40C20 51.0457 28.9543 60 40 60Z" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -509,7 +509,7 @@
                 <p class="text-white/85 text-xl">Ideal para equipos motivados por rankings y superar metas</p>
             </article>
 
-            <article class="type-card type-blue">
+            <article class="type-card type-blue w-full min-w-0">
                 <div class="type-icon" aria-hidden="true"><svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M53.3333 70V63.3333C53.3333 59.7971 51.9285 56.4057 49.428 53.9052C46.9276 51.4048 43.5362 50 40 50H20C16.4637 50 13.0724 51.4048 10.5719 53.9052C8.07138 56.4057 6.66663 59.7971 6.66663 63.3333V70" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M30 36.6667C37.3638 36.6667 43.3333 30.6971 43.3333 23.3333C43.3333 15.9695 37.3638 10 30 10C22.6362 10 16.6666 15.9695 16.6666 23.3333C16.6666 30.6971 22.6362 36.6667 30 36.6667Z" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -521,7 +521,7 @@
                 <p class="text-white/85 text-xl">Funciona cuando el éxito se mide en grupo</p>
             </article>
 
-            <article class="type-card type-purple">
+            <article class="type-card type-purple w-full min-w-0">
                 <div class="type-icon" aria-hidden="true"><svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M53.3333 70V63.3333C53.3333 59.7971 51.9285 56.4057 49.428 53.9052C46.9276 51.4048 43.5362 50 40 50H20C16.4637 50 13.0724 51.4048 10.5719 53.9052C8.07138 56.4057 6.66663 59.7971 6.66663 63.3333V70" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M30 36.6667C37.3638 36.6667 43.3333 30.6971 43.3333 23.3333C43.3333 15.9695 37.3638 10 30 10C22.6362 10 16.6666 15.9695 16.6666 23.3333C16.6666 30.6971 22.6362 36.6667 30 36.6667Z" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -533,7 +533,7 @@
                 <p class="text-white/85 text-xl">Para equipos que valoran el crecimiento personal</p>
             </article>
 
-            <article class="type-card type-orange">
+            <article class="type-card type-orange w-full min-w-0">
                 <div class="type-icon" aria-hidden="true"><svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M73.3334 23.3335L45 51.6668L28.3334 35.0002L6.66669 56.6668" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M53.3333 23.3335H73.3333V43.3335" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -544,7 +544,7 @@
             </article>
         </div>
 
-        <article class="type-card type-dark type-wide">
+        <article class="type-card type-dark type-wide w-full min-w-0">
             <div class="type-icon" aria-hidden="true"><svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M48.88 8H47.12C44.9983 8 42.9634 8.84285 41.4632 10.3431C39.9629 11.8434 39.12 13.8783 39.12 16V16.72C39.1186 18.1229 38.7482 19.5008 38.0462 20.7153C37.3441 21.9299 36.335 22.9385 35.12 23.64L33.4 24.64C32.1839 25.3421 30.8043 25.7118 29.4 25.7118C27.9957 25.7118 26.6162 25.3421 25.4 24.64L24.8 24.32C22.9643 23.2611 20.7834 22.9738 18.736 23.5212C16.6887 24.0687 14.9422 25.4061 13.88 27.24L13 28.76C11.9411 30.5957 11.6538 32.7767 12.2012 34.824C12.7487 36.8713 14.0862 38.6178 15.92 39.68L16.52 40.08C17.7291 40.778 18.7345 41.7804 19.4362 42.9873C20.1379 44.1943 20.5116 45.5639 20.52 46.96V49C20.5256 50.4097 20.1586 51.7958 19.4562 53.018C18.7538 54.2403 17.7408 55.2552 16.52 55.96L15.92 56.32C14.0862 57.3822 12.7487 59.1287 12.2012 61.176C11.6538 63.2233 11.9411 65.4043 13 67.24L13.88 68.76C14.9422 70.5939 16.6887 71.9313 18.736 72.4788C20.7834 73.0262 22.9643 72.7389 24.8 71.68L25.4 71.36C26.6162 70.6579 27.9957 70.2882 29.4 70.2882C30.8043 70.2882 32.1839 70.6579 33.4 71.36L35.12 72.36C36.335 73.0615 37.3441 74.0701 38.0462 75.2847C38.7482 76.4992 39.1186 77.8771 39.12 79.28V80C39.12 82.1217 39.9629 84.1566 41.4632 85.6569C42.9634 87.1571 44.9983 88 47.12 88H48.88C51.0017 88 53.0366 87.1571 54.5369 85.6569C56.0372 84.1566 56.88 82.1217 56.88 80V79.28C56.8814 77.8771 57.2518 76.4992 57.9539 75.2847C58.6559 74.0701 59.6651 73.0615 60.88 72.36L62.6 71.36C63.8162 70.6579 65.1957 70.2882 66.6 70.2882C68.0043 70.2882 69.3839 70.6579 70.6 71.36L71.2 71.68C73.0357 72.7389 75.2167 73.0262 77.264 72.4788C79.3113 71.9313 81.0578 70.5939 82.12 68.76L83 67.2C84.059 65.3643 84.3462 63.1833 83.7988 61.136C83.2513 59.0887 81.9139 57.3422 80.08 56.28L79.48 55.96C78.2592 55.2552 77.2463 54.2403 76.5438 53.018C75.8414 51.7958 75.4744 50.4097 75.48 49V47C75.4744 45.5903 75.8414 44.2042 76.5438 42.982C77.2463 41.7597 78.2592 40.7448 79.48 40.04L80.08 39.68C81.9139 38.6178 83.2513 36.8713 83.7988 34.824C84.3462 32.7767 84.059 30.5957 83 28.76L82.12 27.24C81.0578 25.4061 79.3113 24.0687 77.264 23.5212C75.2167 22.9738 73.0357 23.2611 71.2 24.32L70.6 24.64C69.3839 25.3421 68.0043 25.7118 66.6 25.7118C65.1957 25.7118 63.8162 25.3421 62.6 24.64L60.88 23.64C59.6651 22.9385 58.6559 21.9299 57.9539 20.7153C57.2518 19.5008 56.8814 18.1229 56.88 16.72V16C56.88 13.8783 56.0372 11.8434 54.5369 10.3431C53.0366 8.84285 51.0017 8 48.88 8Z" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M48 60C54.6274 60 60 54.6274 60 48C60 41.3726 54.6274 36 48 36C41.3726 36 36 41.3726 36 48C36 54.6274 41.3726 60 48 60Z" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
@@ -637,7 +637,7 @@
                 <p class="pilot-price">800€</p>
                 <p class="text-body text-2xl">pago único</p>
             </div>
-            <button class="btn-accent text-title px-8 py-4 rounded-lg text-xl font-medium cursor-pointer hover-button active-button">Programar Piloto</button>
+            <a href="#contact" class="btn-accent text-title px-8 py-4 rounded-lg text-xl font-medium cursor-pointer hover-button active-button text-center no-underline">Programar Piloto</a>
             <p class="text-body text-lg text-center">Generalmente programada dentro de 5 a 7 días hábiles</p>
         </article>
 
@@ -814,15 +814,18 @@
         </div>
 
         <article class="contact-card">
-            <form class="contact-form">
+            <form class="contact-form" [formGroup]="contactForm" (ngSubmit)="submitContactForm()" novalidate>
                 <div class="contact-form-row">
-                    <input class="contact-input" type="text" placeholder="Nombre" />
-                    <input class="contact-input" type="text" placeholder="Apellidos" />
+                    <input class="contact-input" type="text" formControlName="firstName" autocomplete="given-name" aria-label="Nombre" placeholder="Nombre" />
+                    <input class="contact-input" type="text" formControlName="lastName" autocomplete="family-name" aria-label="Apellidos" placeholder="Apellidos" />
                 </div>
-                <input class="contact-input" type="email" placeholder="Email contacto" />
-                <input class="contact-input" type="text" placeholder="Nombre de tu empresa" />
-                <input class="contact-input" type="text" placeholder="Tamaño del equipo de ventas" />
-                <button class="contact-button" type="button">Agendar Llamada →</button>
+                <input class="contact-input" type="email" formControlName="email" autocomplete="email" aria-label="Email de contacto" placeholder="Email contacto" />
+                <input class="contact-input" type="text" formControlName="company" autocomplete="organization" aria-label="Nombre de tu empresa" placeholder="Nombre de tu empresa" />
+                <input class="contact-input" type="text" formControlName="teamSize" aria-label="Tamaño del equipo de ventas" placeholder="Tamaño del equipo de ventas" />
+                <button class="contact-button" type="submit">Agendar Llamada →</button>
+                @if (contactForm.invalid && contactForm.touched) {
+                    <p class="contact-form-feedback" aria-live="polite">Completa todos los campos antes de agendar la llamada.</p>
+                }
             </form>
 
             <div class="contact-divider"></div>
@@ -854,7 +857,7 @@
         <div class="footer-grid">
             <div class="footer-brand">
                 <div class="footer-logo-row">
-                    <img src="assets/components/landing-header/ludu-logo.webp" alt="Ludus Sales" class="footer-logo">
+                <img ngSrc="assets/components/landing-header/ludu-logo.webp" width="28" height="28" alt="Ludus Sales" class="footer-logo">
                     <p class="text-white text-2xl font-semibold">Ludus Sales</p>
                 </div>
                 <p class="text-white/60 text-xl">Consultoría de Gamificación especializada en equipos comerciales</p>

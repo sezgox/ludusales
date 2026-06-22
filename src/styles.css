@@ -11,6 +11,20 @@
   --color-accent-yellow: #f9d21c;
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+}
+
 .btn-accent {
   background-color: var(--color-accent-yellow);
   color: var(--color-title);
@@ -30,4 +44,20 @@
 
 .active-button:active {
   filter: brightness(0.94) saturate(0.98);
+}
+
+a,
+button,
+input {
+  transition:
+    filter 150ms ease,
+    outline-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+  outline: 3px solid var(--color-accent-yellow);
+  outline-offset: 3px;
 }
