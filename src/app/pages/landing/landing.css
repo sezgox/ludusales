@@ -1276,6 +1276,21 @@ section {
     justify-content: center;
     color: white;
     background: rgba(255, 255, 255, 0.04);
+    text-decoration: none;
+    transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.footer-social:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.24);
+}
+
+.footer-column a {
+    text-decoration: none;
+}
+
+.footer-column a:hover {
+    color: white;
 }
 
 .footer-divider {
