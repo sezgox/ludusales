@@ -9,6 +9,7 @@
   --color-title: #1e5125;
   --color-primary: #278537;
   --color-accent-yellow: #f9d21c;
+  --navbar-offset: 104px;
 }
 
 *,
@@ -21,8 +22,18 @@ html {
   scroll-behavior: smooth;
 }
 
+section[id] {
+  scroll-margin-top: var(--navbar-offset);
+}
+
 body {
   margin: 0;
+}
+
+@media (max-width: 1023px) {
+  :root {
+    --navbar-offset: 88px;
+  }
 }
 
 .btn-accent {

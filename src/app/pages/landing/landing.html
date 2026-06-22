@@ -31,7 +31,7 @@
                 </div>
             </div>
 
-            <div class="performance-bar mb-8 max-w-[90vw] md:max-w-[70vw] lg:max-w-[30vw] w-full py-1 px-2 rounded-lg">
+            <div class="performance-bar mb-8 max-w-[90vw] md:max-w-[70vw] lg:max-w-[30vw] w-full py-1 px-2 rounded-lg" [style.--performance-progress]="performanceProgress() + '%'">
                 <p class="text-center text-white">Activando sistema de rendimiento... {{ performanceProgress() }}%</p>
             </div>
         </section>

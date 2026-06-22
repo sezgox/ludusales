@@ -33,11 +33,18 @@ export class Landing {
 
   constructor() {
     afterNextRender(() => {
-      const intervalId = window.setInterval(() => {
-        this.performanceProgress.update((value) => (value >= 100 ? 0 : value + 1));
-      }, 40);
+      let timerId = 0;
 
-      this.destroyRef.onDestroy(() => window.clearInterval(intervalId));
+      const scheduleNextTick = (delay: number) => {
+        timerId = window.setTimeout(() => {
+          const nextValue = this.performanceProgress() >= 100 ? 0 : this.performanceProgress() + 1;
+          this.performanceProgress.set(nextValue);
+          scheduleNextTick(nextValue === 100 ? 1000 : 40);
+        }, delay);
+      };
+
+      scheduleNextTick(40);
+      this.destroyRef.onDestroy(() => window.clearTimeout(timerId));
     });
   }
 
