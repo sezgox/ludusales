@@ -31,7 +31,7 @@ section {
 }
 
 #hero {
-    background: linear-gradient(0deg, rgba(104, 174, 69, 0.12) 0%, rgba(255, 255, 255, 0.15) 78%);
+    background: linear-gradient(180deg, rgba(104, 174, 69, 0.18) 0%, rgba(255, 255, 255, 0.12) 72%);
     height: 95vh;
 }
 
