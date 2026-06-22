@@ -157,6 +157,7 @@ section {
 }
 
 .gap-center-inner {
+    position: relative;
     width: min(100%, 320px);
     aspect-ratio: 1;
     border-radius: 999px;
@@ -167,8 +168,33 @@ section {
     justify-content: center;
     gap: 16px;
     background: radial-gradient(circle at top, #eaf8de 0%, #d7f0c4 100%);
-    border: 2px dashed rgba(39, 133, 55, 0.7);
+    border: 0;
     box-shadow: 0 12px 30px rgba(30, 81, 37, 0.12);
+    overflow: hidden;
+}
+
+.gap-center-inner::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    border: 2px dashed rgba(39, 133, 55, 0.7);
+    animation: gapRingSpin 24s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes gapRingSpin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.gap-center-inner > * {
+    position: relative;
+    z-index: 1;
 }
 
 .gap-icon-lg {
