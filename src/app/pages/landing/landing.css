@@ -95,6 +95,10 @@ section {
     }
 }
 
+.performance-bar {
+    background: linear-gradient(90deg, #1e5125 0%, #278537 50%, #68ae45 100%);
+}
+
 .btn-piloto {
     background: linear-gradient(90deg, #1E5125 0%, #68AE45 100%);
 }
