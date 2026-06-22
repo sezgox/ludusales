@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { afterNextRender, Component, DestroyRef, inject, signal } from '@angular/core';
 import { LandingHeader } from '@components/landing-header/landing-header';
 
 @Component({
@@ -13,10 +13,12 @@ export class Landing {
   readonly performanceProgress = signal(0);
 
   constructor() {
-    const intervalId = window.setInterval(() => {
-      this.performanceProgress.update((value) => (value >= 100 ? 0 : value + 1));
-    }, 40);
+    afterNextRender(() => {
+      const intervalId = window.setInterval(() => {
+        this.performanceProgress.update((value) => (value >= 100 ? 0 : value + 1));
+      }, 40);
 
-    this.destroyRef.onDestroy(() => window.clearInterval(intervalId));
+      this.destroyRef.onDestroy(() => window.clearInterval(intervalId));
+    });
   }
 }

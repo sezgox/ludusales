@@ -12,9 +12,11 @@
 }
 
 .btn-accent {
-    background-color: var(--color-accent-yellow);
-    color: var(--color-title);
+  background-color: var(--color-accent-yellow);
+  color: var(--color-title);
 }
+
+.hover-button {
   transition: filter 150ms ease;
 }
 
