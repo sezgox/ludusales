@@ -918,7 +918,7 @@ section {
     align-items: center;
     justify-content: center;
     gap: 14px;
-    background: #67b337;
+    background: linear-gradient(90deg, #68ae45 0%, #f9d21c 100%);
     border-radius: 999px;
     padding: 16px 28px;
     width: min(100%, 640px);
