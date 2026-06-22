@@ -607,14 +607,16 @@ section {
     display: flex;
     flex-direction: column;
     gap: 28px;
+    color: var(--color-title);
 }
 
 .success-results {
-    background: #4ca13d;
+    background: linear-gradient(180deg, #278537 0%, #68ae45 45%, #f9d21c 100%);
     padding: 36px 28px;
     display: flex;
     flex-direction: column;
     gap: 24px;
+    color: white;
 }
 
 .success-block {
