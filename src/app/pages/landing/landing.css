@@ -1375,6 +1375,17 @@ section {
 .contact-meta-text {
     color: #dbeafe;
     font-size: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.contact-meta-link {
+    text-decoration: none;
+}
+
+.contact-meta-link:hover {
+    color: white;
 }
 
 .contact-note {
