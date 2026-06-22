@@ -1362,16 +1362,35 @@ section {
 @media (max-width: 767px) {
     section {
         min-height: auto;
-        padding: 24px 16px;
+        padding: 28px 16px;
+        gap: 24px;
     }
 
     #hero {
         min-height: calc(100vh - 72px);
         height: auto;
         justify-content: center;
-        gap: 24px;
-        padding-top: 40px;
-        padding-bottom: 40px;
+        gap: 20px;
+        padding-top: 32px;
+        padding-bottom: 32px;
+    }
+
+    #hero .chip {
+        margin-bottom: 4px;
+    }
+
+    #hero > .flex.gap-4.mt-4 {
+        margin-top: 8px;
+    }
+
+    #hero > p.text-body.text-cente {
+        margin-top: 8px;
+        margin-bottom: 8px;
+    }
+
+    #hero > .flex.gap-4.md\:gap-10 {
+        margin-top: 8px;
+        margin-bottom: 8px;
     }
 
     #hero h2 {
