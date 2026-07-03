@@ -56,8 +56,8 @@ section {
     position: absolute;
     inset: -80px 0;
     background-image:
-        linear-gradient(to right, rgba(0, 70, 20, 0.55) 2px, transparent 2px),
-        linear-gradient(to bottom, rgba(0, 70, 20, 0.55) 2px, transparent 2px);
+        linear-gradient(to right, rgba(39, 133, 55, 0.18) 2px, transparent 2px),
+        linear-gradient(to bottom, rgba(39, 133, 55, 0.18) 2px, transparent 2px);
     background-size: 54px 54px;
     mask-image: repeating-linear-gradient(
         to right,
@@ -275,26 +275,10 @@ section {
     line-height: 1;
 }
 
-.gap-arrow {
-    display: none;
-    align-items: center;
-    justify-content: center;
-}
-
-.gap-arrow svg {
-    width: 100%;
-    max-width: 215px;
-    height: auto;
-}
-
 @media (min-width: 1024px) {
     .gap-visual {
-        grid-template-columns: minmax(0, 1fr) minmax(120px, 215px) minmax(260px, 320px) minmax(120px, 215px) minmax(0, 1fr);
-        gap: 20px;
-    }
-
-    .gap-arrow {
-        display: flex;
+        grid-template-columns: minmax(0, 1fr) minmax(260px, 320px) minmax(0, 1fr);
+        gap: clamp(24px, 4vw, 64px);
     }
 }
 
@@ -465,12 +449,12 @@ section {
 
 .xp-green {
     background-color: #d8f3d3;
-    color: var(--color-primary);
+    color: var(--color-title);
 }
 
 .xp-orange {
     background-color: #fff3c4;
-    color: #8a6d00;
+    color: #765d00;
 }
 
 .solution-note {
@@ -815,6 +799,10 @@ section {
     box-shadow: 0 22px 44px rgba(18, 28, 45, 0.26), 0 10px 22px rgba(18, 28, 45, 0.16);
 }
 
+.type-card h3 {
+    overflow-wrap: anywhere;
+}
+
 .type-green {
     background: linear-gradient(135deg, #b8e06a 0%, #68ae45 100%);
 }
@@ -1135,7 +1123,7 @@ section {
 
 .difference-label.success-label {
     background: #d3f7d7;
-    color: #2e7d32;
+    color: #256428;
 }
 
 .difference-list {
