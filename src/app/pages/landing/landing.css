@@ -3,6 +3,43 @@
     --landing-transition-color: rgba(104, 174, 69, 0.15);
 }
 
+[data-reveal].reveal-pending {
+    opacity: 0;
+    will-change: opacity, transform;
+}
+
+[data-reveal].reveal-visible {
+    animation-duration: 620ms;
+    animation-delay: var(--reveal-delay, 0ms);
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    animation-fill-mode: both;
+}
+
+[data-reveal].reveal-visible { animation-name: cardReveal; }
+[data-reveal="fade"] { --reveal-from: translate3d(0, 0, 0); }
+[data-reveal="fade-up"] { --reveal-from: translate3d(0, 20px, 0); }
+[data-reveal="fade-down"] { --reveal-from: translate3d(0, -16px, 0); }
+[data-reveal="slide-left"] { --reveal-from: translate3d(-28px, 8px, 0); }
+[data-reveal="slide-right"] { --reveal-from: translate3d(28px, 8px, 0); }
+[data-reveal="scale-in"] { --reveal-from: translate3d(0, 12px, 0) scale(0.975); }
+[data-reveal="tilt-left"] { --reveal-from: translate3d(-18px, 18px, 0) rotate(-2deg); }
+[data-reveal="tilt-right"] { --reveal-from: translate3d(18px, 18px, 0) rotate(2deg); }
+
+@keyframes cardReveal {
+    from { opacity: 0; transform: var(--reveal-from); }
+    to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    [data-reveal].reveal-pending,
+    [data-reveal].reveal-visible {
+        opacity: 1;
+        transform: none;
+        animation: none;
+        will-change: auto;
+    }
+}
+
 .chip {
     background: #98C55633;
     padding: 8px 20px;

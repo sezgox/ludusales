@@ -9,10 +9,11 @@ import {
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LandingHeader } from '@components/landing-header/landing-header';
+import { ScrollRevealDirective } from '../../directives/scroll-reveal.directive';
 
 @Component({
   selector: 'app-landing',
-  imports: [LandingHeader, NgOptimizedImage, ReactiveFormsModule],
+  imports: [LandingHeader, NgOptimizedImage, ReactiveFormsModule, ScrollRevealDirective],
   templateUrl: './landing.html',
   styleUrl: './landing.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
