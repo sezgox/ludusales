@@ -7,7 +7,7 @@
     justify-content: space-between;
     gap: 16px;
     padding: 16px 20px;
-    background: rgba(248, 251, 248, 0.92);
+    background: #EAF3DD;
     border-bottom: 1px solid rgba(104, 174, 69, 0.18);
     backdrop-filter: blur(16px);
 }
