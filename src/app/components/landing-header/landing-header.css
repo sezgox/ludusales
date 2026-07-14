@@ -28,11 +28,12 @@
     flex-shrink: 0;
 }
 
-.landing-header__title {
-    color: var(--color-title);
-    font-size: 1.375rem;
-    font-weight: 600;
-    line-height: 1.1;
+.landing-header__wordmark {
+    width: clamp(132px, 14vw, 164px);
+    height: auto;
+    display: block;
+    flex-shrink: 1;
+    object-fit: contain;
 }
 
 .landing-header__nav {
@@ -70,8 +71,13 @@
         padding: 14px 16px;
     }
 
-    .landing-header__title {
-        font-size: 1.125rem;
+    .landing-header__logo {
+        width: 36px;
+        height: 36px;
+    }
+
+    .landing-header__wordmark {
+        width: clamp(112px, 34vw, 144px);
     }
 
     .landing-header__nav {
@@ -90,5 +96,27 @@
         padding: 11px 14px;
         font-size: 0.875rem;
         text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .landing-header {
+        gap: 10px;
+    }
+
+    .landing-header__brand {
+        gap: 0;
+    }
+
+    .landing-header__logo {
+        display: none;
+    }
+
+    .landing-header__wordmark {
+        width: 132px;
+    }
+
+    .landing-header__cta {
+        padding: 10px 12px;
     }
 }

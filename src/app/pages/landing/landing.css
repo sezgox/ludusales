@@ -176,7 +176,7 @@ section {
 }
 
 .custom-gr {
-    background: linear-gradient(90deg, #278537 0%, #1E5125 35%, #f9d21c 100%);
+    background: linear-gradient(90deg, #278537 0%, #1E5125 35%, var(--color-accent-yellow) 100%);
 }
 
 #motivation-gap {
@@ -310,6 +310,30 @@ section {
     color: var(--color-title);
     font-size: 28px;
     line-height: 1;
+    transform-origin: center;
+}
+
+.gap-note.reveal-visible .gap-note-icon {
+    animation: gapBulbOrbitIn 920ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    animation-delay: calc(var(--reveal-delay, 0ms) + 130ms);
+}
+
+@keyframes gapBulbOrbitIn {
+    0% {
+        opacity: 0;
+        transform: translate3d(-148px, 18px, 0) rotate(-210deg) scale(0.72);
+    }
+    42% {
+        opacity: 1;
+        transform: translate3d(-78px, -38px, 0) rotate(-112deg) scale(0.88);
+    }
+    72% {
+        transform: translate3d(14px, -8px, 0) rotate(14deg) scale(1.06);
+    }
+    100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+    }
 }
 
 @media (min-width: 1024px) {
@@ -323,6 +347,12 @@ section {
     .gap-note {
         flex-direction: column;
         align-items: flex-start;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .gap-note.reveal-visible .gap-note-icon {
+        animation: none;
     }
 }
 
@@ -418,7 +448,7 @@ section {
     top: 50%;
     height: 4px;
     transform: translateY(-50%);
-    background: linear-gradient(90deg, #68ae45 0%, #278537 45%, #f9d21c 100%);
+    background: linear-gradient(90deg, #68ae45 0%, #278537 45%, var(--color-accent-yellow) 100%);
     border-radius: 999px;
 }
 
@@ -447,16 +477,16 @@ section {
 }
 
 .step-4 {
-    background-color: #f9d21c;
+    background-color: var(--color-accent-yellow);
     color: var(--color-title);
 }
 
 .step-5 {
     width: 52px;
     height: 52px;
-    background-color: #f9d21c;
+    background-color: var(--color-accent-yellow);
     color: var(--color-title);
-    box-shadow: 0 10px 18px rgba(249, 210, 28, 0.35);
+    box-shadow: 0 10px 18px color-mix(in srgb, var(--color-accent-yellow) 35%, transparent);
 }
 
 .solution-weeks {
@@ -668,7 +698,7 @@ section {
 }
 
 .success-results {
-    background: linear-gradient(180deg, #278537 0%, #68ae45 45%, #f9d21c 100%);
+    background: linear-gradient(180deg, #278537 0%, #68ae45 45%, var(--color-accent-yellow) 100%);
     padding: 36px 28px;
     display: flex;
     flex-direction: column;
@@ -709,7 +739,7 @@ section {
 .square-warning {
     width: 24px;
     height: 24px;
-    background: linear-gradient(180deg, #fff5c5 0%, #f9d21c 100%);
+    background: linear-gradient(180deg, #fff5c5 0%, var(--color-accent-yellow) 100%);
     border-radius: 4px;
 }
 
@@ -849,7 +879,7 @@ section {
 }
 
 .type-purple {
-    background: linear-gradient(135deg, #68ae45 0%, #f9d21c 100%);
+    background: linear-gradient(135deg, #68ae45 0%, var(--color-accent-yellow) 100%);
 }
 
 .type-orange {
@@ -981,10 +1011,35 @@ section {
     align-items: center;
     justify-content: center;
     gap: 14px;
-    background: linear-gradient(90deg, #68ae45 0%, #f9d21c 100%);
+    background: linear-gradient(90deg, #68ae45 0%, var(--color-accent-yellow) 100%);
     border-radius: 999px;
     padding: 16px 28px;
     width: min(100%, 640px);
+    transform-origin: center;
+}
+
+.pilot-pill.reveal-visible {
+    animation-name: pilotPillPopUp;
+    animation-duration: 760ms;
+    animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes pilotPillPopUp {
+    0% {
+        opacity: 0;
+        transform: translate3d(0, 22px, 0) scale(0.82);
+    }
+    62% {
+        opacity: 1;
+        transform: translate3d(0, -4px, 0) scale(1.05);
+    }
+    82% {
+        transform: translate3d(0, 2px, 0) scale(0.985);
+    }
+    100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
 }
 
 .pilot-pill-icon {
@@ -1070,33 +1125,48 @@ section {
 }
 
 #difference {
-    gap: 32px;
-    padding-top: 80px;
-    padding-bottom: 92px;
+    gap: 28px;
+    padding-top: 72px;
+    padding-bottom: 84px;
 }
 
 .difference-heading {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 8px;
+    align-items: center;
+    width: min(100%, 980px);
 }
 
-.difference-top {
-    width: min(100%, 1120px);
+.difference-heading p {
+    letter-spacing: 0.08em;
+    font-weight: 400;
+    font-size: clamp(1.45rem, 2vw, 1.75rem);
+    line-height: 1.2;
+}
+
+.difference-heading h2 {
+    font-size: clamp(2rem, 2.8vw, 2.5rem);
+    line-height: 1.12;
+}
+
+.difference-content {
+    width: min(100%, 860px);
     display: grid;
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 28px;
     align-items: center;
 }
 
 .difference-problem-card {
     background: white;
-    border: 1px solid #b9e3bd;
-    border-radius: 18px;
-    padding: 20px 22px;
+    border: 1px solid rgba(39, 133, 55, 0.32);
+    border-radius: 12px;
+    padding: 20px 28px;
     display: flex;
     flex-direction: column;
     gap: 14px;
+    box-shadow: 0 10px 24px rgba(30, 81, 37, 0.04);
 }
 
 .difference-problem-title {
@@ -1105,109 +1175,86 @@ section {
     gap: 14px;
 }
 
+.difference-problem-title h3 {
+    font-size: 1.2rem;
+    line-height: 1.25;
+}
+
+.difference-problem-card p {
+    font-size: 0.95rem;
+    line-height: 1.55;
+}
+
 .difference-star {
-    width: 36px;
-    height: 36px;
-    min-width: 36px;
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
     border-radius: 999px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #2f8d45;
+    background: var(--color-primary);
     color: white;
-    font-size: 20px;
     line-height: 1;
 }
 
-.difference-graph {
+.difference-system-visual {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
     align-items: center;
+    justify-content: center;
+    min-height: 190px;
 }
 
-.difference-graph svg {
-    width: min(100%, 320px);
+.difference-system-visual svg {
+    width: min(100%, 300px);
     height: auto;
-}
-
-.difference-compare {
-    width: min(100%, 1120px);
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 18px;
-}
-
-.difference-column {
-    position: relative;
-    background: white;
-    border-radius: 18px;
-    padding: 30px 18px 22px;
-}
-
-.difference-column.ludus {
-    border: 2px solid #8ff0a0;
-}
-
-.difference-label {
-    position: absolute;
-    top: -14px;
-    left: 18px;
-    border-radius: 999px;
-    padding: 8px 14px;
-    font-size: 16px;
-}
-
-.difference-label.success-label {
-    background: #d3f7d7;
-    color: #256428;
-}
-
-.difference-list {
-    display: flex;
-    flex-direction: column;
-    gap: 26px;
+    overflow: visible;
 }
 
 .difference-cta {
-    width: min(100%, 1120px);
-    background: linear-gradient(90deg, #278537 0%, #68ae45 45%, #f9d21c 100%);
-    border-radius: 18px;
-    padding: 26px 28px;
+    width: min(100%, 860px);
+    background: linear-gradient(100deg, #278537 0%, #4a982f 56%, var(--color-accent-yellow) 100%);
+    border-radius: 12px;
+    padding: 28px 28px;
     display: flex;
     align-items: center;
-    gap: 18px;
+    gap: 24px;
+    box-shadow: 0 14px 28px rgba(30, 81, 37, 0.12);
 }
 
 .difference-cta-icon {
-    width: 48px;
-    height: 48px;
-    min-width: 48px;
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
     border-radius: 999px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: rgba(255, 255, 255, 0.22);
     color: white;
-    font-size: 26px;
     line-height: 1;
 }
 
 .difference-cta p {
     color: white;
+    font-size: clamp(1.15rem, 1.55vw, 1.35rem);
+    line-height: 1.35;
 }
 
 .difference-note {
+    width: min(100%, 860px);
+    justify-content: center;
     font-style: italic;
+    font-size: 1.05rem;
+}
+
+.difference-note svg {
+    flex-shrink: 0;
 }
 
 @media (min-width: 1024px) {
-    .difference-top {
-        grid-template-columns: 1.5fr 0.7fr;
-    }
-
-    .difference-compare {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+    .difference-content {
+        grid-template-columns: minmax(0, 1.9fr) minmax(240px, 0.9fr);
     }
 }
 
@@ -1591,7 +1638,6 @@ section {
     #gamification article:first-child,
     #gamification article:last-child > div:first-child,
     .pilot-card,
-    .difference-problem-title,
     .testimonial-person {
         flex-direction: column;
         align-items: flex-start;
@@ -1688,7 +1734,6 @@ section {
     }
 
     .testimonials-grid,
-    .difference-compare,
     .about-metrics-grid,
     .footer-grid {
         gap: 20px;
@@ -1697,6 +1742,8 @@ section {
     .difference-note {
         font-size: 1.125rem;
         line-height: 1.5;
+        align-items: flex-start;
+        text-align: left;
     }
 
     .difference-note svg {
