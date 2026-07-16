@@ -9,7 +9,11 @@ import {
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LandingHeader } from '@components/landing-header/landing-header';
+import { firstValueFrom } from 'rxjs';
 import { ScrollRevealDirective } from '../../directives/scroll-reveal.directive';
+import { ContactService } from '../../services/contact.service';
+
+type ContactFormStatus = 'idle' | 'sending' | 'sent' | 'error';
 
 @Component({
   selector: 'app-landing',
@@ -21,9 +25,11 @@ import { ScrollRevealDirective } from '../../directives/scroll-reveal.directive'
 export class Landing {
   private readonly destroyRef = inject(DestroyRef);
   private readonly formBuilder = inject(FormBuilder);
+  private readonly contactService = inject(ContactService);
 
   readonly performanceProgress = signal(0);
   readonly contactEmail = 'juanma@ludusales.com';
+  readonly contactFormStatus = signal<ContactFormStatus>('idle');
   readonly contactForm = this.formBuilder.nonNullable.group({
     firstName: ['', Validators.required],
     lastName: ['', Validators.required],
@@ -49,27 +55,21 @@ export class Landing {
     });
   }
 
-  submitContactForm(): void {
+  async submitContactForm(): Promise<void> {
     if (this.contactForm.invalid) {
       this.contactForm.markAllAsTouched();
       return;
     }
 
-    const { firstName, lastName, email, company, teamSize } = this.contactForm.getRawValue();
-    const subject = encodeURIComponent(`Solicitud de llamada - ${company}`);
-    const body = encodeURIComponent(
-      [
-        'Hola Ludus Sales,',
-        '',
-        'Quiero agendar una llamada.',
-        '',
-        `Nombre: ${firstName} ${lastName}`,
-        `Email: ${email}`,
-        `Empresa: ${company}`,
-        `Tamaño del equipo de ventas: ${teamSize}`,
-      ].join('\n'),
-    );
+    this.contactFormStatus.set('sending');
 
-    globalThis.location?.assign(`mailto:${this.contactEmail}?subject=${subject}&body=${body}`);
+    try {
+      await firstValueFrom(this.contactService.sendContactRequest(this.contactForm.getRawValue()));
+      this.contactFormStatus.set('sent');
+      this.contactForm.reset();
+    } catch (error) {
+      console.error('Unable to submit contact form', error);
+      this.contactFormStatus.set('error');
+    }
   }
 }

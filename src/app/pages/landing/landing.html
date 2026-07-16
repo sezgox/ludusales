@@ -842,9 +842,17 @@
                 <input class="contact-input" type="email" formControlName="email" autocomplete="email" aria-label="Email de contacto" placeholder="Email contacto" />
                 <input class="contact-input" type="text" formControlName="company" autocomplete="organization" aria-label="Nombre de tu empresa" placeholder="Nombre de tu empresa" />
                 <input class="contact-input" type="text" formControlName="teamSize" aria-label="Tamaño del equipo de ventas" placeholder="Tamaño del equipo de ventas" />
-                <button class="contact-button" type="submit">Agendar Llamada →</button>
+                <button class="contact-button" type="submit" [disabled]="contactFormStatus() === 'sending'">
+                    {{ contactFormStatus() === 'sending' ? 'Enviando...' : 'Agendar Llamada →' }}
+                </button>
                 @if (contactForm.invalid && contactForm.touched) {
                     <p class="contact-form-feedback" aria-live="polite">Completa todos los campos antes de agendar la llamada.</p>
+                }
+                @if (contactFormStatus() === 'sent') {
+                    <p class="contact-form-feedback contact-form-feedback--success" aria-live="polite">Solicitud enviada. Te contactaremos pronto.</p>
+                }
+                @if (contactFormStatus() === 'error') {
+                    <p class="contact-form-feedback" aria-live="polite">No hemos podido enviar la solicitud. Escríbenos a {{ contactEmail }}.</p>
                 }
             </form>
 
