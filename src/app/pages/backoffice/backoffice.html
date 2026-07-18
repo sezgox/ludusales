@@ -1,0 +1,151 @@
+<main class="backoffice-shell">
+  @if (auth(); as session) {
+    @if (session.authenticated) {
+      <header class="backoffice-topbar">
+        <div>
+          <p class="eyebrow">Backoffice</p>
+          <h1>Correos de {{ session.user.publicEmail }}</h1>
+        </div>
+        <div class="topbar-actions">
+          <span class="session-email">{{ session.user.email }}</span>
+          <button type="button" class="secondary-button" (click)="loadMessages()" [disabled]="loadingMessages()">Actualizar</button>
+          <button type="button" class="ghost-button" (click)="logout()">Salir</button>
+        </div>
+      </header>
+
+      <section class="mail-workspace" aria-label="Gestion de correos">
+        <aside class="mail-list" aria-label="Listado de correos">
+          <div class="mail-list-header">
+            <h2>Entrada</h2>
+            <span>{{ messages().length }}</span>
+          </div>
+
+          @if (loadingMessages()) {
+            <p class="state-text">Cargando correos...</p>
+          } @else if (messages().length === 0) {
+            <p class="state-text">No hay correos con evidencia de destino corporativo.</p>
+          } @else {
+            <div class="message-list">
+              @for (message of messages(); track message.messageKey) {
+                <button
+                  type="button"
+                  class="message-row"
+                  [class.message-row-active]="selectedMessageKey() === message.messageKey"
+                  (click)="openMessage(message)"
+                >
+                  <span class="message-row-from">{{ message.from.name }}</span>
+                  <span class="message-row-subject">{{ message.subject }}</span>
+                  <span class="message-row-preview">{{ message.bodyPreview }}</span>
+                  <span class="message-row-date">{{ message.receivedAt | date: 'dd/MM HH:mm' }}</span>
+                </button>
+              }
+            </div>
+          }
+        </aside>
+
+        <article class="mail-detail" aria-label="Detalle del correo">
+          @if (error()) {
+            <p class="feedback feedback-error" aria-live="polite">{{ error() }}</p>
+          }
+
+          @if (notice()) {
+            <p class="feedback feedback-ok" aria-live="polite">{{ notice() }}</p>
+          }
+
+          @if (loadingDetail()) {
+            <p class="state-text">Abriendo correo...</p>
+          } @else if (selectedMessage(); as message) {
+            <header class="message-detail-header">
+              <p class="eyebrow">{{ message.evidence }}</p>
+              <h2>{{ message.subject }}</h2>
+              <dl>
+                <div>
+                  <dt>De</dt>
+                  <dd>{{ message.from.name }} &lt;{{ message.from.email }}&gt;</dd>
+                </div>
+                <div>
+                  <dt>Responder a</dt>
+                  <dd>{{ message.replyToEmail || message.from.email }}</dd>
+                </div>
+                <div>
+                  <dt>Recibido</dt>
+                  <dd>{{ message.receivedAt | date: 'dd/MM/yyyy HH:mm' }}</dd>
+                </div>
+              </dl>
+            </header>
+
+            <section class="thread-view" aria-label="Mensajes del hilo">
+              @if (message.threadMessages.length > 1) {
+                @for (threadMessage of message.threadMessages; track threadMessage.messageKey) {
+                  <article
+                    class="thread-message"
+                    [class.thread-message-outbound]="threadMessage.direction === 'outbound'"
+                    [class.thread-message-quoted]="threadMessage.direction === 'quoted'"
+                  >
+                    <header class="thread-message-header">
+                      <div>
+                        <span class="thread-segment-label">
+                          {{
+                            threadMessage.direction === 'quoted'
+                              ? 'Mensaje anterior citado'
+                              : 'Mensaje del hilo'
+                          }}
+                        </span>
+                        <p>{{ threadMessage.from.name }} &lt;{{ threadMessage.from.email }}&gt;</p>
+                      </div>
+                      <span class="thread-segment-meta">{{ threadMessage.receivedAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+                    </header>
+                    <div class="message-body" [innerHTML]="threadMessage.bodyHtml"></div>
+                  </article>
+                }
+              } @else {
+                @for (segment of message.threadSegments; track segment.kind + segment.label + $index) {
+                  <article class="thread-segment" [class.thread-segment-quoted]="segment.kind === 'quoted'">
+                    <header class="thread-segment-header">
+                      <span class="thread-segment-label">{{ segment.label }}</span>
+                      @if (segment.kind === 'latest') {
+                        <span class="thread-segment-meta">{{ message.from.name }} - {{ message.receivedAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+                      }
+                    </header>
+                    <div class="message-body" [innerHTML]="segment.html"></div>
+                  </article>
+                }
+              }
+            </section>
+
+            <form class="reply-panel" (submit)="$event.preventDefault(); sendReply()">
+              <label for="reply-message">Respuesta</label>
+              <textarea
+                id="reply-message"
+                rows="8"
+                [value]="replyText()"
+                (input)="updateReplyText($event)"
+                [disabled]="sendingReply()"
+                placeholder="Escribe la respuesta de Juanma..."
+              ></textarea>
+              <div class="reply-actions">
+                <span>Se enviara desde {{ session.user.publicEmail }} con Resend.</span>
+                <button type="submit" class="primary-button" [disabled]="sendingReply() || !replyText().trim()">
+                  {{ sendingReply() ? 'Enviando...' : 'Responder' }}
+                </button>
+              </div>
+            </form>
+          } @else {
+            <p class="state-text">Selecciona un correo para leerlo y responder.</p>
+          }
+        </article>
+      </section>
+    } @else {
+      <section class="login-panel" aria-label="Acceso al backoffice">
+        <p class="eyebrow">Backoffice</p>
+        <h1>Acceso propietario</h1>
+        <p>Entra con la cuenta Microsoft autorizada para gestionar los correos de Juanma.</p>
+        <button type="button" class="primary-button" (click)="login()">Entrar con Microsoft</button>
+      </section>
+    }
+  } @else {
+    <section class="login-panel" aria-label="Comprobando sesion">
+      <p class="state-text">Comprobando sesion...</p>
+    </section>
+  }
+</main>
