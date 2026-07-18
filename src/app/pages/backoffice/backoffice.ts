@@ -2,10 +2,11 @@ import { DatePipe, isPlatformBrowser } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, PLATFORM_ID, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { BackofficeMessageDetail, BackofficeMessageSummary, BackofficeService } from './backoffice.service';
+import { SafeEmailHtmlPipe } from './safe-email-html.pipe';
 
 @Component({
   selector: 'app-backoffice',
-  imports: [DatePipe],
+  imports: [DatePipe, SafeEmailHtmlPipe],
   templateUrl: './backoffice.html',
   styleUrl: './backoffice.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

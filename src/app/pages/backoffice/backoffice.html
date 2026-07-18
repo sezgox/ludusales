@@ -95,7 +95,7 @@
                       </div>
                       <span class="thread-segment-meta">{{ threadMessage.receivedAt | date: 'dd/MM/yyyy HH:mm' }}</span>
                     </header>
-                    <div class="message-body" [innerHTML]="threadMessage.bodyHtml"></div>
+                    <div class="message-body" [innerHTML]="threadMessage.bodyHtml | safeEmailHtml"></div>
                   </article>
                 }
               } @else {
@@ -107,7 +107,7 @@
                         <span class="thread-segment-meta">{{ message.from.name }} - {{ message.receivedAt | date: 'dd/MM/yyyy HH:mm' }}</span>
                       }
                     </header>
-                    <div class="message-body" [innerHTML]="segment.html"></div>
+                    <div class="message-body" [innerHTML]="segment.html | safeEmailHtml"></div>
                   </article>
                 }
               }

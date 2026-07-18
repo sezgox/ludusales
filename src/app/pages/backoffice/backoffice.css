@@ -308,6 +308,19 @@ dd {
   overflow-wrap: anywhere;
 }
 
+.message-body :where(table) {
+  max-width: 100%;
+}
+
+.message-body :where(img) {
+  max-width: 100%;
+  height: auto;
+}
+
+.message-body :where(a) {
+  color: #278537;
+}
+
 .thread-segment-quoted .message-body {
   border-left: 4px solid #b8c8b2;
   color: #526057;
