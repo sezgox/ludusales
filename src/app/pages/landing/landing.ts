@@ -28,7 +28,7 @@ export class Landing {
   private readonly contactService = inject(ContactService);
 
   readonly performanceProgress = signal(0);
-  readonly contactEmail = 'juanma@ludusales.com';
+  readonly contactEmail = 'juan.mateo@ludusales.com';
   readonly contactFormStatus = signal<ContactFormStatus>('idle');
   readonly contactForm = this.formBuilder.nonNullable.group({
     firstName: ['', Validators.required],
