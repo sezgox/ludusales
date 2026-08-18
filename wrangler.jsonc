@@ -3,6 +3,7 @@
   "name": "ludusales",
   "compatibility_date": "2026-06-11",
   "assets": {
-    "directory": "./dist/gamification-front/browser"
+    "directory": "./dist/gamification-front/browser",
+    "not_found_handling": "single-page-application"
   }
 }
