@@ -115,7 +115,7 @@
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 500px) {
     .landing-header {
         gap: 10px;
     }
@@ -132,7 +132,10 @@
         width: 132px;
     }
 
-    .landing-header__access,
+    .landing-header__access {
+        display: none;
+    }
+
     .landing-header__cta {
         padding: 10px 12px;
     }
