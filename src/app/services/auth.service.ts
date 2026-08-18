@@ -8,10 +8,22 @@ export type AuthenticatedCompany = {
   name: string;
 };
 
-type AuthResponse = {
+export type DashboardCompany = AuthenticatedCompany;
+export type AuthRole = 'company' | 'superuser';
+
+type CompanyAuthResponse = {
   ok: true;
+  role: 'company';
   company: AuthenticatedCompany;
 };
+
+type SuperuserAuthResponse = {
+  ok: true;
+  role: 'superuser';
+  companies: DashboardCompany[];
+};
+
+type AuthResponse = CompanyAuthResponse | SuperuserAuthResponse;
 
 @Injectable({
   providedIn: 'root',
@@ -21,6 +33,8 @@ export class AuthService {
   private readonly platformId = inject(PLATFORM_ID);
 
   readonly company = signal<AuthenticatedCompany | null>(null);
+  readonly companies = signal<DashboardCompany[]>([]);
+  readonly role = signal<AuthRole | null>(null);
 
   login(accessCode: string) {
     return this.http
@@ -31,7 +45,7 @@ export class AuthService {
           withCredentials: true,
         },
       )
-      .pipe(tap((response) => this.company.set(response.company)));
+      .pipe(tap((response) => this.applyAuthResponse(response)));
   }
 
   me() {
@@ -39,7 +53,7 @@ export class AuthService {
       .get<AuthResponse>(this.authEndpoint('/auth/me'), {
         withCredentials: true,
       })
-      .pipe(tap((response) => this.company.set(response.company)));
+      .pipe(tap((response) => this.applyAuthResponse(response)));
   }
 
   logout() {
@@ -51,7 +65,26 @@ export class AuthService {
           withCredentials: true,
         },
       )
-      .pipe(tap(() => this.company.set(null)));
+      .pipe(tap(() => this.clearSession()));
+  }
+
+  private applyAuthResponse(response: AuthResponse): void {
+    this.role.set(response.role);
+
+    if (response.role === 'company') {
+      this.company.set(response.company);
+      this.companies.set([]);
+      return;
+    }
+
+    this.company.set(null);
+    this.companies.set(response.companies);
+  }
+
+  private clearSession(): void {
+    this.role.set(null);
+    this.company.set(null);
+    this.companies.set([]);
   }
 
   private authEndpoint(path: string): string {

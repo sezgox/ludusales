@@ -14,13 +14,39 @@
                 <span aria-hidden="true"></span>
             </button>
 
-            <a routerLink="/dashboard/informacion" class="dashboard-brand-link" aria-label="Ir a información del dashboard">
+            <a [routerLink]="dashboardPath('informacion')" class="dashboard-brand-link" aria-label="Ir a información del dashboard">
                 <img ngSrc="assets/components/landing-header/ludu-logo.webp" width="40" height="40" alt="" class="dashboard-brand-logo" priority>
                 <img ngSrc="assets/components/landing-header/ludus-sales-wordmark.png" width="724" height="128" alt="Ludus Sales" class="dashboard-brand-wordmark" priority>
             </a>
         </div>
 
-        <div class="dashboard-company-panel" aria-label="Empresa loggeada">
+        <div class="dashboard-company-panel" aria-label="Empresa logueada">
+            @if (isSuperuser()) {
+                <div class="dashboard-company-switcher" aria-label="Cambiar empresa visible">
+                    <label class="dashboard-company-label" for="dashboard-company-search">Buscar empresa</label>
+                    <input
+                        id="dashboard-company-search"
+                        class="dashboard-company-search"
+                        type="search"
+                        [value]="companySearch()"
+                        (input)="updateCompanySearch($event)"
+                        placeholder="Nombre o ID"
+                        autocomplete="off"
+                    />
+                    <label class="dashboard-select-label" for="dashboard-company-select">Empresa visible</label>
+                    <select
+                        id="dashboard-company-select"
+                        class="dashboard-company-select"
+                        [value]="selectedCompanyPublicId() ?? ''"
+                        (change)="selectCompany($event)"
+                    >
+                        @for (companyOption of filteredCompanies(); track companyOption.public_id) {
+                            <option [value]="companyOption.public_id">{{ companyOption.name }}</option>
+                        }
+                    </select>
+                </div>
+            }
+
             <div class="dashboard-company-copy">
                 <span class="dashboard-company-label">Empresa</span>
                 <strong>{{ company()?.name ?? 'Empresa' }}</strong>
@@ -47,7 +73,7 @@
                     <a
                         class="dashboard-nav-link"
                         [class.is-active]="activeSection() === item.section"
-                        [routerLink]="item.path"
+                        [routerLink]="dashboardPath(item.section)"
                         [attr.aria-current]="activeSection() === item.section ? 'page' : null"
                         (click)="closeMenu()"
                     >

@@ -29,6 +29,7 @@ describe('authGuard', () => {
 
     request.flush({
       ok: true,
+      role: 'company',
       company: {
         public_id: '82b4c7b9-68d1-4cc6-9e36-41d4db4e05f0',
         name: 'Ludus Sales Demo',

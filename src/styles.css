@@ -65,7 +65,8 @@ body {
 
 a,
 button,
-input {
+input,
+select {
   transition:
     filter 150ms ease,
     outline-color 150ms ease,
@@ -74,7 +75,8 @@ input {
 
 a:focus-visible,
 button:focus-visible,
-input:focus-visible {
+input:focus-visible,
+select:focus-visible {
   outline: 3px solid var(--color-accent-yellow);
   outline-offset: 3px;
 }

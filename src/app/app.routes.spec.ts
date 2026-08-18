@@ -16,12 +16,21 @@ describe('app routes', () => {
     expect(indexRoute?.redirectTo).toBe('informacion');
   });
 
-  it('registers the four dashboard section urls', () => {
+  it('registers dashboard section urls with and without company public ids', () => {
     const sectionPaths = dashboardChildren
       .filter((route) => route.loadComponent)
       .map((route) => route.path);
 
-    expect(sectionPaths).toEqual(['informacion', 'premios', 'gamificacion', 'ranking']);
+    expect(sectionPaths).toEqual([
+      'informacion',
+      'informacion/:companyPublicId',
+      'premios',
+      'premios/:companyPublicId',
+      'gamificacion',
+      'gamificacion/:companyPublicId',
+      'ranking',
+      'ranking/:companyPublicId',
+    ]);
   });
 
   it('redirects unknown dashboard urls back to dashboard', () => {

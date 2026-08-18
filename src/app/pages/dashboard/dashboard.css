@@ -82,6 +82,59 @@
     min-width: 0;
 }
 
+.dashboard-company-switcher {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: grid;
+    grid-template-columns: minmax(130px, 180px) minmax(132px, 200px);
+    gap: 6px 8px;
+    align-items: end;
+    width: min(38vw, 388px);
+    min-width: 0;
+}
+
+.dashboard-company-switcher .dashboard-company-label {
+    grid-column: 1 / -1;
+    color: var(--color-primary);
+    font-size: 0.72rem;
+    font-weight: 800;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.dashboard-company-search,
+.dashboard-company-select {
+    width: 100%;
+    min-width: 0;
+    height: 36px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-surface-muted);
+    color: var(--color-heading);
+    font: inherit;
+    font-size: 0.85rem;
+}
+
+.dashboard-company-search {
+    padding: 0 10px;
+}
+
+.dashboard-company-select {
+    padding: 0 32px 0 10px;
+    cursor: pointer;
+}
+
+.dashboard-select-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
 .dashboard-company-copy {
     display: grid;
     gap: 2px;
@@ -259,6 +312,13 @@
         gap: 10px;
     }
 
+    .dashboard-company-switcher {
+        position: static;
+        transform: none;
+        grid-template-columns: minmax(112px, 1fr) minmax(112px, 1fr);
+        width: min(100%, 340px);
+    }
+
     .dashboard-company-copy {
         max-width: 180px;
     }
@@ -296,6 +356,10 @@
 }
 
 @media (max-width: 560px) {
+    .dashboard-header {
+        flex-wrap: wrap;
+    }
+
     .dashboard-brand-link {
         gap: 0;
     }
@@ -306,6 +370,17 @@
 
     .dashboard-company-copy {
         display: none;
+    }
+
+    .dashboard-company-panel {
+        flex: 1 1 100%;
+        order: 2;
+    }
+
+    .dashboard-company-switcher {
+        flex: 1;
+        grid-template-columns: minmax(0, 1fr);
+        width: auto;
     }
 
     .dashboard-content {

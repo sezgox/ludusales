@@ -25,7 +25,15 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/dashboard/dashboard').then((module) => module.Dashboard),
       },
       {
+        path: 'informacion/:companyPublicId',
+        loadComponent: () => import('./pages/dashboard/dashboard').then((module) => module.Dashboard),
+      },
+      {
         path: 'premios',
+        loadComponent: () => import('./pages/dashboard/dashboard').then((module) => module.Dashboard),
+      },
+      {
+        path: 'premios/:companyPublicId',
         loadComponent: () => import('./pages/dashboard/dashboard').then((module) => module.Dashboard),
       },
       {
@@ -33,7 +41,15 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/dashboard/dashboard').then((module) => module.Dashboard),
       },
       {
+        path: 'gamificacion/:companyPublicId',
+        loadComponent: () => import('./pages/dashboard/dashboard').then((module) => module.Dashboard),
+      },
+      {
         path: 'ranking',
+        loadComponent: () => import('./pages/dashboard/dashboard').then((module) => module.Dashboard),
+      },
+      {
+        path: 'ranking/:companyPublicId',
         loadComponent: () => import('./pages/dashboard/dashboard').then((module) => module.Dashboard),
       },
       {
