@@ -1,0 +1,81 @@
+:host {
+    display: block;
+    min-height: 100dvh;
+    background: var(--color-page-bg);
+}
+
+.login-page {
+    padding: 28px 20px;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    gap: 32px;
+}
+
+.login-brand {
+    width: fit-content;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--color-title);
+    font-size: 1.25rem;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.login-brand img {
+    width: 40px;
+    height: 40px;
+}
+
+.login-panel {
+    width: min(100%, 560px);
+    align-self: center;
+    justify-self: center;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.login-copy {
+    gap: 10px;
+}
+
+.login-copy h1 {
+    margin: 0;
+    color: var(--color-heading);
+    font-size: clamp(2rem, 6vw, 2.8rem);
+    line-height: 1.05;
+}
+
+.login-copy p {
+    margin: 0;
+    color: var(--color-body);
+    font-size: 1.05rem;
+    line-height: 1.55;
+}
+
+.login-form {
+    gap: 12px;
+}
+
+.login-label {
+    color: var(--color-heading);
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.login-button {
+    width: 100%;
+    font-size: 1.2rem;
+}
+
+.login-secondary {
+    align-self: center;
+}
+
+@media (max-width: 640px) {
+    .login-panel {
+        padding: 24px 18px;
+    }
+}

@@ -1447,49 +1447,6 @@ section {
     gap: 28px;
 }
 
-.contact-form {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-}
-
-.contact-form-row {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 14px;
-}
-
-.contact-input {
-    width: 100%;
-    background: #ffffff1a;
-    border: 1px solid #ffffff33;
-    border-radius: 8px;
-    padding: 16px 18px;
-    color: white;
-    outline: none;
-}
-
-.contact-input::placeholder {
-    color: #bedbff;
-}
-
-.contact-button {
-    width: 100%;
-    border: 0;
-    border-radius: 8px;
-    padding: 16px 18px;
-    background: white;
-    color: var(--color-title);
-    font-size: 22px;
-    cursor: pointer;
-}
-
-.contact-form-feedback {
-    color: #fef3c7;
-    font-size: 0.95rem;
-    line-height: 1.5;
-}
-
 .contact-divider {
     width: 100%;
     height: 1px;
@@ -1524,10 +1481,6 @@ section {
 }
 
 @media (min-width: 900px) {
-    .contact-form-row {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
     .contact-meta {
         flex-direction: row;
         justify-content: center;
@@ -1594,12 +1547,6 @@ section {
         gap: 12px;
     }
 
-    #hero > div:nth-of-type(2) button {
-        width: 100%;
-        font-size: 1rem;
-        line-height: 1.25;
-    }
-
     #hero > div:nth-of-type(3) {
         width: 100%;
         display: grid;
@@ -1655,11 +1602,6 @@ section {
 
     #gamification article:last-child > div:last-child > div {
         width: 100%;
-    }
-
-    #gamification img[alt="Mobile"] {
-        width: min(100%, 320px);
-        margin: 0 auto;
     }
 
     .gap-visual {
@@ -1746,27 +1688,11 @@ section {
         text-align: left;
     }
 
-    .difference-note svg {
-        flex-shrink: 0;
-        margin-top: 4px;
-    }
-
     .contact-meta {
         align-items: flex-start;
     }
 
-    .contact-meta-text {
-        font-size: 1rem;
-    }
-
     #site-footer {
         padding: 32px 16px 24px;
-    }
-
-    .footer-column a,
-    .footer-column p,
-    .footer-brand p,
-    #site-footer > p {
-        word-break: break-word;
     }
 }

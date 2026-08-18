@@ -1,0 +1,14 @@
+<main class="app-page dashboard-page">
+    <header class="dashboard-header">
+        <div>
+            <p class="eyebrow">Panel de empresa</p>
+            <h1>Dashboard</h1>
+        </div>
+        <button class="primary-button dashboard-logout" type="button" (click)="logout()">Cerrar sesión</button>
+    </header>
+
+    <section class="dashboard-empty" aria-labelledby="dashboard-empty-title">
+        <p class="dashboard-company">{{ company()?.name ?? 'Empresa' }}</p>
+        <h2 id="dashboard-empty-title">Panel en preparación</h2>
+    </section>
+</main>

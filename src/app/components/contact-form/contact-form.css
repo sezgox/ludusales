@@ -1,0 +1,59 @@
+:host {
+    display: block;
+}
+
+.contact-form {
+    gap: 14px;
+}
+
+.contact-form-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+}
+
+:host(.contact-form-host--dark) .contact-input {
+    background: #ffffff1a;
+    border: 1px solid #ffffff33;
+    color: white;
+}
+
+:host(.contact-form-host--dark) .contact-input::placeholder {
+    color: #bedbff;
+}
+
+.contact-button {
+    width: 100%;
+    font-size: 22px;
+}
+
+:host(.contact-form-host--dark) .contact-button {
+    background: white;
+    color: var(--color-title);
+}
+
+:host(.contact-form-host--light) .contact-button {
+    font-weight: 700;
+}
+
+.contact-form-feedback {
+    color: #fef3c7;
+}
+
+:host(.contact-form-host--light) .contact-form-feedback {
+    color: var(--color-warning);
+}
+
+.contact-form-feedback--success {
+    color: #d9f99d;
+}
+
+:host(.contact-form-host--light) .contact-form-feedback--success {
+    color: var(--color-primary);
+}
+
+@media (min-width: 900px) {
+    .contact-form-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}

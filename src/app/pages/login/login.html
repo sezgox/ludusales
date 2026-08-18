@@ -1,0 +1,42 @@
+<main class="app-page login-page">
+    <a routerLink="/" class="login-brand" aria-label="Volver al inicio">
+        <img src="assets/components/landing-header/ludu-logo.webp" width="40" height="40" alt="" />
+        <span>Ludus Sales</span>
+    </a>
+
+    <section class="app-card login-panel" aria-labelledby="login-title">
+        @if (mode() === 'access-code') {
+            <div class="stack login-copy">
+                <p class="eyebrow">Acceso de empresa</p>
+                <h1 id="login-title">Entra con tu código de acceso</h1>
+                <p>Introduce el código único asignado a tu empresa para acceder al panel.</p>
+            </div>
+
+            <form class="stack login-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+                <label class="login-label" for="access-code">Código de acceso</label>
+                <input id="access-code" class="form-input" type="text" formControlName="accessCode" autocomplete="one-time-code" placeholder="Ej. EMPRESA-2026" />
+                <button class="primary-button login-button" type="submit" [disabled]="status() === 'submitting'">
+                    {{ status() === 'submitting' ? 'Accediendo...' : 'Acceder' }}
+                </button>
+                @if (form.invalid && form.touched) {
+                    <p class="form-feedback" aria-live="polite">Introduce tu código de acceso.</p>
+                }
+                @if (status() === 'error') {
+                    <p class="form-feedback" aria-live="polite">El código no es válido o el servicio no está configurado.</p>
+                }
+            </form>
+
+            <button class="text-button login-secondary" type="button" (click)="showContactForm()">¿Aún no tienes cuenta de empresa?</button>
+        } @else {
+            <div class="stack login-copy">
+                <p class="eyebrow">Nueva empresa</p>
+                <h1 id="login-title">Solicita una cuenta para tu equipo</h1>
+                <p>Completa el formulario y te contactaremos para preparar el acceso.</p>
+            </div>
+
+            <app-contact-form variant="light" submitLabel="Solicitar cuenta" />
+
+            <button class="text-button login-secondary" type="button" (click)="showAccessCodeForm()">Volver al acceso con código</button>
+        }
+    </section>
+</main>
