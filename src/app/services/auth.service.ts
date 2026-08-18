@@ -25,6 +25,18 @@ type SuperuserAuthResponse = {
 
 type AuthResponse = CompanyAuthResponse | SuperuserAuthResponse;
 
+export type CreateCompanyAccountPayload = {
+  companyName: string;
+  accountName: string;
+  email: string | null;
+  accessCode: string;
+};
+
+type CreateCompanyAccountResponse = {
+  ok: true;
+  company: DashboardCompany;
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -66,6 +78,20 @@ export class AuthService {
         },
       )
       .pipe(tap(() => this.clearSession()));
+  }
+
+  createCompanyAccount(payload: CreateCompanyAccountPayload) {
+    return this.http
+      .post<CreateCompanyAccountResponse>(this.authEndpoint('/superuser/companies'), payload, {
+        withCredentials: true,
+      })
+      .pipe(
+        tap((response) => {
+          this.companies.update((companies) =>
+            [...companies, response.company].sort((left, right) => left.name.localeCompare(right.name, 'es-ES')),
+          );
+        }),
+      );
   }
 
   private applyAuthResponse(response: AuthResponse): void {

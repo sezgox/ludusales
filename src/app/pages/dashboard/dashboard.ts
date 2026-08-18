@@ -1,6 +1,7 @@
 import { NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter, firstValueFrom, map, startWith } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
@@ -14,13 +15,14 @@ type DashboardMenuItem = {
 
 @Component({
   selector: 'app-dashboard',
-  imports: [NgOptimizedImage, RouterLink],
+  imports: [NgOptimizedImage, ReactiveFormsModule, RouterLink],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Dashboard {
   private readonly authService = inject(AuthService);
+  private readonly formBuilder = inject(NonNullableFormBuilder);
   private readonly router = inject(Router);
   private readonly currentUrl = toSignal(
     this.router.events.pipe(
@@ -33,18 +35,14 @@ export class Dashboard {
   private readonly routeCompanyPublicId = computed(() => this.companyPublicIdFromUrl(this.currentUrl()));
 
   readonly companies = this.authService.companies;
-  readonly companySearch = signal('');
   readonly isMenuOpen = signal(false);
+  readonly isCreatingCompany = signal(false);
+  readonly createCompanyFeedback = signal<string | null>(null);
   readonly isSuperuser = computed(() => this.authService.role() === 'superuser');
-  readonly filteredCompanies = computed(() => {
-    const query = this.normalizeSearch(this.companySearch());
-    const companies = this.companies();
-
-    if (!query) {
-      return companies;
-    }
-
-    return companies.filter((company) => this.normalizeSearch(`${company.name} ${company.public_id}`).includes(query));
+  readonly createCompanyForm = this.formBuilder.group({
+    companyName: ['', [Validators.required, Validators.maxLength(160)]],
+    email: ['', [Validators.email, Validators.maxLength(254)]],
+    accessCode: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(80)]],
   });
   readonly selectedCompanyPublicId = computed(() => {
     if (!this.isSuperuser()) {
@@ -71,7 +69,7 @@ export class Dashboard {
   });
   readonly menu: DashboardMenuItem[] = [
     {
-      label: 'Información',
+      label: 'Informaci\u00f3n',
       section: 'informacion',
     },
     {
@@ -79,7 +77,7 @@ export class Dashboard {
       section: 'premios',
     },
     {
-      label: 'Gamificación',
+      label: 'Gamificaci\u00f3n',
       section: 'gamificacion',
     },
     {
@@ -121,18 +119,59 @@ export class Dashboard {
     return `/dashboard/${section}`;
   }
 
-  updateCompanySearch(event: Event): void {
-    if (event.target instanceof HTMLInputElement) {
-      this.companySearch.set(event.target.value);
-    }
-  }
-
   selectCompany(event: Event): void {
     if (!(event.target instanceof HTMLSelectElement) || !event.target.value) {
       return;
     }
 
     void this.router.navigateByUrl(this.dashboardPath(this.activeSection(), event.target.value));
+  }
+
+  openCreateCompanyDialog(dialog: HTMLDialogElement): void {
+    this.createCompanyFeedback.set(null);
+
+    if (!dialog.open) {
+      dialog.showModal();
+    }
+  }
+
+  closeCreateCompanyDialog(dialog: HTMLDialogElement): void {
+    if (!this.isCreatingCompany() && dialog.open) {
+      dialog.close();
+    }
+  }
+
+  async createCompanyAccount(dialog: HTMLDialogElement): Promise<void> {
+    if (this.createCompanyForm.invalid) {
+      this.createCompanyForm.markAllAsTouched();
+      this.createCompanyFeedback.set('Revisa los campos del formulario.');
+      return;
+    }
+
+    this.isCreatingCompany.set(true);
+    this.createCompanyFeedback.set(null);
+
+    const formValue = this.createCompanyForm.getRawValue();
+    const companyName = formValue.companyName.trim();
+
+    try {
+      const response = await firstValueFrom(
+        this.authService.createCompanyAccount({
+          companyName,
+          accountName: companyName,
+          email: formValue.email.trim() || null,
+          accessCode: formValue.accessCode.trim(),
+        }),
+      );
+
+      this.createCompanyForm.reset();
+      dialog.close();
+      await this.router.navigateByUrl(this.dashboardPath(this.activeSection(), response.company.public_id));
+    } catch {
+      this.createCompanyFeedback.set('No se pudo crear la empresa. Comprueba los datos e int\u00e9ntalo de nuevo.');
+    } finally {
+      this.isCreatingCompany.set(false);
+    }
   }
 
   async logout(): Promise<void> {
@@ -161,9 +200,5 @@ export class Dashboard {
     const companyPublicId = path.split('/').filter(Boolean).at(2);
 
     return companyPublicId ? decodeURIComponent(companyPublicId) : null;
-  }
-
-  private normalizeSearch(value: string): string {
-    return value.trim().toLocaleLowerCase('es-ES');
   }
 }

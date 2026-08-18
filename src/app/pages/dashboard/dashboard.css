@@ -88,10 +88,10 @@
     left: 50%;
     transform: translate(-50%, -50%);
     display: grid;
-    grid-template-columns: minmax(130px, 180px) minmax(132px, 200px);
+    grid-template-columns: minmax(150px, 210px) auto;
     gap: 6px 8px;
     align-items: end;
-    width: min(38vw, 388px);
+    width: min(42vw, 388px);
     min-width: 0;
 }
 
@@ -104,7 +104,6 @@
     text-transform: uppercase;
 }
 
-.dashboard-company-search,
 .dashboard-company-select {
     width: 100%;
     min-width: 0;
@@ -117,22 +116,34 @@
     font-size: 0.85rem;
 }
 
-.dashboard-company-search {
-    padding: 0 10px;
-}
-
 .dashboard-company-select {
     padding: 0 32px 0 10px;
     cursor: pointer;
 }
 
-.dashboard-select-label {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
+.dashboard-create-company-button,
+.dashboard-secondary-button {
+    min-height: 36px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 0 12px;
+    background: var(--color-surface);
+    color: var(--color-title);
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 800;
+    cursor: pointer;
     white-space: nowrap;
+}
+
+.dashboard-create-company-button:hover,
+.dashboard-secondary-button:hover {
+    background: var(--color-surface-muted);
+}
+
+.dashboard-secondary-button:disabled {
+    cursor: wait;
+    opacity: 0.72;
 }
 
 .dashboard-company-copy {
@@ -289,6 +300,54 @@
     display: none;
 }
 
+.dashboard-company-dialog {
+    position: fixed;
+    inset: 0;
+    width: min(calc(100vw - 32px), 520px);
+    max-height: min(720px, calc(100dvh - 32px));
+    margin: auto;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 0;
+    background: var(--color-surface);
+    color: var(--color-heading);
+    box-shadow: 0 24px 70px rgba(20, 32, 24, 0.24);
+}
+
+.dashboard-company-dialog::backdrop {
+    background: rgba(20, 32, 24, 0.42);
+}
+
+.dashboard-company-form {
+    display: grid;
+    gap: 16px;
+    padding: 24px;
+}
+
+.dashboard-company-form-header h2 {
+    margin: 6px 0 0;
+    color: var(--color-heading);
+    font-size: 1.45rem;
+}
+
+.dashboard-form-field {
+    display: grid;
+    gap: 8px;
+}
+
+.dashboard-form-field span {
+    color: var(--color-heading);
+    font-size: 0.9rem;
+    font-weight: 800;
+}
+
+.dashboard-dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 4px;
+}
+
 @media (max-width: 860px) {
     .dashboard-page {
         padding-inline: 16px;
@@ -315,8 +374,8 @@
     .dashboard-company-switcher {
         position: static;
         transform: none;
-        grid-template-columns: minmax(112px, 1fr) minmax(112px, 1fr);
-        width: min(100%, 340px);
+        grid-template-columns: minmax(150px, 1fr) auto;
+        width: min(100%, 390px);
     }
 
     .dashboard-company-copy {
@@ -381,6 +440,14 @@
         flex: 1;
         grid-template-columns: minmax(0, 1fr);
         width: auto;
+    }
+
+    .dashboard-create-company-button {
+        width: 100%;
+    }
+
+    .dashboard-dialog-actions {
+        display: grid;
     }
 
     .dashboard-content {

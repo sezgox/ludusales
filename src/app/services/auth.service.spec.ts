@@ -86,4 +86,52 @@ describe('AuthService', () => {
     expect(service.role()).toBeNull();
     expect(service.companies()).toEqual([]);
   });
+
+  it('creates company accounts with credentials and updates the superuser company list', () => {
+    service.role.set('superuser');
+    service.companies.set([
+      {
+        public_id: '82b4c7b9-68d1-4cc6-9e36-41d4db4e05f0',
+        name: 'Ludus Sales Demo',
+      },
+    ]);
+
+    service
+      .createCompanyAccount({
+        companyName: 'Ludus Sales Beta',
+        accountName: 'Cuenta beta',
+        email: 'beta@ludusales.local',
+        accessCode: 'BETA-ACCESS-2026',
+      })
+      .subscribe();
+
+    const request = httpMock.expectOne('http://localhost:8787/superuser/companies');
+
+    expect(request.request.method).toBe('POST');
+    expect(request.request.withCredentials).toBe(true);
+    expect(request.request.body).toEqual({
+      companyName: 'Ludus Sales Beta',
+      accountName: 'Cuenta beta',
+      email: 'beta@ludusales.local',
+      accessCode: 'BETA-ACCESS-2026',
+    });
+    request.flush({
+      ok: true,
+      company: {
+        public_id: '4c6f2c3d-3f73-4472-a453-4e0d6cb472d8',
+        name: 'Ludus Sales Beta',
+      },
+    });
+
+    expect(service.companies()).toEqual([
+      {
+        public_id: '4c6f2c3d-3f73-4472-a453-4e0d6cb472d8',
+        name: 'Ludus Sales Beta',
+      },
+      {
+        public_id: '82b4c7b9-68d1-4cc6-9e36-41d4db4e05f0',
+        name: 'Ludus Sales Demo',
+      },
+    ]);
+  });
 });

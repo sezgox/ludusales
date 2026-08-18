@@ -1,5 +1,5 @@
 import { provideHttpClient } from '@angular/common/http';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
@@ -20,6 +20,7 @@ describe('Dashboard', () => {
   let fixture: ComponentFixture<Dashboard>;
   let router: Router;
   let authService: AuthService;
+  let httpMock: HttpTestingController;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -36,9 +37,14 @@ describe('Dashboard', () => {
 
     router = TestBed.inject(Router);
     authService = TestBed.inject(AuthService);
+    httpMock = TestBed.inject(HttpTestingController);
     fixture = TestBed.createComponent(Dashboard);
     component = fixture.componentInstance;
     fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    httpMock.verify();
   });
 
   it('should create', () => {
@@ -58,9 +64,11 @@ describe('Dashboard', () => {
 
     await router.navigateByUrl(`/dashboard/ranking/${betaCompany.public_id}`);
     fixture.detectChanges();
+    const select: HTMLSelectElement = fixture.nativeElement.querySelector('#dashboard-company-select');
 
     expect(component.activeSection()).toBe('ranking');
     expect(component.company()?.name).toBe('Ludus Sales Beta');
+    expect(select.value).toBe(betaCompany.public_id);
   });
 
   it('marks the active menu link and preserves the selected superuser company', async () => {
@@ -91,13 +99,20 @@ describe('Dashboard', () => {
     expect(fixture.nativeElement.querySelector('.dashboard-company-switcher')).not.toBeNull();
   });
 
-  it('filters companies in the superuser selector', () => {
+  it('uses the full company list in the superuser selector without a search field', () => {
     authService.role.set('superuser');
     authService.companies.set([demoCompany, betaCompany]);
+    fixture.detectChanges();
 
-    component.companySearch.set('beta');
+    const options: NodeListOf<HTMLOptionElement> = fixture.nativeElement.querySelectorAll(
+      '#dashboard-company-select option',
+    );
 
-    expect(component.filteredCompanies()).toEqual([betaCompany]);
+    expect(fixture.nativeElement.querySelector('#dashboard-company-search')).toBeNull();
+    expect(Array.from(options).map((option) => option.value)).toEqual([
+      demoCompany.public_id,
+      betaCompany.public_id,
+    ]);
   });
 
   it('changes the url when a superuser selects another company', async () => {
@@ -114,5 +129,47 @@ describe('Dashboard', () => {
     await fixture.whenStable();
 
     expect(router.url).toBe(`/dashboard/gamificacion/${betaCompany.public_id}`);
+  });
+
+  it('creates a company account from the superuser dialog and navigates to it', async () => {
+    authService.role.set('superuser');
+    authService.companies.set([demoCompany, betaCompany]);
+    await router.navigateByUrl(`/dashboard/informacion/${demoCompany.public_id}`);
+    component.createCompanyForm.setValue({
+      companyName: 'Ludus Sales Nueva',
+      email: 'nueva@ludusales.local',
+      accessCode: 'NUEVA-2026',
+    });
+
+    const dialog = {
+      close: vi.fn(),
+    } as unknown as HTMLDialogElement;
+    const createPromise = component.createCompanyAccount(dialog);
+    const request = httpMock.expectOne('http://localhost:8787/superuser/companies');
+
+    expect(request.request.method).toBe('POST');
+    expect(request.request.withCredentials).toBe(true);
+    expect(request.request.body).toEqual({
+      companyName: 'Ludus Sales Nueva',
+      accountName: 'Ludus Sales Nueva',
+      email: 'nueva@ludusales.local',
+      accessCode: 'NUEVA-2026',
+    });
+    request.flush({
+      ok: true,
+      company: {
+        public_id: '33333333-3333-4333-8333-333333333333',
+        name: 'Ludus Sales Nueva',
+      },
+    });
+    await createPromise;
+
+    expect(dialog.close).toHaveBeenCalledOnce();
+    expect(router.url).toBe('/dashboard/informacion/33333333-3333-4333-8333-333333333333');
+    expect(authService.companies().map((company) => company.name)).toEqual([
+      'Ludus Sales Beta',
+      'Ludus Sales Demo',
+      'Ludus Sales Nueva',
+    ]);
   });
 });
