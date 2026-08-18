@@ -81,6 +81,12 @@
     white-space: nowrap;
 }
 
+@media (min-width: 1024px) {
+    .landing-header__cta + .landing-header__access {
+        margin-left: -12px;
+    }
+}
+
 @media (max-width: 1023px) {
     .landing-header {
         padding: 14px 16px;
