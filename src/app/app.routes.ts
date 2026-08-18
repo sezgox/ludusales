@@ -14,7 +14,33 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     canActivate: [authGuard],
-    loadComponent: () => import('./pages/dashboard/dashboard').then((module) => module.Dashboard),
+    children: [
+      {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'informacion',
+      },
+      {
+        path: 'informacion',
+        loadComponent: () => import('./pages/dashboard/dashboard').then((module) => module.Dashboard),
+      },
+      {
+        path: 'premios',
+        loadComponent: () => import('./pages/dashboard/dashboard').then((module) => module.Dashboard),
+      },
+      {
+        path: 'gamificacion',
+        loadComponent: () => import('./pages/dashboard/dashboard').then((module) => module.Dashboard),
+      },
+      {
+        path: 'ranking',
+        loadComponent: () => import('./pages/dashboard/dashboard').then((module) => module.Dashboard),
+      },
+      {
+        path: '**',
+        redirectTo: '',
+      },
+    ],
   },
   { path: '**', redirectTo: '' },
 ];

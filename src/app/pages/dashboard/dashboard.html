@@ -1,14 +1,90 @@
-<main class="app-page dashboard-page">
+<main class="dashboard-page">
     <header class="dashboard-header">
-        <div>
-            <p class="eyebrow">Panel de empresa</p>
-            <h1>Dashboard</h1>
+        <div class="dashboard-brand">
+            <button
+                class="dashboard-menu-button"
+                type="button"
+                aria-label="Abrir menú del dashboard"
+                aria-controls="dashboard-sidebar"
+                [attr.aria-expanded]="isMenuOpen()"
+                (click)="toggleMenu()"
+            >
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </button>
+
+            <a routerLink="/dashboard/informacion" class="dashboard-brand-link" aria-label="Ir a información del dashboard">
+                <img ngSrc="assets/components/landing-header/ludu-logo.webp" width="40" height="40" alt="" class="dashboard-brand-logo" priority>
+                <img ngSrc="assets/components/landing-header/ludus-sales-wordmark.png" width="724" height="128" alt="Ludus Sales" class="dashboard-brand-wordmark" priority>
+            </a>
         </div>
-        <button class="primary-button dashboard-logout" type="button" (click)="logout()">Cerrar sesión</button>
+
+        <div class="dashboard-company-panel" aria-label="Empresa loggeada">
+            <div class="dashboard-company-copy">
+                <span class="dashboard-company-label">Empresa</span>
+                <strong>{{ company()?.name ?? 'Empresa' }}</strong>
+                <span>ID {{ companyId() }}</span>
+            </div>
+            <button class="dashboard-logout" type="button" aria-label="Cerrar sesión" (click)="logout()">
+                <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+                    <path d="M10 17v2H5V5h5v2H7v10h3Z" />
+                    <path d="M15.6 16.4 14.2 15l2-2H10v-2h6.2l-2-2 1.4-1.4L20 12l-4.4 4.4Z" />
+                </svg>
+            </button>
+        </div>
     </header>
 
-    <section class="dashboard-empty" aria-labelledby="dashboard-empty-title">
-        <p class="dashboard-company">{{ company()?.name ?? 'Empresa' }}</p>
-        <h2 id="dashboard-empty-title">Panel en preparación</h2>
-    </section>
+    <div class="dashboard-layout">
+        <aside id="dashboard-sidebar" class="dashboard-sidebar" [class.is-open]="isMenuOpen()">
+            <div class="dashboard-sidebar-heading">
+                <p class="eyebrow">Panel</p>
+                <h1>Dashboard</h1>
+            </div>
+
+            <nav class="dashboard-nav" aria-label="Secciones del dashboard">
+                @for (item of menu; track item.section) {
+                    <a
+                        class="dashboard-nav-link"
+                        [class.is-active]="activeSection() === item.section"
+                        [routerLink]="item.path"
+                        [attr.aria-current]="activeSection() === item.section ? 'page' : null"
+                        (click)="closeMenu()"
+                    >
+                        <span class="dashboard-nav-marker" aria-hidden="true"></span>
+                        <span>{{ item.label }}</span>
+                    </a>
+                }
+            </nav>
+        </aside>
+
+        @if (isMenuOpen()) {
+            <button class="dashboard-sidebar-backdrop" type="button" aria-label="Cerrar menú del dashboard" (click)="closeMenu()"></button>
+        }
+
+        <section class="dashboard-content" [attr.aria-labelledby]="'dashboard-' + activeSection() + '-title'">
+            @switch (activeSection()) {
+                @case ('informacion') {
+                    <p class="eyebrow">Sección principal</p>
+                    <h2 id="dashboard-informacion-title">Información</h2>
+                    <p>Resumen general de la empresa, actividad reciente y datos principales del programa.</p>
+                }
+                @case ('premios') {
+                    <p class="eyebrow">Catálogo</p>
+                    <h2 id="dashboard-premios-title">Premios</h2>
+                    <p>Gestión de recompensas, disponibilidad y configuración del canje para el equipo.</p>
+                }
+                @case ('gamificacion') {
+                    <p class="eyebrow">Dinámicas</p>
+                    <h2 id="dashboard-gamificacion-title">Gamificación</h2>
+                    <p>Configuración de reglas, retos, objetivos y mecánicas de motivación comercial.</p>
+                }
+                @case ('ranking') {
+                    <p class="eyebrow">En directo</p>
+                    <h2 id="dashboard-ranking-title">Live Ranking</h2>
+                    <p>Clasificación actualizada del equipo y seguimiento del rendimiento en tiempo real.</p>
+                }
+            }
+        </section>
+    </div>
 </main>
