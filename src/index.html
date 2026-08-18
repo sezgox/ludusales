@@ -1,15 +1,85 @@
 <!doctype html>
 <html lang="es">
-<head>
-  <meta charset="utf-8">
-  <title>Ludus Sales</title>
-  <meta name="description" content="Ludus Sales es una plataforma para motivar a los equipos de ventas, impulsar un rendimiento
-  constante y construir una cultura del logro.">
-  <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/webp" href="assets/components/landing-header/ludu-logo.webp">
-</head>
-<body>
-  <app-root></app-root>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <title>Ludus Sales</title>
+    <meta
+      name="description"
+      content="Ludus Sales es una plataforma para motivar a los equipos de ventas, impulsar un rendimiento
+  constante y construir una cultura del logro."
+    />
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/webp" href="assets/components/landing-header/ludu-logo.webp" />
+    <script>
+      if (location.pathname === '/dashboard' || location.pathname.startsWith('/dashboard/')) {
+        document.documentElement.classList.add('dashboard-auth-check');
+      }
+    </script>
+    <style>
+      #dashboard-auth-loader {
+        display: none;
+      }
+
+      html.dashboard-auth-check app-root {
+        visibility: hidden;
+      }
+
+      html.dashboard-auth-check #dashboard-auth-loader {
+        position: fixed;
+        inset: 0;
+        z-index: 2147483647;
+        display: grid;
+        place-items: center;
+        background: #f6f8f4;
+        color: #142018;
+        font-family:
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          sans-serif;
+      }
+
+      .dashboard-auth-loader__content {
+        display: grid;
+        justify-items: center;
+        gap: 18px;
+      }
+
+      .dashboard-auth-loader__logo {
+        width: 72px;
+        height: 72px;
+        object-fit: contain;
+      }
+
+      .dashboard-auth-loader__text {
+        margin: 0;
+        color: #4a5565;
+        font-size: 15px;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="dashboard-auth-loader"
+      role="status"
+      aria-live="polite"
+      aria-label="Comprobando acceso"
+    >
+      <div class="dashboard-auth-loader__content">
+        <img
+          class="dashboard-auth-loader__logo"
+          src="assets/components/landing-header/ludu-logo.webp"
+          width="72"
+          height="72"
+          alt=""
+        />
+        <p class="dashboard-auth-loader__text">Comprobando acceso...</p>
+      </div>
+    </div>
+    <app-root></app-root>
+  </body>
 </html>
