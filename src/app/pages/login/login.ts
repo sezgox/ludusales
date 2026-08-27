@@ -4,13 +4,14 @@ import { Router, RouterLink } from '@angular/router';
 import { ContactForm } from '@components/contact-form/contact-form';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
+import { NgOptimizedImage } from '@angular/common';
 
 type LoginMode = 'access-code' | 'contact';
 type LoginStatus = 'idle' | 'submitting' | 'error';
 
 @Component({
   selector: 'app-login',
-  imports: [ContactForm, ReactiveFormsModule, RouterLink],
+  imports: [ContactForm, ReactiveFormsModule, RouterLink, NgOptimizedImage],
   templateUrl: './login.html',
   styleUrl: './login.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

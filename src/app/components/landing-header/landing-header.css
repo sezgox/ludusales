@@ -28,14 +28,6 @@
     flex-shrink: 0;
 }
 
-.landing-header__wordmark {
-    width: clamp(132px, 14vw, 164px);
-    height: auto;
-    display: block;
-    flex-shrink: 1;
-    object-fit: contain;
-}
-
 .landing-header__nav {
     display: flex;
     align-items: center;
