@@ -1,12 +1,45 @@
 :host {
     display: block;
+    position: relative;
     min-height: 100dvh;
+    overflow: hidden;
+}
+
+.dashboard-background {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
     background: var(--color-page-bg);
 }
 
+.dashboard-background img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+@media (min-width: 1441px) {
+    .dashboard-background {
+        display: grid;
+        place-items: center;
+    }
+
+    .dashboard-background img {
+        width: 100%;
+        height: auto;
+        max-width: 100%;
+        object-fit: contain;
+    }
+}
+
 .dashboard-page {
+    position: relative;
+    z-index: 1;
     min-height: 100dvh;
-    padding: 0 20px 32px;
+    padding: 0 0 32px 0;
 }
 
 .dashboard-header {
@@ -19,10 +52,11 @@
     gap: 20px;
     width: min(100%, 1180px);
     margin: 0 auto;
-    padding: 14px 0;
-    background: color-mix(in srgb, var(--color-page-bg) 92%, transparent);
+    padding: 16px 32px;
+    background: color-mix(in srgb, var(--color-surface) 78%, transparent);
     border-bottom: 1px solid rgba(39, 133, 55, 0.14);
     backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
 }
 
 .dashboard-brand,
@@ -280,6 +314,9 @@
 .dashboard-content {
     min-height: 50dvh;
     padding: 28px;
+    background: color-mix(in srgb, var(--color-surface) 82%, transparent);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
 }
 
 .dashboard-content h2 {
@@ -349,13 +386,10 @@
 }
 
 @media (max-width: 860px) {
-    .dashboard-page {
-        padding-inline: 16px;
-    }
 
     .dashboard-header {
         gap: 12px;
-        padding: 12px 0;
+        padding: 12px;
     }
 
     .dashboard-menu-button {
@@ -385,9 +419,11 @@
     .dashboard-layout {
         display: block;
         margin-top: 18px;
+        padding: 8px;
     }
 
     .dashboard-sidebar {
+        z-index: 30;
         position: fixed;
         top: 72px;
         left: 16px;
