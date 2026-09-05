@@ -1,0 +1,35 @@
+<div class="rich-text-editor" [class.is-disabled]="disabled()" [class.is-invalid]="invalid()">
+  <div class="rich-text-editor__toolbar" role="toolbar" aria-label="Formato de texto">
+    <button type="button" title="Deshacer" aria-label="Deshacer" [disabled]="disabled() || !canUndo()" (click)="undo()">↶</button>
+    <button type="button" title="Rehacer" aria-label="Rehacer" [disabled]="disabled() || !canRedo()" (click)="redo()">↷</button>
+    <span class="rich-text-editor__separator" aria-hidden="true"></span>
+    <button type="button" [class.is-active]="isActive('paragraph')" [attr.aria-pressed]="isActive('paragraph')" [disabled]="disabled()" (click)="setParagraph()">P</button>
+    <button type="button" [class.is-active]="isActive('heading', { level: 2 })" [attr.aria-pressed]="isActive('heading', { level: 2 })" [disabled]="disabled()" (click)="toggleHeading(2)">H2</button>
+    <button type="button" [class.is-active]="isActive('heading', { level: 3 })" [attr.aria-pressed]="isActive('heading', { level: 3 })" [disabled]="disabled()" (click)="toggleHeading(3)">H3</button>
+    <button type="button" class="rich-text-editor__bold" aria-label="Negrita" [class.is-active]="isActive('bold')" [attr.aria-pressed]="isActive('bold')" [disabled]="disabled()" (click)="toggleBold()">B</button>
+    <button type="button" class="rich-text-editor__italic" aria-label="Cursiva" [class.is-active]="isActive('italic')" [attr.aria-pressed]="isActive('italic')" [disabled]="disabled()" (click)="toggleItalic()">I</button>
+    <button type="button" class="rich-text-editor__underline" aria-label="Subrayado" [class.is-active]="isActive('underline')" [attr.aria-pressed]="isActive('underline')" [disabled]="disabled()" (click)="toggleUnderline()">U</button>
+    <button type="button" class="rich-text-editor__strike" aria-label="Tachado" [class.is-active]="isActive('strike')" [attr.aria-pressed]="isActive('strike')" [disabled]="disabled()" (click)="toggleStrike()">S</button>
+    <button type="button" aria-label="Lista con viñetas" [class.is-active]="isActive('bulletList')" [attr.aria-pressed]="isActive('bulletList')" [disabled]="disabled()" (click)="toggleBulletList()">• Lista</button>
+    <button type="button" aria-label="Lista numerada" [class.is-active]="isActive('orderedList')" [attr.aria-pressed]="isActive('orderedList')" [disabled]="disabled()" (click)="toggleOrderedList()">1. Lista</button>
+    <button type="button" aria-label="Cita" [class.is-active]="isActive('blockquote')" [attr.aria-pressed]="isActive('blockquote')" [disabled]="disabled()" (click)="toggleBlockquote()">❝</button>
+    <button type="button" aria-label="Editar enlace" [class.is-active]="isActive('link')" [attr.aria-pressed]="isActive('link')" [attr.aria-expanded]="linkFormOpen()" [disabled]="disabled()" (click)="openLinkForm()">Enlace</button>
+  </div>
+
+  @if (linkFormOpen()) {
+    <div class="rich-text-editor__link-form">
+      <label for="rich-text-link">URL del enlace</label>
+      <input id="rich-text-link" type="url" [formControl]="linkControl" placeholder="https://ejemplo.com">
+      <button type="button" (click)="applyLink()">Aplicar</button>
+      @if (isActive('link')) {
+        <button type="button" (click)="removeLink()">Quitar</button>
+      }
+      <button type="button" (click)="closeLinkForm()">Cancelar</button>
+      @if (linkFeedback()) {
+        <span role="alert">{{ linkFeedback() }}</span>
+      }
+    </div>
+  }
+
+  <div #editorHost class="rich-text-editor__host" ngSkipHydration></div>
+</div>
