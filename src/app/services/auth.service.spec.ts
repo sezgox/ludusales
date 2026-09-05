@@ -2,9 +2,11 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { AuthService } from './auth.service';
+import { GamificationStore } from './gamification.store';
 
 describe('AuthService', () => {
   let service: AuthService;
+  let gamificationStore: GamificationStore;
   let httpMock: HttpTestingController;
 
   beforeEach(() => {
@@ -13,6 +15,7 @@ describe('AuthService', () => {
     });
 
     service = TestBed.inject(AuthService);
+    gamificationStore = TestBed.inject(GamificationStore);
     httpMock = TestBed.inject(HttpTestingController);
   });
 
@@ -21,6 +24,7 @@ describe('AuthService', () => {
   });
 
   it('logs in with credentials and stores the authenticated company', () => {
+    const clearSpy = vi.spyOn(gamificationStore, 'clear');
     service.login('DEMO-ACCESS-2026').subscribe();
 
     const request = httpMock.expectOne('http://localhost:8787/auth/login');
@@ -39,6 +43,35 @@ describe('AuthService', () => {
     expect(service.company()?.name).toBe('Ludus Sales Demo');
     expect(service.role()).toBe('company');
     expect(service.companies()).toEqual([]);
+    expect(clearSpy).toHaveBeenCalledOnce();
+  });
+
+  it('clears cached gamifications when session recovery fails', () => {
+    const clearSpy = vi.spyOn(gamificationStore, 'clear');
+    service.me().subscribe({ error: () => undefined });
+
+    httpMock.expectOne('http://localhost:8787/auth/me').flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
+
+    expect(clearSpy).toHaveBeenCalledOnce();
+    expect(service.role()).toBeNull();
+  });
+
+  it('clears cached gamifications when the recovered identity changes', () => {
+    const clearSpy = vi.spyOn(gamificationStore, 'clear');
+    service.me().subscribe();
+    httpMock.expectOne('http://localhost:8787/auth/me').flush({
+      ok: true,
+      role: 'company',
+      company: {
+        public_id: '82b4c7b9-68d1-4cc6-9e36-41d4db4e05f0',
+        name: 'Ludus Sales Demo',
+      },
+    });
+
+    service.me().subscribe();
+    httpMock.expectOne('http://localhost:8787/auth/me').flush({ ok: true, role: 'superuser', companies: [] });
+
+    expect(clearSpy).toHaveBeenCalledOnce();
   });
 
   it('stores superuser sessions with the available companies', () => {

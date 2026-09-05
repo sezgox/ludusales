@@ -1,0 +1,76 @@
+<div class="section-heading">
+  <div>
+    <p class="eyebrow">Catálogo</p>
+    <h2 id="dashboard-premios-title">Premios</h2>
+  </div>
+</div>
+
+@if (canEdit()) {
+  <form class="create-prize" [formGroup]="createForm" (ngSubmit)="createPrize()">
+    <label>
+      <span>Nombre del premio</span>
+      <input type="text" formControlName="name" maxlength="160" placeholder="Ej. Viaje de fin de semana" required>
+    </label>
+    <label>
+      <span>Imagen opcional</span>
+      <input type="file" accept="image/jpeg,image/png,image/webp" [disabled]="isCreating()" (change)="selectCreatePicture($event)">
+    </label>
+    <button class="primary-button" type="submit" [disabled]="isCreating()">{{ isCreating() ? 'Creando…' : 'Añadir premio' }}</button>
+  </form>
+}
+
+@if (feedback()) {
+  <p class="section-feedback" role="alert">{{ feedback() }}</p>
+}
+
+@if (gamification().prizes.length) {
+  <div class="prize-grid">
+    @for (prize of gamification().prizes; track prize.publicId) {
+      <article class="prize-card">
+        @if (prize.pictureUrl) {
+          <img [src]="prize.pictureUrl" [alt]="'Premio ' + prize.name">
+        } @else {
+          <div class="empty-picture" aria-hidden="true">★</div>
+        }
+
+        @if (editingPrizeId() === prize.publicId) {
+          <form class="edit-prize" [formGroup]="editForm" (ngSubmit)="savePrize(prize)">
+            <label [for]="'prize-name-' + prize.publicId">Nombre</label>
+            <input [id]="'prize-name-' + prize.publicId" type="text" formControlName="name" maxlength="160" required>
+            <div class="card-actions">
+              <button class="secondary-button" type="button" (click)="cancelEdit()">Cancelar</button>
+              <button class="primary-button" type="submit" [disabled]="pendingPrizeId() === prize.publicId">Guardar</button>
+            </div>
+          </form>
+        } @else {
+          <h3>{{ prize.name }}</h3>
+          @if (canEdit()) {
+            <div class="card-actions">
+              <button class="secondary-button" type="button" (click)="editPrize(prize)">Editar</button>
+              <label class="secondary-button file-button">
+                Imagen
+                <input type="file" accept="image/jpeg,image/png,image/webp" [disabled]="pendingPrizeId() === prize.publicId" (change)="uploadPicture(prize, $event)">
+              </label>
+              @if (prize.pictureUrl) {
+                <button class="secondary-button" type="button" [disabled]="pendingPrizeId() === prize.publicId" (click)="deletePicture(prize)">Quitar imagen</button>
+              }
+              <button class="danger-button" type="button" [disabled]="pendingPrizeId() === prize.publicId" (click)="deletePrize(prize)">Eliminar</button>
+            </div>
+          }
+        }
+      </article>
+    }
+  </div>
+} @else {
+  @if (canEdit()) {
+    <div class="empty-state">
+      <h3>Aún no hay premios</h3>
+      <p>Los premios son opcionales y se mostrarán en su orden de creación.</p>
+    </div>
+  } @else {
+    <div class="empty-state">
+      <h3>Premios de la gamificación</h3>
+      <p>Aquí aparecerán los premios disponibles que se darán a los ganadores de la gamificación.</p>
+    </div>
+  }
+}

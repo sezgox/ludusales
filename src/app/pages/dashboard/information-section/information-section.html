@@ -1,0 +1,75 @@
+<div class="section-heading">
+  <div>
+    <p class="eyebrow">Sección principal</p>
+    <h2 id="dashboard-informacion-title">Información</h2>
+  </div>
+</div>
+
+<div class="section-grid">
+  <article class="section-card section-card--wide">
+    <div class="section-card__header">
+      <div>
+        <p class="eyebrow">Presentación</p>
+        <h3>Descripción</h3>
+      </div>
+    </div>
+
+    @if (isEditing()) {
+      <form class="section-form" [formGroup]="descriptionForm" (ngSubmit)="saveDescription()">
+        <app-rich-text-editor formControlName="description" />
+        @if (feedback()) {
+          <p class="section-feedback is-error" role="alert">{{ feedback() }}</p>
+        }
+        <div class="section-actions">
+          <button class="secondary-button" type="button" [disabled]="isSaving()" (click)="cancelDescription()">Cancelar</button>
+          <button class="primary-button" type="submit" [disabled]="isSaving()">
+            {{ isSaving() ? 'Guardando…' : 'Guardar descripción' }}
+          </button>
+        </div>
+      </form>
+    } @else {
+      <div class="description-edit-surface" [class.is-editable]="canEdit()">
+        <div class="formatted-description" [innerHTML]="gamification().description"></div>
+        @if (canEdit()) {
+          <button class="description-edit-overlay" type="button" (click)="editDescription()">
+            <span aria-hidden="true">✎</span> Editar descripción
+          </button>
+        }
+      </div>
+    }
+  </article>
+
+  @if (gamification().imageUrl || canEdit()) {
+    <article class="information-media">
+      <div class="section-card__header">
+        <div>
+          <p class="eyebrow">Imagen pública</p>
+          <h3>Portada</h3>
+        </div>
+      </div>
+
+      <div class="cover-media" [class.is-editable]="canEdit()">
+        @if (gamification().imageUrl) {
+          <img class="cover-preview" [src]="gamification().imageUrl" alt="Portada de la gamificación">
+        } @else {
+          <div class="empty-media">Sin portada</div>
+        }
+        @if (canEdit()) {
+          <label class="media-edit-overlay">
+            <span aria-hidden="true">↥</span>
+            {{ isUploading() ? 'Procesando…' : 'Cambiar imagen' }}
+            <input type="file" accept="image/jpeg,image/png,image/webp" [disabled]="isUploading()" (change)="uploadCover($event)">
+          </label>
+        }
+      </div>
+      @if (canEdit() && gamification().imageUrl) {
+        <div class="section-actions section-actions--start">
+          <button class="danger-button" type="button" [disabled]="isUploading()" (click)="deleteCover()">Eliminar imagen</button>
+        </div>
+      }
+      @if (coverFeedback()) {
+        <p class="section-feedback" aria-live="polite">{{ coverFeedback() }}</p>
+      }
+    </article>
+  }
+</div>

@@ -1,7 +1,8 @@
-import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { tap } from 'rxjs';
+import { ApiUrlService } from './api-url.service';
+import { GamificationStore } from './gamification.store';
 
 export type AuthenticatedCompany = {
   public_id: string;
@@ -42,7 +43,9 @@ type CreateCompanyAccountResponse = {
 })
 export class AuthService {
   private readonly http = inject(HttpClient);
-  private readonly platformId = inject(PLATFORM_ID);
+  private readonly apiUrl = inject(ApiUrlService);
+  private readonly gamificationStore = inject(GamificationStore);
+  private sessionContext: string | null = null;
 
   readonly company = signal<AuthenticatedCompany | null>(null);
   readonly companies = signal<DashboardCompany[]>([]);
@@ -51,27 +54,38 @@ export class AuthService {
   login(accessCode: string) {
     return this.http
       .post<AuthResponse>(
-        this.authEndpoint('/auth/login'),
+        this.apiUrl.endpoint('/auth/login'),
         { accessCode },
         {
           withCredentials: true,
         },
       )
-      .pipe(tap((response) => this.applyAuthResponse(response)));
+      .pipe(
+        tap((response) => {
+          this.gamificationStore.clear();
+          this.sessionContext = null;
+          this.applyAuthResponse(response);
+        }),
+      );
   }
 
   me() {
     return this.http
-      .get<AuthResponse>(this.authEndpoint('/auth/me'), {
+      .get<AuthResponse>(this.apiUrl.endpoint('/auth/me'), {
         withCredentials: true,
       })
-      .pipe(tap((response) => this.applyAuthResponse(response)));
+      .pipe(
+        tap({
+          next: (response) => this.applyAuthResponse(response),
+          error: () => this.clearSession(),
+        }),
+      );
   }
 
   logout() {
     return this.http
       .post<{ ok: true }>(
-        this.authEndpoint('/auth/logout'),
+        this.apiUrl.endpoint('/auth/logout'),
         {},
         {
           withCredentials: true,
@@ -82,7 +96,7 @@ export class AuthService {
 
   createCompanyAccount(payload: CreateCompanyAccountPayload) {
     return this.http
-      .post<CreateCompanyAccountResponse>(this.authEndpoint('/superuser/companies'), payload, {
+      .post<CreateCompanyAccountResponse>(this.apiUrl.endpoint('/superuser/companies'), payload, {
         withCredentials: true,
       })
       .pipe(
@@ -95,6 +109,9 @@ export class AuthService {
   }
 
   private applyAuthResponse(response: AuthResponse): void {
+    const nextSessionContext = response.role === 'company' ? `company:${response.company.public_id}` : 'superuser';
+    if (this.sessionContext && this.sessionContext !== nextSessionContext) this.gamificationStore.clear();
+    this.sessionContext = nextSessionContext;
     this.role.set(response.role);
 
     if (response.role === 'company') {
@@ -108,20 +125,10 @@ export class AuthService {
   }
 
   private clearSession(): void {
+    this.sessionContext = null;
+    this.gamificationStore.clear();
     this.role.set(null);
     this.company.set(null);
     this.companies.set([]);
-  }
-
-  private authEndpoint(path: string): string {
-    if (isPlatformBrowser(this.platformId)) {
-      const hostname = globalThis.location?.hostname;
-
-      if (hostname === 'localhost' || hostname === '127.0.0.1') {
-        return `http://localhost:8787${path}`;
-      }
-    }
-
-    return `https://api.ludusales.com${path}`;
   }
 }

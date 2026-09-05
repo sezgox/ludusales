@@ -1,159 +1,90 @@
-<div class="dashboard-background" aria-hidden="true">
-    <img src="assets/pages/dashboard/dashboardbg.webp" alt="" />
-</div>
+<div class="dashboard-background" aria-hidden="true"><img src="assets/pages/dashboard/dashboardbg.webp" alt=""></div>
 
 <main class="dashboard-page">
-    <header class="dashboard-header">
-        <div class="dashboard-brand">
-            <button
-                class="dashboard-menu-button"
-                type="button"
-                aria-label="Abrir men&uacute; del dashboard"
-                aria-controls="dashboard-sidebar"
-                [attr.aria-expanded]="isMenuOpen()"
-                (click)="toggleMenu()"
-            >
-                <span aria-hidden="true"></span>
-                <span aria-hidden="true"></span>
-                <span aria-hidden="true"></span>
-            </button>
-
-            <a [routerLink]="dashboardPath('informacion')" class="dashboard-brand-link" aria-label="Ir a informaci&oacute;n del dashboard">
-                <img ngSrc="assets/components/landing-header/ludu-logo.webp" width="40" height="40" alt="" class="dashboard-brand-logo" priority>
-                <img ngSrc="assets/components/landing-header/ludus-sales-wordmark.png" width="724" height="128" alt="Ludus Sales" class="dashboard-brand-wordmark" priority>
-            </a>
-        </div>
-
-        <div class="dashboard-company-panel" aria-label="Empresa logueada">
-            @if (isSuperuser()) {
-                <div class="dashboard-company-switcher" aria-label="Cambiar empresa visible">
-                    <label class="dashboard-company-label" for="dashboard-company-select">Empresa visible</label>
-                    <select
-                        id="dashboard-company-select"
-                        class="dashboard-company-select"
-                        [value]="selectedCompanyPublicId() ?? ''"
-                        (change)="selectCompany($event)"
-                    >
-                        @for (companyOption of companies(); track companyOption.public_id) {
-                            <option
-                                [value]="companyOption.public_id"
-                                [selected]="companyOption.public_id === selectedCompanyPublicId()"
-                            >
-                                {{ companyOption.name }}
-                            </option>
-                        }
-                    </select>
-                    <button class="dashboard-create-company-button" type="button" (click)="openCreateCompanyDialog(companyDialog)">
-                        Crear empresa
-                    </button>
-                </div>
-            }
-
-            <div class="dashboard-company-copy">
-                <span class="dashboard-company-label">Empresa</span>
-                <strong>{{ company()?.name ?? 'Empresa' }}</strong>
-                <span>ID {{ companyId() }}</span>
-            </div>
-            <button class="dashboard-logout" type="button" aria-label="Cerrar sesi&oacute;n" (click)="logout()">
-                <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
-                    <path d="M10 17v2H5V5h5v2H7v10h3Z" />
-                    <path d="M15.6 16.4 14.2 15l2-2H10v-2h6.2l-2-2 1.4-1.4L20 12l-4.4 4.4Z" />
-                </svg>
-            </button>
-        </div>
-    </header>
-
-    <div class="dashboard-layout">
-        <aside id="dashboard-sidebar" class="dashboard-sidebar" [class.is-open]="isMenuOpen()">
-            <div class="dashboard-sidebar-heading">
-                <p class="eyebrow">Panel</p>
-                <h1>Dashboard</h1>
-            </div>
-
-            <nav class="dashboard-nav" aria-label="Secciones del dashboard">
-                @for (item of menu; track item.section) {
-                    <a
-                        class="dashboard-nav-link"
-                        [class.is-active]="activeSection() === item.section"
-                        [routerLink]="dashboardPath(item.section)"
-                        [attr.aria-current]="activeSection() === item.section ? 'page' : null"
-                        (click)="closeMenu()"
-                    >
-                        <span class="dashboard-nav-marker" aria-hidden="true"></span>
-                        <span>{{ item.label }}</span>
-                    </a>
-                }
-            </nav>
-        </aside>
-
-        @if (isMenuOpen()) {
-            <button class="dashboard-sidebar-backdrop" type="button" aria-label="Cerrar men&uacute; del dashboard" (click)="closeMenu()"></button>
-        }
-
-        <section class="dashboard-content" [attr.aria-labelledby]="'dashboard-' + activeSection() + '-title'">
-            @switch (activeSection()) {
-                @case ('informacion') {
-                    <p class="eyebrow">Secci&oacute;n principal</p>
-                    <h2 id="dashboard-informacion-title">Informaci&oacute;n</h2>
-                    <p>Resumen general de la empresa, actividad reciente y datos principales del programa.</p>
-                }
-                @case ('premios') {
-                    <p class="eyebrow">Cat&aacute;logo</p>
-                    <h2 id="dashboard-premios-title">Premios</h2>
-                    <p>Gesti&oacute;n de recompensas, disponibilidad y configuraci&oacute;n del canje para el equipo.</p>
-                }
-                @case ('gamificacion') {
-                    <p class="eyebrow">Din&aacute;micas</p>
-                    <h2 id="dashboard-gamificacion-title">Gamificaci&oacute;n</h2>
-                    <p>Configuraci&oacute;n de reglas, retos, objetivos y mec&aacute;nicas de motivaci&oacute;n comercial.</p>
-                }
-                @case ('ranking') {
-                    <p class="eyebrow">En directo</p>
-                    <h2 id="dashboard-ranking-title">Live Ranking</h2>
-                    <p>Clasificaci&oacute;n actualizada del equipo y seguimiento del rendimiento en tiempo real.</p>
-                }
-            }
-        </section>
+  <header class="dashboard-header">
+    <div class="dashboard-brand">
+      <button class="dashboard-menu-button" type="button" aria-label="Abrir menú del dashboard" aria-controls="dashboard-sidebar" [attr.aria-expanded]="isMenuOpen()" (click)="toggleMenu()"><span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span></button>
+      <a [routerLink]="dashboardPath('informacion')" [queryParams]="gamificationQuery()" class="dashboard-brand-link" aria-label="Ir a información del dashboard">
+        <img ngSrc="assets/components/landing-header/ludu-logo.webp" width="40" height="40" alt="" class="dashboard-brand-logo" priority>
+        <img ngSrc="assets/components/landing-header/ludus-sales-wordmark.png" width="724" height="128" alt="Ludus Sales" class="dashboard-brand-wordmark" priority>
+      </a>
     </div>
 
-    <dialog #companyDialog class="dashboard-company-dialog" aria-labelledby="create-company-title" (close)="createCompanyFeedback.set(null)">
-        <form class="dashboard-company-form" [formGroup]="createCompanyForm" (ngSubmit)="createCompanyAccount(companyDialog)">
-            <div class="dashboard-company-form-header">
-                <p class="eyebrow">Superuser</p>
-                <h2 id="create-company-title">Crear compa&ntilde;&iacute;a</h2>
-            </div>
-
-            <label class="dashboard-form-field">
-                <span>Nombre de la compa&ntilde;&iacute;a</span>
-                <input class="form-input" type="text" formControlName="companyName" autocomplete="organization" maxlength="160" required>
-            </label>
-
-            <label class="dashboard-form-field">
-                <span>Email de la cuenta</span>
-                <input class="form-input" type="email" formControlName="email" autocomplete="email" maxlength="254">
-            </label>
-
-            <label class="dashboard-form-field">
-                <span>C&oacute;digo de acceso</span>
-                <input class="form-input" type="text" formControlName="accessCode" autocomplete="off" minlength="8" maxlength="80" required>
-            </label>
-
-            @if (createCompanyFeedback()) {
-                <p class="form-feedback" role="alert">{{ createCompanyFeedback() }}</p>
+    <div class="dashboard-company-panel" aria-label="Empresa visible">
+      @if (isSuperuser()) {
+        <div class="dashboard-company-switcher">
+          <label class="dashboard-company-label" for="dashboard-company-select">Empresa visible</label>
+          <select id="dashboard-company-select" class="dashboard-company-select" [value]="selectedCompanyPublicId() ?? ''" (change)="selectCompany($event)">
+            @for (companyOption of companies(); track companyOption.public_id) {
+              <option [value]="companyOption.public_id">{{ companyOption.name }}</option>
             }
+          </select>
+          <button class="dashboard-create-company-button" type="button" (click)="openCreateCompanyDialog(companyDialog)">Crear empresa</button>
+        </div>
+      }
+      <div class="dashboard-company-copy"><span class="dashboard-company-label">Empresa</span><strong>{{ company()?.name ?? 'Empresa' }}</strong><span>ID {{ companyId() }}</span></div>
+      <button class="dashboard-logout" type="button" aria-label="Cerrar sesión" (click)="logout()"><svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><path d="M10 17v2H5V5h5v2H7v10h3Z"></path><path d="M15.6 16.4 14.2 15l2-2H10v-2h6.2l-2-2 1.4-1.4L20 12l-4.4 4.4Z"></path></svg></button>
+    </div>
+  </header>
 
-            <div class="dashboard-dialog-actions">
-                <button class="dashboard-secondary-button" type="button" [disabled]="isCreatingCompany()" (click)="closeCreateCompanyDialog(companyDialog)">
-                    Cancelar
-                </button>
-                <button class="primary-button" type="submit" [disabled]="isCreatingCompany()">
-                    @if (isCreatingCompany()) {
-                        Creando...
-                    } @else {
-                        Crear compa&ntilde;&iacute;a
-                    }
-                </button>
-            </div>
-        </form>
-    </dialog>
+  <div class="dashboard-layout">
+    <aside id="dashboard-sidebar" class="dashboard-sidebar" [class.is-open]="isMenuOpen()">
+      <div class="dashboard-sidebar-heading"><p class="eyebrow">Panel</p><h1>Dashboard</h1></div>
+      <nav class="dashboard-nav" aria-label="Secciones del dashboard">
+        @for (item of menu; track item.section) {
+          <a class="dashboard-nav-link" [class.is-active]="activeSection() === item.section" [routerLink]="dashboardPath(item.section)" [queryParams]="gamificationQuery()" [attr.aria-current]="activeSection() === item.section ? 'page' : null" (click)="closeMenu()"><span class="dashboard-nav-marker" aria-hidden="true"></span><span>{{ item.label }}</span></a>
+        }
+      </nav>
+    </aside>
+
+    @if (isMenuOpen()) {<button class="dashboard-sidebar-backdrop" type="button" aria-label="Cerrar menú del dashboard" (click)="closeMenu()"></button>}
+
+    <section class="dashboard-content" [attr.aria-labelledby]="'dashboard-' + activeSection() + '-title'">
+      @if (selectedCompanyPublicId()) {
+        <div class="gamification-switcher">
+          <label for="dashboard-gamification-select">Gamificación visible</label>
+          <select id="dashboard-gamification-select" [value]="selectedGamificationPublicId() ?? ''" [disabled]="isLoadingGamifications() || !gamifications().length" (change)="selectGamification($event)">
+            @if (!gamifications().length) {<option value="">Sin gamificaciones</option>}
+            @for (item of gamifications(); track item.publicId) {<option [value]="item.publicId" [selected]="item.publicId === selectedGamificationPublicId()">{{ gamificationLabel(item) }}</option>}
+          </select>
+        </div>
+      }
+
+      @if (gamificationFeedback()) {<p class="dashboard-feedback" role="alert">{{ gamificationFeedback() }}</p>}
+
+      @if (isLoadingGamifications() || isLoadingDetail()) {
+        <div class="dashboard-loading" aria-live="polite"><span aria-hidden="true"></span>Cargando gamificación…</div>
+      } @else {
+        @switch (activeSection()) {
+          @case ('gamificacion') {
+            @if (selectedCompanyPublicId(); as companyPublicId) {
+              <app-gamification-section [companyPublicId]="companyPublicId" [gamification]="selectedGamification()" [isSuperuser]="isSuperuser()" (changed)="handleGamificationChanged($event)" />
+            }
+          }
+          @default {
+            @if (selectedGamification(); as current) {
+              @switch (activeSection()) {
+                @case ('informacion') {<app-information-section [gamification]="current" [isSuperuser]="isSuperuser()" (changed)="refreshSelectedDetail()" />}
+                @case ('premios') {<app-prizes-section [gamification]="current" [isSuperuser]="isSuperuser()" (changed)="refreshSelectedDetail()" />}
+                @case ('ranking') {<app-ranking-section [gamification]="current" [isSuperuser]="isSuperuser()" (changed)="refreshSelectedDetail()" />}
+              }
+            } @else {
+              <div class="dashboard-empty"><h2 [id]="'dashboard-' + activeSection() + '-title'">Sin gamificación seleccionada</h2>@if (isSuperuser()) {<p>Crea una gamificación desde la sección Gamificación para empezar.</p><a class="primary-button" [routerLink]="dashboardPath('gamificacion')">Ir a Gamificación</a>} @else {<p>Cuando tu empresa tenga una gamificación disponible, aquí podrás consultar toda su información.</p>}</div>
+            }
+          }
+        }
+      }
+    </section>
+  </div>
+
+  <dialog #companyDialog class="dashboard-company-dialog" aria-labelledby="create-company-title" (close)="createCompanyFeedback.set(null)">
+    <form class="dashboard-company-form" [formGroup]="createCompanyForm" (ngSubmit)="createCompanyAccount(companyDialog)">
+      <div class="dashboard-company-form-header"><p class="eyebrow">Superuser</p><h2 id="create-company-title">Crear compañía</h2></div>
+      <label class="dashboard-form-field"><span>Nombre de la compañía</span><input class="form-input" type="text" formControlName="companyName" autocomplete="organization" maxlength="160" required></label>
+      <label class="dashboard-form-field"><span>Email de la cuenta</span><input class="form-input" type="email" formControlName="email" autocomplete="email" maxlength="254"></label>
+      <label class="dashboard-form-field"><span>Código de acceso</span><input class="form-input" type="text" formControlName="accessCode" autocomplete="off" minlength="8" maxlength="80" required></label>
+      @if (createCompanyFeedback()) {<p class="form-feedback" role="alert">{{ createCompanyFeedback() }}</p>}
+      <div class="dashboard-dialog-actions"><button class="dashboard-secondary-button" type="button" [disabled]="isCreatingCompany()" (click)="closeCreateCompanyDialog(companyDialog)">Cancelar</button><button class="primary-button" type="submit" [disabled]="isCreatingCompany()">{{ isCreatingCompany() ? 'Creando…' : 'Crear compañía' }}</button></div>
+    </form>
+  </dialog>
 </main>

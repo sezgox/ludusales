@@ -1,0 +1,150 @@
+<div class="section-heading">
+  <div>
+    <p class="eyebrow">Dinámicas</p>
+    <h2 id="dashboard-gamificacion-title">Gamificación</h2>
+  </div>
+  @if (isSuperuser()) {
+    <button class="primary-button" type="button" (click)="openCreateDialog(createDialog)">Nueva gamificación</button>
+  }
+</div>
+
+@if (gamification(); as current) {
+  <article class="gamification-card">
+    <div class="gamification-card__header">
+      <div>
+        <span class="status-chip" [class.is-active]="current.status === 'active'" [class.is-closed]="current.status === 'closed'">
+          {{ statusLabel(current.status) }}
+        </span>
+        <h3>Configuración</h3>
+      </div>
+      @if (canEdit() && !isEditing()) {
+        <button class="secondary-button" type="button" (click)="edit()">Editar</button>
+      }
+    </div>
+
+    @if (isEditing()) {
+      <form class="gamification-form" [formGroup]="editForm" (ngSubmit)="save()">
+        <p class="required-note"><span aria-hidden="true">*</span> Todos los campos son obligatorios.</p>
+        <div class="form-grid">
+          <label>
+            <span>Inicio <span class="required-marker" aria-hidden="true">*</span></span>
+            <input id="edit-start-at" type="datetime-local" formControlName="startAt" required [class.is-invalid]="showEditError(editForm.controls.startAt)" [attr.aria-invalid]="showEditError(editForm.controls.startAt)" [attr.aria-describedby]="showEditError(editForm.controls.startAt) ? 'edit-start-at-error' : null">
+            @if (showEditError(editForm.controls.startAt)) {<span id="edit-start-at-error" class="field-error">Indica la fecha de inicio.</span>}
+          </label>
+          <label>
+            <span>Fin <span class="required-marker" aria-hidden="true">*</span></span>
+            <input id="edit-end-at" type="datetime-local" formControlName="endAt" required [class.is-invalid]="showEditError(editForm.controls.endAt) || showEditDateRangeError()" [attr.aria-invalid]="showEditError(editForm.controls.endAt) || showEditDateRangeError()" [attr.aria-describedby]="showEditError(editForm.controls.endAt) || showEditDateRangeError() ? 'edit-end-at-error' : null">
+            @if (showEditError(editForm.controls.endAt) || showEditDateRangeError()) {<span id="edit-end-at-error" class="field-error">{{ showEditDateRangeError() ? 'La fecha de fin debe ser posterior al inicio.' : 'Indica la fecha de fin.' }}</span>}
+          </label>
+          <label>
+            <span>Objetivo <span class="required-marker" aria-hidden="true">*</span></span>
+            <input id="edit-goal" type="text" inputmode="decimal" formControlName="goal" required [class.is-invalid]="showEditError(editForm.controls.goal)" [attr.aria-invalid]="showEditError(editForm.controls.goal)" [attr.aria-describedby]="showEditError(editForm.controls.goal) ? 'edit-goal-error' : null">
+            @if (showEditError(editForm.controls.goal)) {<span id="edit-goal-error" class="field-error">Introduce un número válido con hasta {{ editForm.controls.valuePrecision.value }} decimales.</span>}
+          </label>
+          <label>
+            <span>Decimales <span class="required-marker" aria-hidden="true">*</span></span>
+            <input id="edit-precision" type="number" min="0" max="6" formControlName="valuePrecision" required [class.is-invalid]="showEditError(editForm.controls.valuePrecision)" [attr.aria-invalid]="showEditError(editForm.controls.valuePrecision)" [attr.aria-describedby]="showEditError(editForm.controls.valuePrecision) ? 'edit-precision-error' : null">
+            @if (showEditError(editForm.controls.valuePrecision)) {<span id="edit-precision-error" class="field-error">Indica un número de decimales entre 0 y 6.</span>}
+          </label>
+          <label class="form-grid__wide">
+            <span>Unidad <span class="required-marker" aria-hidden="true">*</span></span>
+            <input id="edit-goal-unit" type="text" maxlength="40" formControlName="goalUnit" required [class.is-invalid]="showEditError(editForm.controls.goalUnit)" [attr.aria-invalid]="showEditError(editForm.controls.goalUnit)" [attr.aria-describedby]="showEditError(editForm.controls.goalUnit) ? 'edit-goal-unit-error' : null">
+            @if (showEditError(editForm.controls.goalUnit)) {<span id="edit-goal-unit-error" class="field-error">Indica la unidad del objetivo.</span>}
+          </label>
+        </div>
+        <div class="section-actions">
+          <button class="secondary-button" type="button" [disabled]="isSaving()" (click)="cancelEdit()">Cancelar</button>
+          <button class="primary-button" type="submit" [disabled]="isSaving()">{{ isSaving() ? 'Guardando…' : 'Guardar' }}</button>
+        </div>
+      </form>
+    } @else {
+      <dl class="gamification-data">
+        <div><dt>Inicio</dt><dd>{{ current.startAt | date:'medium' }}</dd></div>
+        <div><dt>Fin</dt><dd>{{ current.endAt | date:'medium' }}</dd></div>
+        <div><dt>Objetivo</dt><dd>{{ current.goal }} {{ current.goalUnit }}</dd></div>
+        <div><dt>Resultado</dt><dd>{{ outcomeLabel() }}</dd></div>
+      </dl>
+    }
+
+    @if (feedback()) {
+      <p class="section-feedback" role="alert">{{ feedback() }}</p>
+    }
+
+    @if (isSuperuser() && !isEditing()) {
+      <div class="section-actions section-actions--split">
+        <div>
+          @if (current.status === 'draft') {
+            <button class="primary-button" type="button" [disabled]="isTransitioning()" (click)="activate()">Activar</button>
+          }
+          @if (current.status === 'active') {
+            <button class="secondary-button" type="button" [disabled]="isTransitioning()" (click)="close()">Cerrar ahora</button>
+          }
+        </div>
+        <button class="danger-button" type="button" [disabled]="isTransitioning()" (click)="deleteGamification()">Eliminar gamificación</button>
+      </div>
+    }
+  </article>
+} @else {
+  @if (isSuperuser()) {
+    <div class="empty-state">
+      <h3>No hay gamificaciones</h3>
+      <p>Crea la primera gamificación para configurar información, premios y ranking.</p>
+    </div>
+  } @else {
+    <div class="empty-state">
+      <h3>Gamificación de la empresa</h3>
+      <p>Aquí aparecerá la gamificación activa de tu empresa junto con su información, premios y clasificación.</p>
+    </div>
+  }
+}
+
+<dialog #createDialog class="create-dialog" aria-labelledby="create-gamification-title" (close)="createFeedback.set(null)">
+  <form class="gamification-form" [formGroup]="createForm" (ngSubmit)="createGamification(createDialog)">
+    <div>
+      <p class="eyebrow">Nueva dinámica</p>
+      <h2 id="create-gamification-title">Crear gamificación</h2>
+    </div>
+    <p class="required-note"><span aria-hidden="true">*</span> Todos los campos son obligatorios.</p>
+    <label class="editor-label">
+      <span>Descripción <span class="required-marker" aria-hidden="true">*</span></span>
+      <app-rich-text-editor formControlName="description" [required]="true" [invalid]="showCreateError(createForm.controls.description)" [ariaDescribedBy]="showCreateError(createForm.controls.description) ? 'create-description-error' : null" />
+      @if (showCreateError(createForm.controls.description)) {
+        <span id="create-description-error" class="field-error">{{ createForm.controls.description.hasError('maxlength') ? 'La descripción no puede superar 20.000 caracteres.' : 'Escribe una descripción.' }}</span>
+      }
+    </label>
+    <div class="form-grid">
+      <label>
+        <span>Inicio <span class="required-marker" aria-hidden="true">*</span></span>
+        <input id="create-start-at" type="datetime-local" formControlName="startAt" required [class.is-invalid]="showCreateError(createForm.controls.startAt)" [attr.aria-invalid]="showCreateError(createForm.controls.startAt)" [attr.aria-describedby]="showCreateError(createForm.controls.startAt) ? 'create-start-at-error' : null">
+        @if (showCreateError(createForm.controls.startAt)) {<span id="create-start-at-error" class="field-error">Indica la fecha de inicio.</span>}
+      </label>
+      <label>
+        <span>Fin <span class="required-marker" aria-hidden="true">*</span></span>
+        <input id="create-end-at" type="datetime-local" formControlName="endAt" required [class.is-invalid]="showCreateError(createForm.controls.endAt) || showCreateDateRangeError()" [attr.aria-invalid]="showCreateError(createForm.controls.endAt) || showCreateDateRangeError()" [attr.aria-describedby]="showCreateError(createForm.controls.endAt) || showCreateDateRangeError() ? 'create-end-at-error' : null">
+        @if (showCreateError(createForm.controls.endAt) || showCreateDateRangeError()) {<span id="create-end-at-error" class="field-error">{{ showCreateDateRangeError() ? 'La fecha de fin debe ser posterior al inicio.' : 'Indica la fecha de fin.' }}</span>}
+      </label>
+      <label>
+        <span>Objetivo <span class="required-marker" aria-hidden="true">*</span></span>
+        <input id="create-goal" type="text" inputmode="decimal" formControlName="goal" required [class.is-invalid]="showCreateError(createForm.controls.goal)" [attr.aria-invalid]="showCreateError(createForm.controls.goal)" [attr.aria-describedby]="showCreateError(createForm.controls.goal) ? 'create-goal-error' : null">
+        @if (showCreateError(createForm.controls.goal)) {<span id="create-goal-error" class="field-error">Introduce un número válido con hasta {{ createForm.controls.valuePrecision.value }} decimales.</span>}
+      </label>
+      <label>
+        <span>Decimales <span class="required-marker" aria-hidden="true">*</span></span>
+        <input id="create-precision" type="number" min="0" max="6" formControlName="valuePrecision" required [class.is-invalid]="showCreateError(createForm.controls.valuePrecision)" [attr.aria-invalid]="showCreateError(createForm.controls.valuePrecision)" [attr.aria-describedby]="showCreateError(createForm.controls.valuePrecision) ? 'create-precision-error' : null">
+        @if (showCreateError(createForm.controls.valuePrecision)) {<span id="create-precision-error" class="field-error">Indica un número de decimales entre 0 y 6.</span>}
+      </label>
+      <label class="form-grid__wide">
+        <span>Unidad <span class="required-marker" aria-hidden="true">*</span></span>
+        <input id="create-goal-unit" type="text" maxlength="40" formControlName="goalUnit" required [class.is-invalid]="showCreateError(createForm.controls.goalUnit)" [attr.aria-invalid]="showCreateError(createForm.controls.goalUnit)" [attr.aria-describedby]="showCreateError(createForm.controls.goalUnit) ? 'create-goal-unit-error' : null">
+        @if (showCreateError(createForm.controls.goalUnit)) {<span id="create-goal-unit-error" class="field-error">Indica la unidad del objetivo.</span>}
+      </label>
+    </div>
+    @if (createFeedback()) {
+      <p class="section-feedback" role="alert">{{ createFeedback() }}</p>
+    }
+    <div class="section-actions">
+      <button class="secondary-button" type="button" [disabled]="isSaving()" (click)="closeCreateDialog(createDialog)">Cancelar</button>
+      <button class="primary-button" type="submit" [disabled]="isSaving()">{{ isSaving() ? 'Creando…' : 'Crear borrador' }}</button>
+    </div>
+  </form>
+</dialog>

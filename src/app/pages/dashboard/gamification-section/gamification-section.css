@@ -1,0 +1,36 @@
+:host { display: block; }
+.section-heading, .gamification-card__header, .section-actions, .section-actions--split { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.gamification-card { margin-top: 24px; border: 1px solid var(--color-border); border-radius: 10px; padding: 22px; background: var(--color-surface); }
+.gamification-card h3 { margin: 10px 0 0; color: var(--color-heading); font-size: 1.35rem; }
+.status-chip { display: inline-flex; border-radius: 999px; padding: 5px 10px; background: #fff2c7; color: #745600; font-size: 0.78rem; font-weight: 900; text-transform: uppercase; }
+.status-chip.is-active { background: #e6f5e2; color: #1e6a2a; }
+.status-chip.is-closed { background: #e9ece9; color: #526055; }
+.gamification-data { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 22px 0 0; }
+.gamification-data div { border-radius: 8px; padding: 15px; background: var(--color-surface-muted); }
+.gamification-data dt { color: var(--color-body); font-size: 0.82rem; font-weight: 800; text-transform: uppercase; }
+.gamification-data dd { margin: 7px 0 0; color: var(--color-heading); font-weight: 800; }
+.gamification-form { display: grid; gap: 18px; margin-top: 20px; }
+.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.form-grid label, .editor-label { display: grid; gap: 7px; color: var(--color-heading); font-weight: 800; }
+.form-grid input { min-height: 44px; border: 1px solid var(--color-border); border-radius: 8px; padding: 10px 12px; background: var(--color-surface); color: var(--color-heading); font: inherit; }
+.form-grid input.is-invalid { border-color: #b42318; box-shadow: 0 0 0 1px #b42318; }
+.form-grid input.is-invalid:focus { box-shadow: 0 0 0 3px rgba(180, 35, 24, 0.18); }
+.required-note { margin: 0; color: var(--color-body); font-size: 0.9rem; }
+.required-note > span, .required-marker { color: #b42318; font-weight: 900; }
+.field-error { color: #b42318; font-size: 0.86rem; font-weight: 700; line-height: 1.35; }
+.form-grid__wide { grid-column: 1 / -1; }
+.section-actions { justify-content: flex-end; margin-top: 18px; }
+.section-actions--split { justify-content: space-between; border-top: 1px solid var(--color-border); padding-top: 18px; }
+.section-actions--split > div { display: flex; gap: 10px; }
+.secondary-button, .danger-button { min-height: 42px; border: 1px solid var(--color-border); border-radius: 8px; padding: 10px 15px; background: var(--color-surface); color: var(--color-heading); font: inherit; font-weight: 800; cursor: pointer; }
+.danger-button { border-color: #d8a59f; color: #9d2418; }
+.section-feedback { margin: 14px 0 0; color: #9d2418; font-weight: 700; }
+.empty-state { margin-top: 24px; border: 1px dashed var(--color-border); border-radius: 10px; padding: 34px; text-align: center; background: var(--color-surface-muted); }
+.empty-state h3 { margin: 0; color: var(--color-heading); }
+.empty-state p { margin: 8px auto 0; }
+.create-dialog { position: fixed; inset: 0; box-sizing: border-box; width: min(calc(100vw - 32px), 760px); max-height: calc(100dvh - 32px); margin: auto; overflow-y: auto; border: 1px solid var(--color-border); border-radius: 10px; padding: 24px; background: var(--color-surface); color: var(--color-heading); box-shadow: 0 24px 70px rgba(20, 32, 24, 0.24); }
+.create-dialog::backdrop { background: rgba(20, 32, 24, 0.48); }
+.create-dialog h2 { margin: 5px 0 0; }
+button:focus-visible, input:focus-visible { outline: 3px solid rgba(39, 133, 55, 0.3); outline-offset: 2px; }
+button:disabled { cursor: not-allowed; opacity: 0.58; }
+@media (max-width: 650px) { .section-heading, .gamification-card__header, .section-actions--split { align-items: stretch; flex-direction: column; } .form-grid, .gamification-data { grid-template-columns: 1fr; } .form-grid__wide { grid-column: auto; } }
