@@ -110,7 +110,7 @@
       <h2 id="create-gamification-title">Crear gamificación</h2>
     </div>
     <p class="required-note"><span aria-hidden="true">*</span> Todos los campos son obligatorios.</p>
-    <label>
+    <label class="form-field">
       <span>Título <span class="required-marker" aria-hidden="true">*</span></span>
       <input id="create-title" type="text" maxlength="160" formControlName="title" required [class.is-invalid]="showCreateError(createForm.controls.title)" [attr.aria-invalid]="showCreateError(createForm.controls.title)" [attr.aria-describedby]="showCreateError(createForm.controls.title) ? 'create-title-error' : null">
       @if (showCreateError(createForm.controls.title)) {<span id="create-title-error" class="field-error">Escribe un título de hasta 160 caracteres.</span>}
