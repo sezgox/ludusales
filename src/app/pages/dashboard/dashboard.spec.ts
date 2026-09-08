@@ -67,8 +67,10 @@ describe('Dashboard', () => {
       draftGamification,
     );
     const select: HTMLSelectElement = fixture.nativeElement.querySelector('#dashboard-gamification-select');
+    const companySelect: HTMLSelectElement = fixture.nativeElement.querySelector('#dashboard-company-select');
     expect(component.activeSection()).toBe('ranking');
     expect(component.company()?.name).toBe('Ludus Sales Beta');
+    expect(companySelect.value).toBe(betaCompany.public_id);
     expect(select.value).toBe(draftGamification.publicId);
   });
 

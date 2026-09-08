@@ -16,7 +16,7 @@
           <label class="dashboard-company-label" for="dashboard-company-select">Empresa visible</label>
           <select id="dashboard-company-select" class="dashboard-company-select" [value]="selectedCompanyPublicId() ?? ''" (change)="selectCompany($event)">
             @for (companyOption of companies(); track companyOption.public_id) {
-              <option [value]="companyOption.public_id">{{ companyOption.name }}</option>
+              <option [value]="companyOption.public_id" [selected]="companyOption.public_id === selectedCompanyPublicId()">{{ companyOption.name }}</option>
             }
           </select>
           <button class="dashboard-create-company-button" type="button" (click)="openCreateCompanyDialog(companyDialog)">Crear empresa</button>
