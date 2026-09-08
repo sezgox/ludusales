@@ -12,6 +12,14 @@
       <input type="text" formControlName="name" maxlength="160" placeholder="Ej. Viaje de fin de semana" required>
     </label>
     <label>
+      <span>Posición del ranking</span>
+      <input type="number" min="1" max="1000" step="1" formControlName="rankingPosition" required>
+    </label>
+    <label>
+      <span>Valor estimado (€)</span>
+      <input type="number" min="0" step="0.01" inputmode="decimal" formControlName="estimatedValue">
+    </label>
+    <label>
       <span>Imagen opcional</span>
       <input type="file" accept="image/jpeg,image/png,image/webp" [disabled]="isCreating()" (change)="selectCreatePicture($event)">
     </label>
@@ -37,6 +45,10 @@
           <form class="edit-prize" [formGroup]="editForm" (ngSubmit)="savePrize(prize)">
             <label [for]="'prize-name-' + prize.publicId">Nombre</label>
             <input [id]="'prize-name-' + prize.publicId" type="text" formControlName="name" maxlength="160" required>
+            <label [for]="'prize-position-' + prize.publicId">Posición del ranking</label>
+            <input [id]="'prize-position-' + prize.publicId" type="number" min="1" max="1000" step="1" formControlName="rankingPosition" required>
+            <label [for]="'prize-value-' + prize.publicId">Valor estimado (€)</label>
+            <input [id]="'prize-value-' + prize.publicId" type="number" min="0" step="0.01" inputmode="decimal" formControlName="estimatedValue">
             <div class="card-actions">
               <button class="secondary-button" type="button" (click)="cancelEdit()">Cancelar</button>
               <button class="primary-button" type="submit" [disabled]="pendingPrizeId() === prize.publicId">Guardar</button>
@@ -44,6 +56,8 @@
           </form>
         } @else {
           <h3>{{ prize.name }}</h3>
+          <p class="prize-meta">Puesto {{ prize.rankingPosition }}</p>
+          @if (prize.estimatedValue !== null) {<p class="prize-meta">Valor estimado: {{ prize.estimatedValue | currency:'EUR':'symbol':'1.2-2':'es-ES' }}</p>}
           @if (canEdit()) {
             <div class="card-actions">
               <button class="secondary-button" type="button" (click)="editPrize(prize)">Editar</button>

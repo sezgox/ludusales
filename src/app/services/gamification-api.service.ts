@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Gamification, GamificationDetail, GamificationPayload, Prize, RankingPayload } from '../models/gamification';
+import { Gamification, GamificationDetail, GamificationPayload, Prize, PrizePayload, RankingPayload } from '../models/gamification';
 import { ApiUrlService } from './api-url.service';
 
 type OkResponse = { ok: true };
@@ -80,18 +80,18 @@ export class GamificationApiService {
     );
   }
 
-  createPrize(gamificationPublicId: string, name: string) {
+  createPrize(gamificationPublicId: string, payload: PrizePayload) {
     return this.http.post<{ ok: true; prize: Prize }>(
       this.endpoint(`/superuser/gamifications/${encodeURIComponent(gamificationPublicId)}/prizes`),
-      { name },
+      payload,
       this.credentials,
     );
   }
 
-  updatePrize(prizePublicId: string, name: string) {
+  updatePrize(prizePublicId: string, payload: PrizePayload) {
     return this.http.patch<{ ok: true; prize: Prize }>(
       this.endpoint(`/superuser/prizes/${encodeURIComponent(prizePublicId)}`),
-      { name },
+      payload,
       this.credentials,
     );
   }

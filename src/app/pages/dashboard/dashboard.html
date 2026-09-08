@@ -66,10 +66,10 @@
               @switch (activeSection()) {
                 @case ('informacion') {<app-information-section [gamification]="current" [isSuperuser]="isSuperuser()" (changed)="refreshSelectedDetail()" />}
                 @case ('premios') {<app-prizes-section [gamification]="current" [isSuperuser]="isSuperuser()" (changed)="refreshSelectedDetail()" />}
-                @case ('ranking') {<app-ranking-section [gamification]="current" [isSuperuser]="isSuperuser()" (changed)="refreshSelectedDetail()" />}
+                @case ('ranking') {<app-ranking-section [gamification]="current" />}
               }
             } @else {
-              <div class="dashboard-empty"><h2 [id]="'dashboard-' + activeSection() + '-title'">Sin gamificación seleccionada</h2>@if (isSuperuser()) {<p>Crea una gamificación desde la sección Gamificación para empezar.</p><a class="primary-button" [routerLink]="dashboardPath('gamificacion')">Ir a Gamificación</a>} @else {<p>Cuando tu empresa tenga una gamificación disponible, aquí podrás consultar toda su información.</p>}</div>
+              <div class="dashboard-empty"><h2 [id]="'dashboard-' + activeSection() + '-title'">Sin gamificación seleccionada</h2>@if (isSuperuser()) {<p>Crea una gamificación desde la sección Gamificaciones para empezar.</p><a class="primary-button" [routerLink]="dashboardPath('gamificacion')">Ir a Gamificaciones</a>} @else {<p>Cuando tu empresa tenga una gamificación disponible, aquí podrás consultar toda su información.</p>}</div>
             }
           }
         }

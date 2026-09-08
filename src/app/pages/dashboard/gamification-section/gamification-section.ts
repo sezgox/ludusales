@@ -7,6 +7,7 @@ import { RichTextEditor } from '../../../components/rich-text-editor/rich-text-e
 import { GamificationDetail, GamificationPayload, GamificationStatus } from '../../../models/gamification';
 import { apiErrorMessage } from '../../../services/api-error';
 import { GamificationApiService } from '../../../services/gamification-api.service';
+import { RankingManagementSection } from '../ranking-management-section/ranking-management-section';
 import {
   chronologicalDateRangeValidator,
   decimalValidator,
@@ -17,7 +18,7 @@ import {
 
 @Component({
   selector: 'app-gamification-section',
-  imports: [DatePipe, ReactiveFormsModule, RichTextEditor],
+  imports: [DatePipe, ReactiveFormsModule, RichTextEditor, RankingManagementSection],
   templateUrl: './gamification-section.html',
   styleUrl: './gamification-section.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -58,6 +59,7 @@ export class GamificationSection {
       goal: ['0', Validators.required],
       valuePrecision: [0, [Validators.required, Validators.min(0), Validators.max(6)]],
       goalUnit: ['', [Validators.required, Validators.pattern(/\S/), Validators.maxLength(40)]],
+      maxLiveRanking: [5, [Validators.required, Validators.min(3), Validators.max(1000)]],
     },
     { validators: chronologicalDateRangeValidator },
   );
@@ -226,6 +228,11 @@ export class GamificationSection {
     }
   }
 
+  refreshRanking(): void {
+    const gamification = this.gamification();
+    if (gamification) this.changed.emit(gamification.publicId);
+  }
+
   private async runTransition(operation: () => Promise<unknown>, fallback: string): Promise<void> {
     this.isTransitioning.set(true);
     this.feedback.set(null);
@@ -253,7 +260,7 @@ export class GamificationSection {
 
     if (!payload) return null;
     const { description: _description, ...editablePayload } = payload;
-    return editablePayload;
+    return { ...editablePayload, maxLiveRanking: value.maxLiveRanking };
   }
 
   private buildPayload(
@@ -280,6 +287,7 @@ export class GamificationSection {
       goal: gamification.goal,
       valuePrecision: gamification.valuePrecision,
       goalUnit: gamification.goalUnit,
+      maxLiveRanking: gamification.maxLiveRanking,
     });
     this.editForm.controls.valuePrecision[gamification.ranking.length ? 'disable' : 'enable']({ emitEvent: false });
   }

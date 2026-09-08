@@ -1,14 +1,15 @@
+import { CurrencyPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
-import { GamificationDetail, Prize } from '../../../models/gamification';
+import { GamificationDetail, Prize, PrizePayload } from '../../../models/gamification';
 import { apiErrorMessage } from '../../../services/api-error';
 import { GamificationApiService } from '../../../services/gamification-api.service';
 import { ImageProcessingService } from '../../../services/image-processing.service';
 
 @Component({
   selector: 'app-prizes-section',
-  imports: [ReactiveFormsModule],
+  imports: [CurrencyPipe, ReactiveFormsModule],
   templateUrl: './prizes-section.html',
   styleUrl: './prizes-section.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -29,9 +30,13 @@ export class PrizesSection {
   readonly canEdit = computed(() => this.isSuperuser() && this.gamification().status !== 'closed');
   readonly createForm = this.formBuilder.group({
     name: ['', [Validators.required, Validators.maxLength(160)]],
+    rankingPosition: [1, [Validators.required, Validators.min(1), Validators.max(1000)]],
+    estimatedValue: ['', Validators.pattern(/^\d+(?:\.\d{1,2})?$/)],
   });
   readonly editForm = this.formBuilder.group({
     name: ['', [Validators.required, Validators.maxLength(160)]],
+    rankingPosition: [1, [Validators.required, Validators.min(1), Validators.max(1000)]],
+    estimatedValue: ['', Validators.pattern(/^\d+(?:\.\d{1,2})?$/)],
   });
 
   selectCreatePicture(event: Event): void {
@@ -51,10 +56,10 @@ export class PrizesSection {
 
     try {
       const response = await firstValueFrom(
-        this.api.createPrize(this.gamification().publicId, this.createForm.controls.name.value.trim()),
+        this.api.createPrize(this.gamification().publicId, this.prizePayload(this.createForm.getRawValue())),
       );
       const picture = this.createPicture();
-      this.createForm.reset();
+      this.createForm.reset({ name: '', rankingPosition: 1, estimatedValue: '' });
       this.createPicture.set(null);
       this.changed.emit();
 
@@ -78,6 +83,8 @@ export class PrizesSection {
 
   editPrize(prize: Prize): void {
     this.editForm.controls.name.setValue(prize.name);
+    this.editForm.controls.rankingPosition.setValue(prize.rankingPosition);
+    this.editForm.controls.estimatedValue.setValue(prize.estimatedValue === null ? '' : String(prize.estimatedValue));
     this.feedback.set(null);
     this.editingPrizeId.set(prize.publicId);
   }
@@ -98,7 +105,7 @@ export class PrizesSection {
     this.feedback.set(null);
 
     try {
-      await firstValueFrom(this.api.updatePrize(prize.publicId, this.editForm.controls.name.value.trim()));
+      await firstValueFrom(this.api.updatePrize(prize.publicId, this.prizePayload(this.editForm.getRawValue())));
       this.editingPrizeId.set(null);
       this.changed.emit();
     } catch (error) {
@@ -149,5 +156,13 @@ export class PrizesSection {
     } finally {
       this.pendingPrizeId.set(null);
     }
+  }
+
+  private prizePayload(value: { name: string; rankingPosition: number; estimatedValue: string }): PrizePayload {
+    return {
+      name: value.name.trim(),
+      rankingPosition: value.rankingPosition,
+      estimatedValue: value.estimatedValue === '' ? null : Number(value.estimatedValue),
+    };
   }
 }

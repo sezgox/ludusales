@@ -46,6 +46,7 @@ function gamification(): GamificationDetail {
     goal: '100',
     valuePrecision: 0,
     goalUnit: 'ventas',
+    maxLiveRanking: 5,
     status: 'active',
     outcome: 'pending',
     createdAt: '2026-01-01T00:00:00.000Z',

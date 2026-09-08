@@ -1,7 +1,7 @@
 <div class="section-heading">
   <div>
     <p class="eyebrow">Dinámicas</p>
-    <h2 id="dashboard-gamificacion-title">Gamificación</h2>
+    <h2 id="dashboard-gamificacion-title">Gamificaciones</h2>
   </div>
   @if (isSuperuser()) {
     <button class="primary-button" type="button" (click)="openCreateDialog(createDialog)">Nueva gamificación</button>
@@ -30,6 +30,11 @@
             <span>Título <span class="required-marker" aria-hidden="true">*</span></span>
             <input id="edit-title" type="text" maxlength="160" formControlName="title" required [class.is-invalid]="showEditError(editForm.controls.title)" [attr.aria-invalid]="showEditError(editForm.controls.title)" [attr.aria-describedby]="showEditError(editForm.controls.title) ? 'edit-title-error' : null">
             @if (showEditError(editForm.controls.title)) {<span id="edit-title-error" class="field-error">Escribe un título de hasta 160 caracteres.</span>}
+          </label>
+          <label>
+            <span>Máximo Live Ranking <span class="required-marker" aria-hidden="true">*</span></span>
+            <input id="edit-max-live-ranking" type="number" min="3" max="1000" step="1" formControlName="maxLiveRanking" required [class.is-invalid]="showEditError(editForm.controls.maxLiveRanking)" [attr.aria-invalid]="showEditError(editForm.controls.maxLiveRanking)" [attr.aria-describedby]="showEditError(editForm.controls.maxLiveRanking) ? 'edit-max-live-ranking-error' : null">
+            @if (showEditError(editForm.controls.maxLiveRanking)) {<span id="edit-max-live-ranking-error" class="field-error">Indica un número entre 3 y 1.000.</span>}
           </label>
           <label>
             <span>Inicio <span class="required-marker" aria-hidden="true">*</span></span>
@@ -101,6 +106,10 @@
       <p>Aquí aparecerá la gamificación activa de tu empresa junto con su información, premios y clasificación.</p>
     </div>
   }
+}
+
+@if (gamification(); as current) {
+  <app-ranking-management-section [gamification]="current" [isSuperuser]="isSuperuser()" (changed)="refreshRanking()" />
 }
 
 <dialog #createDialog class="create-dialog" aria-labelledby="create-gamification-title" (close)="createFeedback.set(null)">

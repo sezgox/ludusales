@@ -12,6 +12,7 @@ export type Gamification = {
   goal: string;
   valuePrecision: number;
   goalUnit: string;
+  maxLiveRanking: number;
   status: GamificationStatus;
   outcome: GamificationOutcome;
   createdAt: string;
@@ -24,6 +25,8 @@ export type Prize = {
   name: string;
   pictureUrl: string | null;
   sortOrder: number;
+  rankingPosition: number;
+  estimatedValue: number | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -50,6 +53,13 @@ export type GamificationPayload = {
   goal: string;
   valuePrecision: number;
   goalUnit: string;
+  maxLiveRanking?: number;
+};
+
+export type PrizePayload = {
+  name: string;
+  rankingPosition: number;
+  estimatedValue: number | null;
 };
 
 export type RankingPayload = {

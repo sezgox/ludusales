@@ -25,11 +25,11 @@ describe('PrizesSection', () => {
   afterEach(() => httpMock.verify());
 
   it('creates a named prize without requiring an image', async () => {
-    component.createForm.setValue({ name: 'Viaje' });
+    component.createForm.setValue({ name: 'Viaje', rankingPosition: 1, estimatedValue: '99.95' });
     const createPromise = component.createPrize();
     const request = httpMock.expectOne('http://localhost:8787/superuser/gamifications/game-id/prizes');
     expect(request.request.method).toBe('POST');
-    expect(request.request.body).toEqual({ name: 'Viaje' });
+    expect(request.request.body).toEqual({ name: 'Viaje', rankingPosition: 1, estimatedValue: 99.95 });
     request.flush({ ok: true, prize: { publicId: 'prize-id' } });
     await createPromise;
     expect(component.createForm.controls.name.value).toBe('');
@@ -55,6 +55,7 @@ function prizeGamification(status: GamificationDetail['status']): GamificationDe
     goal: '100.00',
     valuePrecision: 2,
     goalUnit: 'ventas',
+    maxLiveRanking: 5,
     status,
     outcome: status === 'closed' ? 'missed' : 'pending',
     createdAt: '2027-01-01',

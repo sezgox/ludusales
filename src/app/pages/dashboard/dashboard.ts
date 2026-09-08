@@ -84,7 +84,7 @@ export class Dashboard {
   readonly menu: DashboardMenuItem[] = [
     { label: 'Información', section: 'informacion' },
     { label: 'Premios', section: 'premios' },
-    { label: 'Gamificación', section: 'gamificacion' },
+    { label: 'Gamificaciones', section: 'gamificacion' },
     { label: 'Live Ranking', section: 'ranking' },
   ];
   readonly activeSection = computed(() => this.sectionFromUrl(this.currentUrl()));

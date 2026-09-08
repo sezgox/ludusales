@@ -1,67 +1,30 @@
 <div class="section-heading">
-  <div>
-    <p class="eyebrow">En directo</p>
-    <h2 id="dashboard-ranking-title">Live Ranking</h2>
-  </div>
-  <span class="ranking-count">{{ gamification().ranking.length }} / 1000</span>
+  <div><p class="eyebrow">En directo</p><h2 id="dashboard-ranking-title">Live Ranking</h2></div>
+  <span class="ranking-count">{{ visibleEntries().length }} de {{ gamification().ranking.length }}</span>
 </div>
 
-@if (canEdit()) {
-  <form class="participant-form" [formGroup]="participantForm" (ngSubmit)="addParticipant()">
-    <label>
-      <span>Nombre completo</span>
-      <input type="text" formControlName="fullName" maxlength="160" autocomplete="off" required>
-    </label>
-    <label>
-      <span>Score ({{ gamification().goalUnit }})</span>
-      <input type="text" inputmode="decimal" formControlName="score" required>
-    </label>
-    <button class="primary-button" type="submit" [disabled]="isSaving() || isFull()">Añadir persona</button>
-  </form>
-}
+@if (visibleEntries().length) {
+  <section class="podium" aria-label="Podio Live Ranking">
+    @if (podiumEntry(1); as second) {
+      <article class="podium-entry podium-entry--second"><span class="podium-entry__position">{{ second.position }}</span><strong>{{ second.fullName }}</strong><span>{{ second.score }} {{ gamification().goalUnit }}</span></article>
+    }
+    @if (podiumEntry(0); as first) {
+      <article class="podium-entry podium-entry--first"><span class="podium-entry__position">{{ first.position }}</span><strong>{{ first.fullName }}</strong><span>{{ first.score }} {{ gamification().goalUnit }}</span></article>
+    }
+    @if (podiumEntry(2); as third) {
+      <article class="podium-entry podium-entry--third"><span class="podium-entry__position">{{ third.position }}</span><strong>{{ third.fullName }}</strong><span>{{ third.score }} {{ gamification().goalUnit }}</span></article>
+    }
+  </section>
 
-@if (feedback()) {
-  <p class="section-feedback" role="alert">{{ feedback() }}</p>
-}
-
-@if (gamification().ranking.length) {
-  <div class="ranking-table-wrap">
-    <table>
-      <caption class="visually-hidden">Clasificación de participantes</caption>
-      <thead>
-        <tr><th scope="col">Posición</th><th scope="col">Participante</th><th scope="col">Score</th>@if (canEdit()) {<th scope="col">Acciones</th>}</tr>
-      </thead>
-      <tbody>
-        @for (entry of gamification().ranking; track entry.externalParticipantId) {
-          <tr>
-            <td class="position"><span>{{ entry.position }}</span></td>
-            @if (editingParticipantId() === entry.externalParticipantId) {
-              <td><label class="visually-hidden" [for]="'ranking-name-' + entry.externalParticipantId">Nombre</label><input [id]="'ranking-name-' + entry.externalParticipantId" type="text" maxlength="160" [formControl]="editForm.controls.fullName"></td>
-              <td><label class="visually-hidden" [for]="'ranking-score-' + entry.externalParticipantId">Score</label><input [id]="'ranking-score-' + entry.externalParticipantId" type="text" inputmode="decimal" [formControl]="editForm.controls.score"></td>
-              <td><div class="row-actions"><button class="primary-button small-button" type="button" [disabled]="isSaving()" (click)="saveParticipant(entry)">Guardar</button><button class="secondary-button small-button" type="button" (click)="cancelEdit()">Cancelar</button></div></td>
-            } @else {
-              <td>{{ entry.fullName }}</td>
-              <td><strong>{{ entry.score }}</strong> {{ gamification().goalUnit }}</td>
-              @if (canEdit()) {
-                <td><div class="row-actions"><button class="secondary-button small-button" type="button" [disabled]="isSaving()" (click)="editParticipant(entry)">Editar</button><button class="danger-button small-button" type="button" [disabled]="isSaving()" (click)="deleteParticipant(entry)">Eliminar</button></div></td>
-              }
-            }
-          </tr>
-        }
-      </tbody>
-    </table>
-  </div>
-  <p class="ranking-note">La posición se calcula automáticamente por score. Los empates comparten posición.</p>
-} @else {
-  @if (canEdit()) {
-    <div class="empty-state">
-      <h3>Ranking vacío</h3>
-      <p>Añade participantes uno a uno para comenzar la clasificación.</p>
-    </div>
-  } @else {
-    <div class="empty-state">
-      <h3>Clasificación de participantes</h3>
-      <p>Aquí podrás consultar la posición y puntuación de las personas que participan en la gamificación.</p>
-    </div>
+  @if (remainingEntries().length) {
+    <div class="ranking-table-wrap"><table><caption class="visually-hidden">Resto del Live Ranking</caption><thead><tr><th scope="col">Posición</th><th scope="col">Participante</th><th scope="col">Score</th></tr></thead><tbody>
+      @for (entry of remainingEntries(); track entry.externalParticipantId) {
+        <tr><td class="position"><span>{{ entry.position }}</span></td><td>{{ entry.fullName }}</td><td><strong>{{ entry.score }}</strong> {{ gamification().goalUnit }}</td></tr>
+      }
+    </tbody></table></div>
   }
+
+  @if (hiddenEntries()) {<p class="ranking-note">Se muestran {{ visibleEntries().length }} de {{ gamification().ranking.length }} participantes.</p>}
+} @else {
+  <div class="empty-state"><h3>Clasificación de participantes</h3><p>Aquí podrás consultar las posiciones y puntuaciones en directo.</p></div>
 }
