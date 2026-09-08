@@ -4,6 +4,7 @@ export type GamificationOutcome = 'pending' | 'achieved' | 'missed';
 export type Gamification = {
   publicId: string;
   companyPublicId: string;
+  title: string;
   description: string;
   imageUrl: string | null;
   startAt: string;
@@ -42,6 +43,7 @@ export type GamificationDetail = Gamification & {
 };
 
 export type GamificationPayload = {
+  title: string;
   description: string;
   startAt: string;
   endAt: string;

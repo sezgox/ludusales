@@ -161,10 +161,9 @@ export class Dashboard {
   }
 
   gamificationLabel(gamification: Gamification): string {
-    const description = gamification.description.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
     const status = this.statusLabel(gamification.status);
-    const shortDescription = description.length > 48 ? `${description.slice(0, 45)}…` : description;
-    return `${status} · ${shortDescription}`;
+    const shortTitle = gamification.title.length > 48 ? `${gamification.title.slice(0, 45)}…` : gamification.title;
+    return `${status} · ${shortTitle}`;
   }
 
   openCreateCompanyDialog(dialog: HTMLDialogElement): void {

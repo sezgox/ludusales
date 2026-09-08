@@ -26,6 +26,7 @@ describe('GamificationApiService', () => {
 
   it('creates gamifications without converting decimal strings', () => {
     const payload: GamificationPayload = {
+      title: 'Reto',
       description: '<p>Reto</p>',
       startAt: '2027-01-01T08:00:00.000Z',
       endAt: '2027-02-01T17:00:00.000Z',

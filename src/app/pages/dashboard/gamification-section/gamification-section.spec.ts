@@ -27,6 +27,7 @@ describe('GamificationSection', () => {
 
   it('marks every invalid required field after trying to create a draft', async () => {
     component.createForm.setValue({
+      title: '',
       description: '<p></p>',
       startAt: '',
       endAt: '',
@@ -39,17 +40,19 @@ describe('GamificationSection', () => {
     fixture.detectChanges();
 
     expect(component.createFeedback()).toContain('campos marcados');
+    expect(fixture.nativeElement.querySelector('#create-title').getAttribute('aria-invalid')).toBe('true');
     expect(fixture.nativeElement.querySelector('[role="textbox"]').getAttribute('aria-invalid')).toBe('true');
     expect(fixture.nativeElement.querySelector('#create-start-at').getAttribute('aria-invalid')).toBe('true');
     expect(fixture.nativeElement.querySelector('#create-end-at').getAttribute('aria-invalid')).toBe('true');
     expect(fixture.nativeElement.querySelector('#create-goal').getAttribute('aria-invalid')).toBe('true');
     expect(fixture.nativeElement.querySelector('#create-goal-unit').getAttribute('aria-invalid')).toBe('true');
-    expect(fixture.nativeElement.querySelectorAll('.field-error')).toHaveLength(5);
+    expect(fixture.nativeElement.querySelectorAll('.field-error')).toHaveLength(6);
     httpMock.expectNone(() => true);
   });
 
   it('marks the end date when it is not later than the start date', async () => {
     component.createForm.setValue({
+      title: 'Reto válido',
       description: '<p>Reto válido</p>',
       startAt: '2027-01-02T09:00',
       endAt: '2027-01-01T09:00',

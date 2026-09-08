@@ -1,16 +1,13 @@
 :host { display: block; }
-.section-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; margin-top: 24px; }
-.information-media { order: -1; }
-.section-card { min-width: 0; border: 1px solid var(--color-border); border-radius: 10px; padding: 20px; background: var(--color-surface); }
-.section-card__header, .section-heading, .section-actions { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
-.section-card h3, .information-media h3 { margin: 4px 0 0; color: var(--color-heading); }
-.information-media { min-width: 0; padding: 4px 0; }
-.section-form { display: grid; gap: 16px; margin-top: 18px; }
-.description-edit-surface { position: relative; margin-top: 16px; border-radius: 8px; }
+.information-title h2 { margin: 0; color: var(--color-heading); font-size: clamp(1.7rem, 3vw, 2.35rem); line-height: 1.15; overflow-wrap: anywhere; }
+.information-content { display: grid; gap: 24px; margin-top: 24px; }
+.information-media, .information-description { min-width: 0; }
+.section-form { display: grid; gap: 16px; }
+.description-edit-surface { position: relative; border-radius: 8px; }
 .description-edit-surface.is-editable::after { position: absolute; inset: 0; border: 2px solid transparent; border-radius: 8px; content: ''; pointer-events: none; transition: border-color 150ms ease, background-color 150ms ease; }
 .description-edit-surface.is-editable:hover::after, .description-edit-surface.is-editable:focus-within::after { border-color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 5%, transparent); }
-.formatted-description { margin-top: 16px; color: var(--color-body); line-height: 1.7; overflow-wrap: anywhere; }
-.description-edit-surface .formatted-description { margin-top: 0; padding: 12px; }
+.formatted-description { color: var(--color-body); line-height: 1.7; overflow-wrap: anywhere; }
+.description-edit-surface .formatted-description { padding: 12px; }
 :host ::ng-deep .formatted-description > :first-child { margin-top: 0; }
 :host ::ng-deep .formatted-description > :last-child { margin-bottom: 0; }
 :host ::ng-deep .formatted-description p { margin: 0 0 1em; }
@@ -22,8 +19,8 @@
 :host ::ng-deep .formatted-description strong { font-weight: 800; }
 :host ::ng-deep .formatted-description a { color: var(--color-primary); text-decoration: underline; }
 :host ::ng-deep .formatted-description blockquote { margin: 0 0 1em; border-left: 4px solid var(--color-primary); padding-left: 16px; }
-.cover-media { position: relative; margin-top: 16px; overflow: hidden; border-radius: 8px; }
-.cover-preview, .empty-media { display: block; width: 100%; aspect-ratio: 16 / 10; margin-top: 0; border-radius: 8px; object-fit: cover; }
+.cover-media { position: relative; overflow: hidden; border-radius: 8px; }
+.cover-preview, .empty-media { display: block; width: 100%; aspect-ratio: 16 / 10; border-radius: 8px; object-fit: cover; }
 .empty-media { display: grid; place-items: center; border: 1px dashed var(--color-border); background: var(--color-surface-muted); color: var(--color-body); }
 .media-edit-overlay, .description-edit-overlay { position: absolute; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; background: rgba(20, 32, 24, 0.78); color: #fff; font: inherit; font-weight: 800; cursor: pointer; opacity: 0; transition: opacity 150ms ease; }
 .media-edit-overlay { inset: 0; flex-direction: column; }
@@ -31,12 +28,11 @@
 .media-edit-overlay input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .media-edit-overlay:focus-within, .description-edit-overlay:focus-visible { outline: 3px solid #fff; outline-offset: -6px; opacity: 1; }
 .description-edit-overlay { right: 12px; bottom: 12px; z-index: 1; min-height: 40px; border-radius: 7px; padding: 8px 12px; }
-.section-actions { margin-top: 16px; }
+.section-actions { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 16px; }
 .section-actions--start { justify-content: flex-start; flex-wrap: wrap; }
 .secondary-button, .danger-button { min-height: 42px; border: 1px solid var(--color-border); border-radius: 8px; padding: 10px 15px; background: var(--color-surface); color: var(--color-heading); font: inherit; font-weight: 800; cursor: pointer; }
 .danger-button { border-color: #d8a59f; color: #9d2418; }
 .section-feedback { margin: 12px 0 0; color: var(--color-primary); font-weight: 700; }
 .section-feedback.is-error { color: #9d2418; }
-button:focus-visible, .file-button:focus-within { outline: 3px solid rgba(39, 133, 55, 0.3); outline-offset: 2px; }
-button:disabled, .file-button:has(input:disabled) { cursor: not-allowed; opacity: 0.58; }
-@media (max-width: 760px) { .section-card__header, .section-heading { align-items: flex-start; } }
+button:focus-visible, .media-edit-overlay:focus-within { outline: 3px solid rgba(39, 133, 55, 0.3); outline-offset: 2px; }
+button:disabled, .media-edit-overlay:has(input:disabled) { cursor: wait; opacity: 0.65; }

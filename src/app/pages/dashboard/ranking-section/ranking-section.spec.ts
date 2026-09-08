@@ -57,6 +57,7 @@ function rankingGamification(): GamificationDetail {
   return {
     publicId: 'game-id',
     companyPublicId: 'company-id',
+    title: 'Reto',
     description: '<p>Reto</p>',
     imageUrl: null,
     startAt: '2027-01-01T09:00:00.000Z',

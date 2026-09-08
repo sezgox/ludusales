@@ -134,6 +134,7 @@ function gamification(publicId: string, companyPublicId: string, description: st
   return {
     publicId,
     companyPublicId,
+    title: description.replace(/<[^>]*>/g, ''),
     description,
     imageUrl: null,
     startAt: '2027-01-02T09:00:00.000Z',

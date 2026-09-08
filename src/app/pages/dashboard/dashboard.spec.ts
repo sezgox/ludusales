@@ -72,6 +72,17 @@ describe('Dashboard', () => {
     expect(select.value).toBe(draftGamification.publicId);
   });
 
+  it('uses the explicit title in labels instead of description HTML', () => {
+    createComponent();
+    expect(
+      component.gamificationLabel({
+        ...activeGamification,
+        title: 'Reto trimestral',
+        description: '&lt;p&gt;No debe mostrarse&lt;/p&gt;',
+      }),
+    ).toBe('Activa · Reto trimestral');
+  });
+
   it('defaults to the active gamification and preserves it in navigation links', async () => {
     await setupSuperuser(
       `/dashboard/premios/${demoCompany.public_id}`,
@@ -217,6 +228,7 @@ function gamification(publicId: string, status: Gamification['status'], descript
   return {
     publicId,
     companyPublicId: demoCompany.public_id,
+    title: description.replace(/<[^>]*>/g, ''),
     description,
     imageUrl: null,
     startAt: status === 'active' ? '2027-01-02T09:00:00.000Z' : '2027-01-03T09:00:00.000Z',

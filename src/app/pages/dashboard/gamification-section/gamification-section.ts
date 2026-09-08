@@ -40,6 +40,7 @@ export class GamificationSection {
   readonly canEdit = computed(() => this.isSuperuser() && this.gamification()?.status !== 'closed');
   readonly createForm = this.formBuilder.group(
     {
+      title: ['', [Validators.required, Validators.pattern(/\S/), Validators.maxLength(160)]],
       description: ['<p></p>', [Validators.maxLength(20_000), richTextRequiredValidator]],
       startAt: ['', Validators.required],
       endAt: ['', Validators.required],
@@ -51,6 +52,7 @@ export class GamificationSection {
   );
   readonly editForm = this.formBuilder.group(
     {
+      title: ['', [Validators.required, Validators.pattern(/\S/), Validators.maxLength(160)]],
       startAt: ['', Validators.required],
       endAt: ['', Validators.required],
       goal: ['0', Validators.required],
@@ -93,6 +95,7 @@ export class GamificationSection {
     start.setSeconds(0, 0);
     const end = new Date(start.getTime() + 30 * 24 * 60 * 60 * 1000);
     this.createForm.reset({
+      title: '',
       description: '<p></p>',
       startAt: toLocalDateTime(start.toISOString()),
       endAt: toLocalDateTime(end.toISOString()),
@@ -240,13 +243,13 @@ export class GamificationSection {
   private payloadFromCreateForm(): GamificationPayload | null {
     if (this.createForm.invalid) return null;
     const value = this.createForm.getRawValue();
-    return this.buildPayload(value.description, value.startAt, value.endAt, value.goal, value.valuePrecision, value.goalUnit);
+    return this.buildPayload(value.title, value.description, value.startAt, value.endAt, value.goal, value.valuePrecision, value.goalUnit);
   }
 
   private payloadFromEditForm(): Partial<GamificationPayload> | null {
     if (this.editForm.invalid) return null;
     const value = this.editForm.getRawValue();
-    const payload = this.buildPayload('', value.startAt, value.endAt, value.goal, value.valuePrecision, value.goalUnit);
+    const payload = this.buildPayload(value.title, '', value.startAt, value.endAt, value.goal, value.valuePrecision, value.goalUnit);
 
     if (!payload) return null;
     const { description: _description, ...editablePayload } = payload;
@@ -254,6 +257,7 @@ export class GamificationSection {
   }
 
   private buildPayload(
+    title: string,
     description: string,
     startAtValue: string,
     endAtValue: string,
@@ -265,11 +269,12 @@ export class GamificationSection {
     const endAt = toIsoDate(endAtValue);
 
     if (!startAt || !endAt || endAt <= startAt) return null;
-    return { description, startAt, endAt, goal: goal.trim(), valuePrecision, goalUnit: goalUnit.trim() };
+    return { title: title.trim(), description, startAt, endAt, goal: goal.trim(), valuePrecision, goalUnit: goalUnit.trim() };
   }
 
   private resetEditForm(gamification: GamificationDetail): void {
     this.editForm.reset({
+      title: gamification.title,
       startAt: toLocalDateTime(gamification.startAt),
       endAt: toLocalDateTime(gamification.endAt),
       goal: gamification.goal,
