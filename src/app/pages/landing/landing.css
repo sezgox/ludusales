@@ -1100,10 +1100,16 @@ section {
 }
 
 .testimonial-avatar {
+    display: grid;
+    place-items: center;
     width: 52px;
     height: 52px;
     min-width: 52px;
     border-radius: 999px;
+    color: #1f2937;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1;
 }
 
 .avatar-orange {
