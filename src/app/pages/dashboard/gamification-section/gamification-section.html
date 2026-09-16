@@ -12,7 +12,7 @@
   <article class="gamification-card">
     <div class="gamification-card__header">
       <div>
-        <span class="status-chip" [class.is-active]="current.status === 'active'" [class.is-closed]="current.status === 'closed'">
+        <span class="status-chip" [class.is-active]="current.status === 'active'" [class.is-inactive]="current.status === 'inactive' || current.status === 'closed'">
           {{ statusLabel(current.status) }}
         </span>
         <h3>Configuración</h3>
@@ -71,6 +71,7 @@
       <dl class="gamification-data">
         <div><dt>Inicio</dt><dd>{{ current.startAt | date:'medium' }}</dd></div>
         <div><dt>Fin</dt><dd>{{ current.endAt | date:'medium' }}</dd></div>
+        @if (current.actualEndAt) {<div><dt>Fin real</dt><dd>{{ current.actualEndAt | date:'medium' }}</dd></div>}
         <div><dt>Objetivo</dt><dd>{{ current.goal }} {{ current.goalUnit }}</dd></div>
         <div><dt>Resultado</dt><dd>{{ outcomeLabel() }}</dd></div>
       </dl>
@@ -83,11 +84,11 @@
     @if (isSuperuser() && !isEditing()) {
       <div class="section-actions section-actions--split">
         <div>
-          @if (current.status === 'draft') {
-            <button class="primary-button" type="button" [disabled]="isTransitioning()" (click)="activate()">Activar</button>
+          @if (current.status === 'draft' || current.status === 'inactive' || current.status === 'closed') {
+            <button class="primary-button" type="button" [disabled]="isTransitioning()" (click)="openActivation(activateDialog)">Activar</button>
           }
           @if (current.status === 'active') {
-            <button class="secondary-button" type="button" [disabled]="isTransitioning()" (click)="close()">Cerrar ahora</button>
+            <button class="secondary-button" type="button" [disabled]="isTransitioning()" (click)="deactivate()">Desactivar</button>
           }
         </div>
         <button class="danger-button" type="button" [disabled]="isTransitioning()" (click)="deleteGamification()">Eliminar gamificación</button>
@@ -165,5 +166,15 @@
       <button class="secondary-button" type="button" [disabled]="isSaving()" (click)="closeCreateDialog(createDialog)">Cancelar</button>
       <button class="primary-button" type="submit" [disabled]="isSaving()">{{ isSaving() ? 'Creando…' : 'Crear borrador' }}</button>
     </div>
+  </form>
+</dialog>
+
+<dialog #activateDialog class="create-dialog" aria-labelledby="activate-gamification-title" (close)="feedback.set(null)">
+  <form class="gamification-form" [formGroup]="activationForm" (ngSubmit)="activate(activateDialog)">
+    <div><p class="eyebrow">Fecha vencida</p><h2 id="activate-gamification-title">Extender gamificación</h2></div>
+    <p>La fecha de fin anterior ya pasó. Indica una nueva fecha de fin para volver a activarla.</p>
+    <label class="form-field"><span>Nueva fecha de fin</span><input id="activate-end-at" type="datetime-local" formControlName="endAt" required [class.is-invalid]="activationForm.controls.endAt.touched && activationForm.controls.endAt.invalid" [attr.aria-invalid]="activationForm.controls.endAt.touched && activationForm.controls.endAt.invalid"></label>
+    @if (feedback()) {<p class="section-feedback" role="alert">{{ feedback() }}</p>}
+    <div class="section-actions"><button class="secondary-button" type="button" [disabled]="isActivatingWithEndDate()" (click)="activateDialog.close()">Cancelar</button><button class="primary-button" type="submit" [disabled]="isActivatingWithEndDate()">{{ isActivatingWithEndDate() ? 'Activando…' : 'Activar' }}</button></div>
   </form>
 </dialog>

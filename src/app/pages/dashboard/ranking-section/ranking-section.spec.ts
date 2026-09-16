@@ -12,10 +12,10 @@ describe('RankingSection', () => {
     fixture.detectChanges();
   });
 
-  it('shows podium plus only entries allowed by the live-ranking limit', () => {
+  it('shows proportional bars only for entries allowed by the live-ranking limit', () => {
     const element = fixture.nativeElement as HTMLElement;
-    expect(element.querySelectorAll('.podium-entry')).toHaveLength(3);
-    expect(element.querySelectorAll('.ranking-table-wrap tbody tr')).toHaveLength(2);
+    expect(element.querySelectorAll('.bar-ranking__entry')).toHaveLength(5);
+    expect((element.querySelector('.bar-ranking__bar') as HTMLElement).style.width).toBe('100%');
     expect(element.textContent).toContain('Se muestran 5 de 6 participantes.');
   });
 
@@ -41,5 +41,5 @@ function rankingGamification(): GamificationDetail {
 }
 
 function entry(externalParticipantId: string, fullName: string, position: number, score: string) {
-  return { externalParticipantId, fullName, position, score, createdAt: '2027-01-01', updatedAt: '2027-01-01' };
+  return { externalParticipantId, fullName, pictureUrl: null, position, score, createdAt: '2027-01-01', updatedAt: '2027-01-01' };
 }

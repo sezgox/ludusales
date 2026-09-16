@@ -27,7 +27,7 @@ export class PrizesSection {
   readonly editingPrizeId = signal<string | null>(null);
   readonly createPicture = signal<File | null>(null);
   readonly feedback = signal<string | null>(null);
-  readonly canEdit = computed(() => this.isSuperuser() && this.gamification().status !== 'closed');
+  readonly canEdit = computed(() => this.isSuperuser());
   readonly createForm = this.formBuilder.group({
     name: ['', [Validators.required, Validators.maxLength(160)]],
     rankingPosition: [1, [Validators.required, Validators.min(1), Validators.max(1000)]],

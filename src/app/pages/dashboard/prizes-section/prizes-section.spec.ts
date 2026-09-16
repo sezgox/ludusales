@@ -35,11 +35,11 @@ describe('PrizesSection', () => {
     expect(component.createForm.controls.name.value).toBe('');
   });
 
-  it('hides write controls for closed gamifications', () => {
-    fixture.componentRef.setInput('gamification', prizeGamification('closed'));
+  it('keeps write controls available for inactive gamifications', () => {
+    fixture.componentRef.setInput('gamification', prizeGamification('inactive'));
     fixture.detectChanges();
-    expect(component.canEdit()).toBe(false);
-    expect(fixture.nativeElement.querySelector('.create-prize')).toBeNull();
+    expect(component.canEdit()).toBe(true);
+    expect(fixture.nativeElement.querySelector('.create-prize')).not.toBeNull();
   });
 });
 
@@ -57,10 +57,10 @@ function prizeGamification(status: GamificationDetail['status']): GamificationDe
     goalUnit: 'ventas',
     maxLiveRanking: 5,
     status,
-    outcome: status === 'closed' ? 'missed' : 'pending',
+    outcome: status === 'inactive' || status === 'closed' ? 'missed' : 'pending',
     createdAt: '2027-01-01',
     updatedAt: '2027-01-01',
-    closedAt: status === 'closed' ? '2027-02-01' : null,
+    actualEndAt: status === 'inactive' || status === 'closed' ? '2027-02-01' : null,
     prizes: [],
     ranking: [],
   };

@@ -1,4 +1,4 @@
-export type GamificationStatus = 'draft' | 'active' | 'closed';
+export type GamificationStatus = 'draft' | 'active' | 'inactive' | 'closed';
 export type GamificationOutcome = 'pending' | 'achieved' | 'missed';
 
 export type Gamification = {
@@ -17,7 +17,9 @@ export type Gamification = {
   outcome: GamificationOutcome;
   createdAt: string;
   updatedAt: string;
-  closedAt: string | null;
+  actualEndAt?: string | null;
+  /** @deprecated Use actualEndAt. Kept while older API responses are supported. */
+  closedAt?: string | null;
 };
 
 export type Prize = {
@@ -34,6 +36,7 @@ export type Prize = {
 export type RankingEntry = {
   externalParticipantId: string;
   fullName: string;
+  pictureUrl: string | null;
   position: number;
   score: string;
   createdAt: string;

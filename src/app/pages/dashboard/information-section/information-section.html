@@ -1,58 +1,119 @@
 <header class="information-title">
-  <h2 id="dashboard-informacion-title">{{ gamification().title }}</h2>
+  <h2 id="dashboard-informacion-title">Información de la Gamificación</h2>
+  <p>Conoce el reto actual, cómo funciona y cómo puedes ganar.</p>
+  <h3 class="gamification-title">{{ gamification().title }}</h3>
 </header>
 
-<div class="information-content">
-  @if (gamification().imageUrl || canEdit()) {
-    <section class="information-media" aria-label="Portada de la gamificación">
-      <div class="cover-media" [class.is-editable]="canEdit()">
-        @if (gamification().imageUrl) {
-          <img class="cover-preview" [src]="gamification().imageUrl" [alt]="'Portada de ' + gamification().title">
-        } @else {
-          <div class="empty-media">Sin portada</div>
+<div class="information-layout">
+  <div class="information-main">
+    @if (gamification().imageUrl || canEdit()) {
+      <section class="information-media" aria-label="Portada de la gamificación">
+        <div class="cover-media" [class.is-editable]="canEdit()">
+          @if (gamification().imageUrl) {
+            <img class="cover-preview" [src]="gamification().imageUrl" [alt]="'Portada de ' + gamification().title">
+          } @else {
+            <div class="empty-media">Sin portada</div>
+          }
+          @if (canEdit()) {
+            <label class="media-edit-overlay">
+              <span aria-hidden="true">↥</span>
+              {{ isUploading() ? 'Procesando…' : 'Cambiar imagen' }}
+              <input type="file" accept="image/jpeg,image/png,image/webp" [disabled]="isUploading()" (change)="uploadCover($event)">
+            </label>
+          }
+        </div>
+        @if (canEdit() && gamification().imageUrl) {
+          <div class="section-actions section-actions--start">
+            <button class="danger-button" type="button" [disabled]="isUploading()" (click)="deleteCover()">Eliminar imagen</button>
+          </div>
         }
-        @if (canEdit()) {
-          <label class="media-edit-overlay">
-            <span aria-hidden="true">↥</span>
-            {{ isUploading() ? 'Procesando…' : 'Cambiar imagen' }}
-            <input type="file" accept="image/jpeg,image/png,image/webp" [disabled]="isUploading()" (change)="uploadCover($event)">
-          </label>
+        @if (coverFeedback()) {
+          <p class="section-feedback" aria-live="polite">{{ coverFeedback() }}</p>
+        }
+      </section>
+    }
+
+    @if (gamification().description) {
+      <section class="information-description" aria-label="Descripción de la gamificación">
+        @if (isEditing()) {
+          <form class="section-form" [formGroup]="descriptionForm" (ngSubmit)="saveDescription()">
+            <app-rich-text-editor formControlName="description" />
+            @if (feedback()) {
+              <p class="section-feedback is-error" role="alert">{{ feedback() }}</p>
+            }
+            <div class="section-actions">
+              <button class="secondary-button" type="button" [disabled]="isSaving()" (click)="cancelDescription()">Cancelar</button>
+              <button class="primary-button" type="submit" [disabled]="isSaving()">{{ isSaving() ? 'Guardando…' : 'Guardar descripción' }}</button>
+            </div>
+          </form>
+        } @else {
+          <div class="description-edit-surface" [class.is-editable]="canEdit()">
+            <div class="formatted-description" [innerHTML]="gamification().description"></div>
+            @if (canEdit()) {
+              <button class="description-edit-overlay" type="button" (click)="editDescription()"><span aria-hidden="true">✎</span> Editar descripción</button>
+            }
+          </div>
+        }
+      </section>
+    }
+
+    <section class="how-it-works" aria-labelledby="how-it-works-title">
+      <h3 id="how-it-works-title">¿Cómo funciona?</h3>
+      <ol class="step-list">
+        <li class="step-card"><span class="step-icon" aria-hidden="true">◎</span><span class="step-number">1</span><h4>Cumple objetivos</h4><p>Alcanza tus metas individuales y suma puntos.</p></li>
+        <li class="step-card"><span class="step-icon" aria-hidden="true">▥</span><span class="step-number">2</span><h4>Suma puntos</h4><p>Cada acción que genera valor suma puntos.</p></li>
+        <li class="step-card"><span class="step-icon" aria-hidden="true">♜</span><span class="step-number">3</span><h4>Escala posiciones</h4><p>Compite con el resto del equipo y sube en el ranking.</p></li>
+        <li class="step-card"><span class="step-icon" aria-hidden="true">♜</span><span class="step-number">4</span><h4>Gana premios</h4><p>Las mejores posiciones se llevan los mejores premios.</p></li>
+      </ol>
+    </section>
+
+    <section class="ranking-disclaimer" aria-label="Actualización del ranking">
+      <span class="disclaimer-icon" aria-hidden="true">i</span>
+      <div><strong>Transparencia ante todo</strong><p>Los datos del ranking se actualizan diariamente. Consulta el ranking para ver tu posición actual.</p></div>
+      <a class="ranking-link" [routerLink]="['/dashboard', 'ranking', gamification().companyPublicId]">Ver ranking <span aria-hidden="true">→</span></a>
+    </section>
+  </div>
+
+  <aside class="information-side">
+    <section class="configuration-card" aria-labelledby="configuration-title">
+      <div class="configuration-header">
+        <div><p class="eyebrow">Reto actual</p><h3 id="configuration-title">Configuración</h3></div>
+        @if (canEdit() && !isEditingConfiguration()) {
+          <button class="secondary-button" type="button" (click)="editConfiguration()">Editar</button>
         }
       </div>
-      @if (canEdit() && gamification().imageUrl) {
-        <div class="section-actions section-actions--start">
-          <button class="danger-button" type="button" [disabled]="isUploading()" (click)="deleteCover()">Eliminar imagen</button>
-        </div>
-      }
-      @if (coverFeedback()) {
-        <p class="section-feedback" aria-live="polite">{{ coverFeedback() }}</p>
+
+      @if (isEditingConfiguration()) {
+        <form class="configuration-form" [formGroup]="configurationForm" (ngSubmit)="saveConfiguration()">
+          <label><span>Título</span><input type="text" maxlength="160" formControlName="title" required [class.is-invalid]="showConfigurationError(configurationForm.controls.title)" [attr.aria-invalid]="showConfigurationError(configurationForm.controls.title)"></label>
+          <label><span>Inicio</span><input type="datetime-local" formControlName="startAt" required [class.is-invalid]="showConfigurationError(configurationForm.controls.startAt)" [attr.aria-invalid]="showConfigurationError(configurationForm.controls.startAt)"></label>
+          <label><span>Fin</span><input type="datetime-local" formControlName="endAt" required [class.is-invalid]="showConfigurationError(configurationForm.controls.endAt) || showConfigurationDateRangeError()" [attr.aria-invalid]="showConfigurationError(configurationForm.controls.endAt) || showConfigurationDateRangeError()"></label>
+          <label><span>Objetivo</span><input type="text" inputmode="decimal" formControlName="goal" required [class.is-invalid]="showConfigurationError(configurationForm.controls.goal)" [attr.aria-invalid]="showConfigurationError(configurationForm.controls.goal)"></label>
+          <label><span>Decimales</span><input type="number" min="0" max="6" formControlName="valuePrecision" required [class.is-invalid]="showConfigurationError(configurationForm.controls.valuePrecision)" [attr.aria-invalid]="showConfigurationError(configurationForm.controls.valuePrecision)"></label>
+          <label><span>Unidad</span><input type="text" maxlength="40" formControlName="goalUnit" required [class.is-invalid]="showConfigurationError(configurationForm.controls.goalUnit)" [attr.aria-invalid]="showConfigurationError(configurationForm.controls.goalUnit)"></label>
+          <label><span>Máximo ranking</span><input type="number" min="3" max="1000" formControlName="maxLiveRanking" required [class.is-invalid]="showConfigurationError(configurationForm.controls.maxLiveRanking)" [attr.aria-invalid]="showConfigurationError(configurationForm.controls.maxLiveRanking)"></label>
+          @if (configurationFeedback()) {<p class="section-feedback is-error" role="alert">{{ configurationFeedback() }}</p>}
+          <div class="section-actions"><button class="secondary-button" type="button" [disabled]="isSavingConfiguration()" (click)="cancelConfiguration()">Cancelar</button><button class="primary-button" type="submit" [disabled]="isSavingConfiguration()">{{ isSavingConfiguration() ? 'Guardando…' : 'Guardar' }}</button></div>
+        </form>
+      } @else {
+        <dl class="configuration-data">
+          <div><dt>Gamificación</dt><dd>{{ gamification().title }}</dd></div>
+          <div><dt>Objetivo</dt><dd>{{ gamification().goal }} {{ gamification().goalUnit }}</dd></div>
+          <div><dt>Inicio</dt><dd>{{ gamification().startAt | date:'mediumDate' }}</dd></div>
+          <div><dt>Fin</dt><dd>{{ gamification().endAt | date:'mediumDate' }}</dd></div>
+          <div><dt>Ranking en directo</dt><dd>Top {{ gamification().maxLiveRanking }}</dd></div>
+        </dl>
       }
     </section>
-  }
 
-  <section class="information-description" aria-label="Descripción de la gamificación">
-    @if (isEditing()) {
-      <form class="section-form" [formGroup]="descriptionForm" (ngSubmit)="saveDescription()">
-        <app-rich-text-editor formControlName="description" />
-        @if (feedback()) {
-          <p class="section-feedback is-error" role="alert">{{ feedback() }}</p>
-        }
-        <div class="section-actions">
-          <button class="secondary-button" type="button" [disabled]="isSaving()" (click)="cancelDescription()">Cancelar</button>
-          <button class="primary-button" type="submit" [disabled]="isSaving()">
-            {{ isSaving() ? 'Guardando…' : 'Guardar descripción' }}
-          </button>
-        </div>
-      </form>
-    } @else {
-      <div class="description-edit-surface" [class.is-editable]="canEdit()">
-        <div class="formatted-description" [innerHTML]="gamification().description"></div>
-        @if (canEdit()) {
-          <button class="description-edit-overlay" type="button" (click)="editDescription()">
-            <span aria-hidden="true">✎</span> Editar descripción
-          </button>
-        }
-      </div>
-    }
-  </section>
+    <section class="points-card" aria-labelledby="points-title">
+      <h3 id="points-title">¿Cómo se suman puntos?</h3>
+      <ul>
+        <li><span aria-hidden="true">▥</span><div><strong>Ventas cerradas</strong><p>Suma puntos por cada venta realizada.</p></div></li>
+        <li><span aria-hidden="true">♙</span><div><strong>Productos estratégicos</strong><p>Multiplica tus puntos al vender productos clave.</p></div></li>
+        <li><span aria-hidden="true">★</span><div><strong>Calidad y satisfacción</strong><p>Las encuestas y la calidad también cuentan.</p></div></li>
+      </ul>
+      <a class="rules-link" [routerLink]="['/dashboard', 'gamificacion', gamification().companyPublicId]">Ver todas las reglas detalladas <span aria-hidden="true">→</span></a>
+    </section>
+  </aside>
 </div>

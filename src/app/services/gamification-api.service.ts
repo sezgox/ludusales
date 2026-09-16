@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
+import { map } from 'rxjs';
 import { Gamification, GamificationDetail, GamificationPayload, Prize, PrizePayload, RankingPayload } from '../models/gamification';
 import { ApiUrlService } from './api-url.service';
 
@@ -15,7 +16,7 @@ export class GamificationApiService {
     return this.http.get<{ ok: true; gamifications: Gamification[] }>(
       this.endpoint(`/companies/${encodeURIComponent(companyPublicId)}/gamifications`),
       this.credentials,
-    );
+    ).pipe(map((response) => ({ ...response, gamifications: response.gamifications.map((gamification) => this.withEffectiveStatus(gamification)) })));
   }
 
   detail(companyPublicId: string, gamificationPublicId: string) {
@@ -24,7 +25,7 @@ export class GamificationApiService {
         `/companies/${encodeURIComponent(companyPublicId)}/gamifications/${encodeURIComponent(gamificationPublicId)}`,
       ),
       this.credentials,
-    );
+    ).pipe(map((response) => ({ ...response, gamification: this.withEffectiveStatus(response.gamification) })));
   }
 
   create(companyPublicId: string, payload: GamificationPayload) {
@@ -51,9 +52,17 @@ export class GamificationApiService {
     );
   }
 
-  close(gamificationPublicId: string) {
+  activateWithEndDate(gamificationPublicId: string, endAt: string) {
     return this.http.post<{ ok: true; gamification: Gamification }>(
-      this.endpoint(`/superuser/gamifications/${encodeURIComponent(gamificationPublicId)}/close`),
+      this.endpoint(`/superuser/gamifications/${encodeURIComponent(gamificationPublicId)}/activate`),
+      { endAt },
+      this.credentials,
+    );
+  }
+
+  deactivate(gamificationPublicId: string) {
+    return this.http.post<{ ok: true; gamification: Gamification }>(
+      this.endpoint(`/superuser/gamifications/${encodeURIComponent(gamificationPublicId)}/deactivate`),
       {},
       this.credentials,
     );
@@ -136,6 +145,22 @@ export class GamificationApiService {
     );
   }
 
+  uploadRankingParticipantPicture(gamificationPublicId: string, externalParticipantId: string, image: Blob) {
+    return this.putWebp<{ ok: true; pictureUrl: string }>(
+      `/superuser/gamifications/${encodeURIComponent(gamificationPublicId)}/ranking/${encodeURIComponent(externalParticipantId)}/picture`,
+      image,
+    );
+  }
+
+  deleteRankingParticipantPicture(gamificationPublicId: string, externalParticipantId: string) {
+    return this.http.delete<OkResponse>(
+      this.endpoint(
+        `/superuser/gamifications/${encodeURIComponent(gamificationPublicId)}/ranking/${encodeURIComponent(externalParticipantId)}/picture`,
+      ),
+      this.credentials,
+    );
+  }
+
   private putWebp<T>(path: string, image: Blob) {
     return this.http.put<T>(this.endpoint(path), image, {
       withCredentials: true,
@@ -145,5 +170,10 @@ export class GamificationApiService {
 
   private endpoint(path: string): string {
     return this.apiUrl.endpoint(path);
+  }
+
+  private withEffectiveStatus<T extends Gamification>(gamification: T): T {
+    const isExpired = gamification.status === 'active' && Date.parse(gamification.endAt) <= Date.now();
+    return isExpired ? { ...gamification, status: 'inactive' } : gamification;
   }
 }

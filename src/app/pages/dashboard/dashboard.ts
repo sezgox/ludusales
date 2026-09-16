@@ -250,7 +250,7 @@ export class Dashboard {
   }
 
   private statusLabel(status: GamificationStatus): string {
-    return { draft: 'Borrador', active: 'Activa', closed: 'Cerrada' }[status];
+    return { draft: 'Borrador', active: 'Activa', inactive: 'Inactiva', closed: 'Inactiva' }[status];
   }
 
   private sectionFromUrl(url: string): DashboardSection {

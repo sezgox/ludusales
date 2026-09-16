@@ -1,16 +1,19 @@
+import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output, signal } from '@angular/core';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { RichTextEditor } from '../../../components/rich-text-editor/rich-text-editor';
 import { GamificationDetail } from '../../../models/gamification';
 import { apiErrorMessage } from '../../../services/api-error';
 import { GamificationApiService } from '../../../services/gamification-api.service';
 import { ImageProcessingService } from '../../../services/image-processing.service';
-import { richTextRequiredValidator } from '../dashboard-form.utils';
+import { chronologicalDateRangeValidator, decimalValidator, richTextRequiredValidator, toIsoDate, toLocalDateTime } from '../dashboard-form.utils';
 
 @Component({
   selector: 'app-information-section',
-  imports: [ReactiveFormsModule, RichTextEditor],
+  imports: [DatePipe, ReactiveFormsModule, RichTextEditor, RouterLink],
   templateUrl: './information-section.html',
   styleUrl: './information-section.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,19 +29,44 @@ export class InformationSection {
   readonly isEditing = signal(false);
   readonly isSaving = signal(false);
   readonly isUploading = signal(false);
+  readonly isEditingConfiguration = signal(false);
+  readonly isSavingConfiguration = signal(false);
+  readonly configurationAttempted = signal(false);
   readonly feedback = signal<string | null>(null);
   readonly coverFeedback = signal<string | null>(null);
-  readonly canEdit = computed(() => this.isSuperuser() && this.gamification().status !== 'closed');
+  readonly configurationFeedback = signal<string | null>(null);
+  readonly canEdit = computed(() => this.isSuperuser());
   readonly descriptionForm = this.formBuilder.group({
     description: ['', [Validators.maxLength(20_000), richTextRequiredValidator]],
   });
+  readonly configurationForm = this.formBuilder.group(
+    {
+      title: ['', [Validators.required, Validators.pattern(/\S/), Validators.maxLength(160)]],
+      startAt: ['', Validators.required],
+      endAt: ['', Validators.required],
+      goal: ['0', Validators.required],
+      valuePrecision: [0, [Validators.required, Validators.min(0), Validators.max(6)]],
+      goalUnit: ['', [Validators.required, Validators.pattern(/\S/), Validators.maxLength(40)]],
+      maxLiveRanking: [5, [Validators.required, Validators.min(3), Validators.max(1000)]],
+    },
+    { validators: chronologicalDateRangeValidator },
+  );
 
   constructor() {
+    this.configurationForm.controls.valuePrecision.valueChanges.pipe(takeUntilDestroyed()).subscribe((precision) => {
+      this.setGoalValidator(precision);
+    });
+    this.setGoalValidator(0);
+
     effect(() => {
-      const description = this.gamification().description;
+      const gamification = this.gamification();
 
       if (!this.isEditing()) {
-        this.descriptionForm.controls.description.setValue(description, { emitEvent: false });
+        this.descriptionForm.controls.description.setValue(gamification.description, { emitEvent: false });
+      }
+
+      if (!this.isEditingConfiguration()) {
+        this.resetConfigurationForm(gamification);
       }
     });
   }
@@ -120,5 +148,87 @@ export class InformationSection {
     } finally {
       this.isUploading.set(false);
     }
+  }
+
+  editConfiguration(): void {
+    this.resetConfigurationForm(this.gamification());
+    this.configurationFeedback.set(null);
+    this.configurationAttempted.set(false);
+    this.isEditingConfiguration.set(true);
+  }
+
+  cancelConfiguration(): void {
+    this.resetConfigurationForm(this.gamification());
+    this.configurationFeedback.set(null);
+    this.configurationAttempted.set(false);
+    this.isEditingConfiguration.set(false);
+  }
+
+  async saveConfiguration(): Promise<void> {
+    this.configurationAttempted.set(true);
+
+    if (this.configurationForm.invalid) {
+      this.configurationForm.markAllAsTouched();
+      this.configurationFeedback.set('Revisa los campos marcados antes de guardar.');
+      return;
+    }
+
+    const value = this.configurationForm.getRawValue();
+    const startAt = toIsoDate(value.startAt);
+    const endAt = toIsoDate(value.endAt);
+
+    if (!startAt || !endAt || endAt <= startAt) {
+      this.configurationFeedback.set('Revisa los campos marcados antes de guardar.');
+      return;
+    }
+
+    this.isSavingConfiguration.set(true);
+    this.configurationFeedback.set(null);
+
+    try {
+      await firstValueFrom(this.api.update(this.gamification().publicId, {
+        title: value.title.trim(),
+        startAt,
+        endAt,
+        goal: value.goal.trim(),
+        valuePrecision: value.valuePrecision,
+        goalUnit: value.goalUnit.trim(),
+        maxLiveRanking: value.maxLiveRanking,
+      }));
+      this.configurationAttempted.set(false);
+      this.isEditingConfiguration.set(false);
+      this.changed.emit();
+    } catch (error) {
+      this.configurationFeedback.set(apiErrorMessage(error, 'No se pudo guardar la configuración.'));
+    } finally {
+      this.isSavingConfiguration.set(false);
+    }
+  }
+
+  showConfigurationError(control: AbstractControl): boolean {
+    return this.configurationAttempted() && control.invalid;
+  }
+
+  showConfigurationDateRangeError(): boolean {
+    return this.configurationAttempted() && this.configurationForm.hasError('dateRange');
+  }
+
+  private setGoalValidator(precision: number): void {
+    this.configurationForm.controls.goal.setValidators([Validators.required, decimalValidator(precision)]);
+    this.configurationForm.controls.goal.updateValueAndValidity({ emitEvent: false });
+  }
+
+  private resetConfigurationForm(gamification: GamificationDetail): void {
+    this.configurationForm.reset({
+      title: gamification.title,
+      startAt: toLocalDateTime(gamification.startAt),
+      endAt: toLocalDateTime(gamification.endAt),
+      goal: gamification.goal,
+      valuePrecision: gamification.valuePrecision,
+      goalUnit: gamification.goalUnit,
+      maxLiveRanking: gamification.maxLiveRanking,
+    }, { emitEvent: false });
+    this.setGoalValidator(gamification.valuePrecision);
+    this.configurationForm.controls.valuePrecision[gamification.ranking.length ? 'disable' : 'enable']({ emitEvent: false });
   }
 }

@@ -1,5 +1,6 @@
 import { provideHttpClient } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { GamificationDetail } from '../../../models/gamification';
 import { InformationSection } from './information-section';
 
@@ -9,7 +10,7 @@ describe('InformationSection', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [InformationSection],
-      providers: [provideHttpClient()],
+      providers: [provideHttpClient(), provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(InformationSection);
@@ -18,19 +19,20 @@ describe('InformationSection', () => {
     fixture.detectChanges();
   });
 
-  it('shows title, image and formatted description in that order without section labels', () => {
+  it('shows information layout with cover, steps and ranking call to action', () => {
     const element = fixture.nativeElement as HTMLElement;
     const title = element.querySelector('h2');
     const image = element.querySelector('.information-media');
     const description = element.querySelector('.information-description');
 
-    expect(title?.textContent?.trim()).toBe('Reto trimestral');
+    expect(title?.textContent?.trim()).toBe('Información de la Gamificación');
+    expect(element.querySelector('.gamification-title')?.textContent?.trim()).toBe('Reto trimestral');
     expect(image?.compareDocumentPosition(description!)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
     expect(description?.querySelector('strong')?.textContent).toBe('ventas');
-    expect(element.textContent).not.toContain('Sección principal');
-    expect(element.textContent).not.toContain('Presentación');
-    expect(element.textContent).not.toContain('Imagen pública');
-    expect(element.textContent).not.toContain('Portada');
+    expect(element.textContent).toContain('¿Cómo funciona?');
+    expect(element.querySelectorAll('.step-card')).toHaveLength(4);
+    expect(element.querySelector('.ranking-link')?.textContent).toContain('Ver ranking');
+    expect(element.querySelector('.configuration-card')?.textContent).toContain('Reto trimestral');
   });
 });
 

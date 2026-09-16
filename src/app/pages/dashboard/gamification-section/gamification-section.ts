@@ -34,11 +34,12 @@ export class GamificationSection {
   readonly isEditing = signal(false);
   readonly isSaving = signal(false);
   readonly isTransitioning = signal(false);
+  readonly isActivatingWithEndDate = signal(false);
   readonly createAttempted = signal(false);
   readonly editAttempted = signal(false);
   readonly feedback = signal<string | null>(null);
   readonly createFeedback = signal<string | null>(null);
-  readonly canEdit = computed(() => this.isSuperuser() && this.gamification()?.status !== 'closed');
+  readonly canEdit = computed(() => this.isSuperuser());
   readonly createForm = this.formBuilder.group(
     {
       title: ['', [Validators.required, Validators.pattern(/\S/), Validators.maxLength(160)]],
@@ -63,6 +64,9 @@ export class GamificationSection {
     },
     { validators: chronologicalDateRangeValidator },
   );
+  readonly activationForm = this.formBuilder.group({
+    endAt: ['', Validators.required],
+  });
 
   constructor() {
     this.createForm.controls.valuePrecision.valueChanges.pipe(takeUntilDestroyed()).subscribe((precision) => {
@@ -84,7 +88,7 @@ export class GamificationSection {
   }
 
   statusLabel(status: GamificationStatus): string {
-    return { draft: 'Borrador', active: 'Activa', closed: 'Cerrada' }[status];
+    return { draft: 'Borrador', active: 'Activa', inactive: 'Inactiva', closed: 'Inactiva' }[status];
   }
 
   outcomeLabel(): string {
@@ -191,23 +195,50 @@ export class GamificationSection {
     }
   }
 
-  async activate(): Promise<void> {
+  openActivation(dialog: HTMLDialogElement): void {
     const gamification = this.gamification();
 
     if (!gamification) return;
-    await this.runTransition(
-      () => firstValueFrom(this.api.activate(gamification.publicId)),
-      'No se pudo activar la gamificación.',
-    );
+    if (Date.parse(gamification.endAt) > Date.now()) {
+      void this.activate();
+      return;
+    }
+
+    const newEnd = new Date();
+    newEnd.setDate(newEnd.getDate() + 30);
+    newEnd.setSeconds(0, 0);
+    this.activationForm.reset({ endAt: toLocalDateTime(newEnd.toISOString()) });
+    this.feedback.set(null);
+    dialog.showModal();
   }
 
-  async close(): Promise<void> {
+  async activate(dialog?: HTMLDialogElement): Promise<void> {
     const gamification = this.gamification();
 
-    if (!gamification || !globalThis.confirm('¿Cerrar la gamificación ahora? El resultado quedará bloqueado.')) return;
+    if (!gamification) return;
+    const endAt = dialog ? toIsoDate(this.activationForm.controls.endAt.value) : null;
+    if (dialog && (!endAt || endAt <= new Date().toISOString())) {
+      this.activationForm.controls.endAt.markAsTouched();
+      this.feedback.set('Indica una nueva fecha de fin posterior a este momento.');
+      return;
+    }
+
+    this.isActivatingWithEndDate.set(Boolean(dialog));
     await this.runTransition(
-      () => firstValueFrom(this.api.close(gamification.publicId)),
-      'No se pudo cerrar la gamificación.',
+      () => firstValueFrom(endAt ? this.api.activateWithEndDate(gamification.publicId, endAt) : this.api.activate(gamification.publicId)),
+      'No se pudo activar la gamificación.',
+    );
+    if (!this.feedback() && dialog) dialog.close();
+    this.isActivatingWithEndDate.set(false);
+  }
+
+  async deactivate(): Promise<void> {
+    const gamification = this.gamification();
+
+    if (!gamification || !globalThis.confirm('¿Desactivar la gamificación? Podrás editarla y activarla de nuevo cuando quieras.')) return;
+    await this.runTransition(
+      () => firstValueFrom(this.api.deactivate(gamification.publicId)),
+      'No se pudo desactivar la gamificación.',
     );
   }
 

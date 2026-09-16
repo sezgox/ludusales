@@ -61,4 +61,15 @@ describe('GamificationApiService', () => {
     expect(request.request.body).toEqual({ fullName: 'Ana', score: '10.00' });
     request.flush({ ok: true });
   });
+
+  it('uploads participant pictures through their encoded ranking route', () => {
+    const image = new Blob(['webp'], { type: 'image/webp' });
+    service.uploadRankingParticipantPicture('game', 'person/one', image).subscribe();
+    const request = httpMock.expectOne(
+      'http://localhost:8787/superuser/gamifications/game/ranking/person%2Fone/picture',
+    );
+    expect(request.request.method).toBe('PUT');
+    expect(request.request.headers.get('Content-Type')).toBe('image/webp');
+    request.flush({ ok: true, pictureUrl: 'https://assets.example/person.webp' });
+  });
 });
