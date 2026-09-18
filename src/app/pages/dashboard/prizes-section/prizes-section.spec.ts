@@ -63,5 +63,6 @@ function prizeGamification(status: GamificationDetail['status']): GamificationDe
     actualEndAt: status === 'inactive' || status === 'closed' ? '2027-02-01' : null,
     prizes: [],
     ranking: [],
+    rules: [],
   };
 }

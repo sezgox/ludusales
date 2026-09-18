@@ -37,6 +37,7 @@ function rankingGamification(): GamificationDetail {
       entry('one', 'Ana', 1, '50.00'), entry('two', 'Bea', 1, '50.00'), entry('three', 'Carla', 3, '25.00'),
       entry('four', 'Diego', 4, '20.00'), entry('five', 'Elena', 5, '15.00'), entry('six', 'Fran', 6, '10.00'),
     ],
+    rules: [],
   };
 }
 

@@ -6,7 +6,7 @@
 @if (visibleEntries().length) {
   <section class="bar-ranking" aria-label="Live Ranking">
     @for (entry of visibleEntries(); track entry.externalParticipantId) {
-      <article class="bar-ranking__entry" [attr.aria-label]="'Posición ' + entry.position + ': ' + entry.fullName + ', ' + entry.score + ' ' + gamification().goalUnit">
+      <article class="bar-ranking__entry" [attr.aria-label]="'Posición ' + entry.position + ': ' + entry.fullName + ', ' + entry.score + (gamification().goalUnit ? ' ' + gamification().goalUnit : '')">
         <span class="bar-ranking__position" aria-hidden="true">{{ entry.position }}</span>
         @if (entry.pictureUrl) {
           <img class="bar-ranking__avatar" [src]="entry.pictureUrl" [alt]="'Foto de ' + entry.fullName">
@@ -18,7 +18,7 @@
             <strong>{{ entry.fullName }}</strong>
           </div>
         </div>
-        <strong class="bar-ranking__score">{{ entry.score }} <span>{{ gamification().goalUnit }}</span></strong>
+        <strong class="bar-ranking__score">{{ entry.score }} @if (gamification().goalUnit) {<span>{{ gamification().goalUnit }}</span>}</strong>
       </article>
     }
   </section>

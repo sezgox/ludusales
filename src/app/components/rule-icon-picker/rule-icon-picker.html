@@ -1,0 +1,34 @@
+<button class="icon-trigger" type="button" (click)="open(iconDialog)">
+  <svg [lucideIcon]="iconName()" [size]="20" aria-hidden="true"></svg>
+  Cambiar icono
+</button>
+
+<dialog #iconDialog class="icon-dialog" aria-labelledby="rule-icon-picker-title">
+  <section>
+    <header>
+      <h3 id="rule-icon-picker-title">Elegir icono</h3>
+      <p>{{ matchingIcons().length }} iconos Lucide disponibles.</p>
+    </header>
+    <label class="icon-search">
+      <span>Buscar icono</span>
+      <input #searchInput type="search" [value]="search()" (input)="updateSearch(searchInput.value)" placeholder="Ej. trophy, star, chart">
+    </label>
+    <div class="icon-grid" role="list" aria-label="Iconos disponibles">
+      @for (name of visibleIcons(); track name) {
+        <button type="button" role="listitem" [class.is-selected]="name === iconName()" [attr.aria-label]="'Seleccionar icono ' + name" (click)="choose(name, iconDialog)">
+          <svg [lucideIcon]="name" [size]="22" aria-hidden="true"></svg>
+          <span>{{ name }}</span>
+        </button>
+      }
+    </div>
+    @if (!visibleIcons().length) {
+      <p class="empty-icons">No hay iconos que coincidan con la búsqueda.</p>
+    }
+    <footer>
+      <button class="secondary-button" type="button" [disabled]="page() === 0" (click)="previousPage()">Anterior</button>
+      <span>Página {{ page() + 1 }} de {{ pageCount() }}</span>
+      <button class="secondary-button" type="button" [disabled]="page() + 1 >= pageCount()" (click)="nextPage()">Siguiente</button>
+      <button class="secondary-button" type="button" (click)="iconDialog.close()">Cancelar</button>
+    </footer>
+  </section>
+</dialog>

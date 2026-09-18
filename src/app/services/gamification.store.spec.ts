@@ -36,7 +36,7 @@ describe('GamificationStore', () => {
     httpMock.expectOne(detailUrl(companyA, item.publicId)).flush({ ok: true, gamification: detail(item) });
     await detailPromise;
 
-    expect(store.gamifications()).toEqual([item]);
+    expect(store.gamifications()).toEqual([{ ...item, rules: [] }]);
     expect(store.selectedGamificationPublicId()).toBe(item.publicId);
     expect(store.selectedGamification()).toEqual(detail(item));
     expect(store.isLoadingGamifications()).toBe(false);
@@ -77,7 +77,7 @@ describe('GamificationStore', () => {
     await store.ensureCompany(companyA);
     await store.ensureDetail(companyA, itemA.publicId);
 
-    expect(store.gamifications()).toEqual([itemA]);
+    expect(store.gamifications()).toEqual([{ ...itemA, rules: [] }]);
     expect(store.selectedGamificationPublicId()).toBe(itemA.publicId);
     expect(store.selectedGamification()?.description).toBe('<p>Empresa A</p>');
     httpMock.expectNone(() => true);
@@ -152,7 +152,7 @@ function gamification(publicId: string, companyPublicId: string, description: st
 }
 
 function detail(item: Gamification): GamificationDetail {
-  return { ...item, prizes: [], ranking: [] };
+  return { ...item, prizes: [], ranking: [], rules: [] };
 }
 
 function listUrl(companyPublicId: string): string {

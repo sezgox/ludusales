@@ -88,32 +88,48 @@
           <label><span>Título</span><input type="text" maxlength="160" formControlName="title" required [class.is-invalid]="showConfigurationError(configurationForm.controls.title)" [attr.aria-invalid]="showConfigurationError(configurationForm.controls.title)"></label>
           <label><span>Inicio</span><input type="datetime-local" formControlName="startAt" required [class.is-invalid]="showConfigurationError(configurationForm.controls.startAt)" [attr.aria-invalid]="showConfigurationError(configurationForm.controls.startAt)"></label>
           <label><span>Fin</span><input type="datetime-local" formControlName="endAt" required [class.is-invalid]="showConfigurationError(configurationForm.controls.endAt) || showConfigurationDateRangeError()" [attr.aria-invalid]="showConfigurationError(configurationForm.controls.endAt) || showConfigurationDateRangeError()"></label>
-          <label><span>Objetivo</span><input type="text" inputmode="decimal" formControlName="goal" required [class.is-invalid]="showConfigurationError(configurationForm.controls.goal)" [attr.aria-invalid]="showConfigurationError(configurationForm.controls.goal)"></label>
+          <label><span>Objetivo (opcional)</span><input type="text" inputmode="decimal" formControlName="goal" [class.is-invalid]="showConfigurationError(configurationForm.controls.goal)" [attr.aria-invalid]="showConfigurationError(configurationForm.controls.goal)"></label>
           <label><span>Decimales</span><input type="number" min="0" max="6" formControlName="valuePrecision" required [class.is-invalid]="showConfigurationError(configurationForm.controls.valuePrecision)" [attr.aria-invalid]="showConfigurationError(configurationForm.controls.valuePrecision)"></label>
-          <label><span>Unidad</span><input type="text" maxlength="40" formControlName="goalUnit" required [class.is-invalid]="showConfigurationError(configurationForm.controls.goalUnit)" [attr.aria-invalid]="showConfigurationError(configurationForm.controls.goalUnit)"></label>
-          <label><span>Máximo ranking</span><input type="number" min="3" max="1000" formControlName="maxLiveRanking" required [class.is-invalid]="showConfigurationError(configurationForm.controls.maxLiveRanking)" [attr.aria-invalid]="showConfigurationError(configurationForm.controls.maxLiveRanking)"></label>
+          <label><span>Unidad (opcional)</span><input type="text" maxlength="40" formControlName="goalUnit" [class.is-invalid]="showConfigurationError(configurationForm.controls.goalUnit)" [attr.aria-invalid]="showConfigurationError(configurationForm.controls.goalUnit)"></label>
           @if (configurationFeedback()) {<p class="section-feedback is-error" role="alert">{{ configurationFeedback() }}</p>}
           <div class="section-actions"><button class="secondary-button" type="button" [disabled]="isSavingConfiguration()" (click)="cancelConfiguration()">Cancelar</button><button class="primary-button" type="submit" [disabled]="isSavingConfiguration()">{{ isSavingConfiguration() ? 'Guardando…' : 'Guardar' }}</button></div>
         </form>
       } @else {
         <dl class="configuration-data">
           <div><dt>Gamificación</dt><dd>{{ gamification().title }}</dd></div>
-          <div><dt>Objetivo</dt><dd>{{ gamification().goal }} {{ gamification().goalUnit }}</dd></div>
+          @if (gamification().goal !== null) {<div><dt>Objetivo</dt><dd>{{ gamification().goal }}{{ gamification().goalUnit ? ' ' + gamification().goalUnit : '' }}</dd></div>}
           <div><dt>Inicio</dt><dd>{{ gamification().startAt | date:'mediumDate' }}</dd></div>
           <div><dt>Fin</dt><dd>{{ gamification().endAt | date:'mediumDate' }}</dd></div>
-          <div><dt>Ranking en directo</dt><dd>Top {{ gamification().maxLiveRanking }}</dd></div>
         </dl>
       }
     </section>
 
-    <section class="points-card" aria-labelledby="points-title">
-      <h3 id="points-title">¿Cómo se suman puntos?</h3>
-      <ul>
-        <li><span aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20V11"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20V8"/></svg></span><div><strong>Ventas cerradas</strong><p>Suma puntos por cada venta realizada.</p></div></li>
-        <li><span aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M15.477 12.8899L16.992 21.4159C17.009 21.5163 16.9949 21.6195 16.9516 21.7116C16.9084 21.8038 16.838 21.8806 16.7499 21.9317C16.6619 21.9828 16.5603 22.0058 16.4588 21.9976C16.3573 21.9894 16.2607 21.9504 16.182 21.8859L12.602 19.1989C12.4292 19.0698 12.2192 19 12.0035 19C11.7878 19 11.5778 19.0698 11.405 19.1989L7.819 21.8849C7.74032 21.9493 7.64386 21.9882 7.54249 21.9964C7.44112 22.0046 7.33967 21.9817 7.25166 21.9308C7.16365 21.8798 7.09327 21.8032 7.04991 21.7112C7.00656 21.6192 6.99228 21.5162 7.009 21.4159L8.523 12.8899"/><path d="M12 14C15.3137 14 18 11.3137 18 8C18 4.68629 15.3137 2 12 2C8.68629 2 6 4.68629 6 8C6 11.3137 8.68629 14 12 14Z"/></svg></span><div><strong>Productos estratégicos</strong><p>Multiplica tus puntos al vender productos clave.</p></div></li>
-        <li><span aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 3 2.3 4.65 5.15.75-3.72 3.63.88 5.12L12 14.7l-4.61 2.45.88-5.12-3.72-3.63 5.15-.75L12 3Z"/></svg></span><div><strong>Calidad y satisfacción</strong><p>Las encuestas y la calidad también cuentan.</p></div></li>
-      </ul>
-      <a class="rules-link" [routerLink]="['/dashboard', 'gamificacion', gamification().companyPublicId]">Ver todas las reglas detalladas <span aria-hidden="true">→</span></a>
-    </section>
+    @if (gamification().rules.length || canEdit()) {
+      <section class="points-card" aria-labelledby="points-title">
+        <div class="points-card__header">
+          <h3 id="points-title">¿Cómo se suman puntos?</h3>
+        </div>
+        @if (canEdit()) {
+          <div class="rules-form">
+            <p class="rules-form__hint">Define las reglas y su orden de aparición.</p>
+            <app-rule-editor [rules]="rulesForm.controls.rules" [revision]="rulesVersion()" />
+            @if (rulesFeedback()) {
+              <p class="section-feedback is-error" role="alert">{{ rulesFeedback() }}</p>
+            }
+            <div class="section-actions">
+              <button class="primary-button" type="button" [disabled]="isSavingRules()" (click)="saveRules()">{{ isSavingRules() ? 'Guardando…' : 'Guardar reglas' }}</button>
+            </div>
+          </div>
+        } @else if (gamification().rules.length) {
+          <ul>
+            @for (rule of gamification().rules; track rule.position) {
+              <li><span aria-hidden="true"><svg [lucideIcon]="rule.iconName" [size]="23"></svg></span><div><strong>{{ rule.title }}</strong><p>{{ rule.description }}</p></div></li>
+            }
+          </ul>
+        } @else {
+          <p class="rules-empty">No hay reglas de puntuación configuradas.</p>
+        }
+      </section>
+    }
   </aside>
 </div>

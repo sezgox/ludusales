@@ -1,6 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { icons, isLucideIconComponent, provideLucideIcons } from '@lucide/angular';
 import { GamificationDetail } from '../../../models/gamification';
 import { InformationSection } from './information-section';
 
@@ -10,7 +11,7 @@ describe('InformationSection', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [InformationSection],
-      providers: [provideHttpClient(), provideRouter([])],
+      providers: [provideHttpClient(), provideRouter([]), provideLucideIcons(...Object.values(icons).filter(isLucideIconComponent))],
     }).compileComponents();
 
     fixture = TestBed.createComponent(InformationSection);
@@ -33,6 +34,40 @@ describe('InformationSection', () => {
     expect(element.querySelectorAll('.step-card')).toHaveLength(4);
     expect(element.querySelector('.ranking-link')?.textContent).toContain('Ver ranking');
     expect(element.querySelector('.configuration-card')?.textContent).toContain('Reto trimestral');
+    expect(element.querySelector('.points-card')?.textContent).toContain('Ventas cerradas');
+    expect(element.querySelector('.configuration-card')?.textContent).not.toContain('Ranking en directo');
+  });
+
+  it('hides the points section when the gamification has no rules', () => {
+    fixture.componentRef.setInput('gamification', { ...gamification(), rules: [] });
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.points-card')).toBeNull();
+  });
+
+  it('omits an unset objective from the public configuration', () => {
+    fixture.componentRef.setInput('gamification', { ...gamification(), goal: null, goalUnit: null });
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.configuration-card')?.textContent).not.toContain('Objetivo');
+  });
+
+  it('shows direct rule editing controls to a superuser in information', () => {
+    fixture.componentRef.setInput('isSuperuser', true);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.rules-form')).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('app-rule-editor')).not.toBeNull();
+
+    fixture.componentRef.setInput('gamification', {
+      ...gamification(),
+      rules: [
+        ...gamification().rules,
+        { position: 2, title: 'Calidad', description: 'La calidad también cuenta.', iconName: 'star' },
+      ],
+    });
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelectorAll('.rule-card')).toHaveLength(2);
   });
 });
 
@@ -56,5 +91,8 @@ function gamification(): GamificationDetail {
     closedAt: null,
     prizes: [],
     ranking: [],
+    rules: [
+      { position: 1, title: 'Ventas cerradas', description: 'Suma puntos por cada venta realizada.', iconName: 'chart-column' },
+    ],
   };
 }

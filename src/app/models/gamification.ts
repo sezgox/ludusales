@@ -1,5 +1,5 @@
 export type GamificationStatus = 'draft' | 'active' | 'inactive' | 'closed';
-export type GamificationOutcome = 'pending' | 'achieved' | 'missed';
+export type GamificationOutcome = 'pending' | 'achieved' | 'missed' | 'not_applicable';
 
 export type Gamification = {
   publicId: string;
@@ -9,9 +9,9 @@ export type Gamification = {
   imageUrl: string | null;
   startAt: string;
   endAt: string;
-  goal: string;
+  goal: string | null;
   valuePrecision: number;
-  goalUnit: string;
+  goalUnit: string | null;
   maxLiveRanking: number;
   status: GamificationStatus;
   outcome: GamificationOutcome;
@@ -46,6 +46,14 @@ export type RankingEntry = {
 export type GamificationDetail = Gamification & {
   prizes: Prize[];
   ranking: RankingEntry[];
+  rules: GamificationRule[];
+};
+
+export type GamificationRule = {
+  position: number;
+  title: string;
+  description: string;
+  iconName: string;
 };
 
 export type GamificationPayload = {
@@ -53,10 +61,11 @@ export type GamificationPayload = {
   description: string;
   startAt: string;
   endAt: string;
-  goal: string;
+  goal: string | null;
   valuePrecision: number;
-  goalUnit: string;
+  goalUnit: string | null;
   maxLiveRanking?: number;
+  rules?: GamificationRule[];
 };
 
 export type PrizePayload = {

@@ -3,9 +3,11 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, input, ou
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { LucideDynamicIcon } from '@lucide/angular';
 import { firstValueFrom } from 'rxjs';
 import { RichTextEditor } from '../../../components/rich-text-editor/rich-text-editor';
-import { GamificationDetail } from '../../../models/gamification';
+import { RuleEditor, RuleEditorForm } from '../../../components/rule-editor/rule-editor';
+import { GamificationDetail, GamificationRule } from '../../../models/gamification';
 import { apiErrorMessage } from '../../../services/api-error';
 import { GamificationApiService } from '../../../services/gamification-api.service';
 import { ImageProcessingService } from '../../../services/image-processing.service';
@@ -13,7 +15,7 @@ import { chronologicalDateRangeValidator, decimalValidator, richTextRequiredVali
 
 @Component({
   selector: 'app-information-section',
-  imports: [DatePipe, ReactiveFormsModule, RichTextEditor, RouterLink],
+  imports: [DatePipe, ReactiveFormsModule, RichTextEditor, RouterLink, LucideDynamicIcon, RuleEditor],
   templateUrl: './information-section.html',
   styleUrl: './information-section.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -31,10 +33,13 @@ export class InformationSection {
   readonly isUploading = signal(false);
   readonly isEditingConfiguration = signal(false);
   readonly isSavingConfiguration = signal(false);
+  readonly isSavingRules = signal(false);
+  readonly rulesVersion = signal(0);
   readonly configurationAttempted = signal(false);
   readonly feedback = signal<string | null>(null);
   readonly coverFeedback = signal<string | null>(null);
   readonly configurationFeedback = signal<string | null>(null);
+  readonly rulesFeedback = signal<string | null>(null);
   readonly canEdit = computed(() => this.isSuperuser());
   readonly descriptionForm = this.formBuilder.group({
     description: ['', [Validators.maxLength(20_000), richTextRequiredValidator]],
@@ -44,13 +49,15 @@ export class InformationSection {
       title: ['', [Validators.required, Validators.pattern(/\S/), Validators.maxLength(160)]],
       startAt: ['', Validators.required],
       endAt: ['', Validators.required],
-      goal: ['0', Validators.required],
+      goal: [''],
       valuePrecision: [0, [Validators.required, Validators.min(0), Validators.max(6)]],
-      goalUnit: ['', [Validators.required, Validators.pattern(/\S/), Validators.maxLength(40)]],
-      maxLiveRanking: [5, [Validators.required, Validators.min(3), Validators.max(1000)]],
+      goalUnit: ['', Validators.maxLength(40)],
     },
     { validators: chronologicalDateRangeValidator },
   );
+  readonly rulesForm = this.formBuilder.group({
+    rules: this.formBuilder.array<RuleEditorForm>([]),
+  });
 
   constructor() {
     this.configurationForm.controls.valuePrecision.valueChanges.pipe(takeUntilDestroyed()).subscribe((precision) => {
@@ -68,6 +75,8 @@ export class InformationSection {
       if (!this.isEditingConfiguration()) {
         this.resetConfigurationForm(gamification);
       }
+
+      this.resetRules(gamification.rules);
     });
   }
 
@@ -190,10 +199,9 @@ export class InformationSection {
         title: value.title.trim(),
         startAt,
         endAt,
-        goal: value.goal.trim(),
+        goal: value.goal.trim() || null,
         valuePrecision: value.valuePrecision,
-        goalUnit: value.goalUnit.trim(),
-        maxLiveRanking: value.maxLiveRanking,
+        goalUnit: value.goalUnit.trim() || null,
       }));
       this.configurationAttempted.set(false);
       this.isEditingConfiguration.set(false);
@@ -202,6 +210,28 @@ export class InformationSection {
       this.configurationFeedback.set(apiErrorMessage(error, 'No se pudo guardar la configuración.'));
     } finally {
       this.isSavingConfiguration.set(false);
+    }
+  }
+
+  async saveRules(): Promise<void> {
+    const rules = this.normalizeRules(this.rulesForm.getRawValue().rules);
+
+    if (this.rulesForm.invalid || !rules) {
+      this.rulesForm.markAllAsTouched();
+      this.rulesFeedback.set('Revisa las reglas antes de guardar.');
+      return;
+    }
+
+    this.isSavingRules.set(true);
+    this.rulesFeedback.set(null);
+
+    try {
+      await firstValueFrom(this.api.update(this.gamification().publicId, { rules }));
+      this.changed.emit();
+    } catch (error) {
+      this.rulesFeedback.set(apiErrorMessage(error, 'No se pudieron guardar las reglas.'));
+    } finally {
+      this.isSavingRules.set(false);
     }
   }
 
@@ -214,7 +244,7 @@ export class InformationSection {
   }
 
   private setGoalValidator(precision: number): void {
-    this.configurationForm.controls.goal.setValidators([Validators.required, decimalValidator(precision)]);
+    this.configurationForm.controls.goal.setValidators([decimalValidator(precision)]);
     this.configurationForm.controls.goal.updateValueAndValidity({ emitEvent: false });
   }
 
@@ -223,12 +253,40 @@ export class InformationSection {
       title: gamification.title,
       startAt: toLocalDateTime(gamification.startAt),
       endAt: toLocalDateTime(gamification.endAt),
-      goal: gamification.goal,
+      goal: gamification.goal ?? '',
       valuePrecision: gamification.valuePrecision,
-      goalUnit: gamification.goalUnit,
-      maxLiveRanking: gamification.maxLiveRanking,
+      goalUnit: gamification.goalUnit ?? '',
     }, { emitEvent: false });
     this.setGoalValidator(gamification.valuePrecision);
     this.configurationForm.controls.valuePrecision[gamification.ranking.length ? 'disable' : 'enable']({ emitEvent: false });
+  }
+
+  private resetRules(rules: GamificationRule[]): void {
+    const controls = this.rulesForm.controls.rules;
+    controls.clear({ emitEvent: false });
+    for (const rule of rules) controls.push(this.createRuleForm(rule), { emitEvent: false });
+    this.rulesVersion.update((version) => version + 1);
+  }
+
+  private createRuleForm(rule: GamificationRule): RuleEditorForm {
+    return this.formBuilder.group({
+      position: [rule.position, [Validators.required, Validators.min(1)]],
+      title: [rule.title, [Validators.required, Validators.pattern(/\S/), Validators.maxLength(160)]],
+      description: [rule.description, [Validators.required, Validators.pattern(/\S/), Validators.maxLength(2_000)]],
+      iconName: [rule.iconName, [Validators.required, Validators.pattern(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)]],
+    });
+  }
+
+  private normalizeRules(rules: GamificationRule[]): GamificationRule[] | null {
+    const normalized = rules.map((rule, index) => ({
+      position: index + 1,
+      title: rule.title.trim(),
+      description: rule.description.trim(),
+      iconName: rule.iconName,
+    }));
+
+    for (const rule of normalized) if (!rule.title || !rule.description) return null;
+
+    return normalized;
   }
 }

@@ -1,6 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { icons, isLucideIconComponent, provideLucideIcons } from '@lucide/angular';
 import { GamificationSection } from './gamification-section';
 
 describe('GamificationSection', () => {
@@ -11,7 +12,7 @@ describe('GamificationSection', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [GamificationSection],
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideLucideIcons(...Object.values(icons).filter(isLucideIconComponent))],
     }).compileComponents();
 
     fixture = TestBed.createComponent(GamificationSection);
@@ -34,6 +35,7 @@ describe('GamificationSection', () => {
       goal: '12.345',
       valuePrecision: 2,
       goalUnit: '   ',
+      rules: [],
     });
 
     await component.createGamification(document.createElement('dialog'));
@@ -45,9 +47,21 @@ describe('GamificationSection', () => {
     expect(fixture.nativeElement.querySelector('#create-start-at').getAttribute('aria-invalid')).toBe('true');
     expect(fixture.nativeElement.querySelector('#create-end-at').getAttribute('aria-invalid')).toBe('true');
     expect(fixture.nativeElement.querySelector('#create-goal').getAttribute('aria-invalid')).toBe('true');
-    expect(fixture.nativeElement.querySelector('#create-goal-unit').getAttribute('aria-invalid')).toBe('true');
-    expect(fixture.nativeElement.querySelectorAll('.field-error')).toHaveLength(6);
+    expect(fixture.nativeElement.querySelector('#create-goal-unit').getAttribute('aria-invalid')).toBe('false');
+    expect(fixture.nativeElement.querySelectorAll('.field-error')).toHaveLength(5);
     httpMock.expectNone(() => true);
+  });
+
+  it('loads editable rule presets when creating a gamification', () => {
+    component.openCreateDialog({ showModal: () => undefined } as HTMLDialogElement);
+
+    expect(component.createForm.controls.rules.getRawValue()).toEqual([
+      { position: 1, title: 'Ventas cerradas', description: 'Suma puntos por cada venta realizada.', iconName: 'chart-column' },
+      { position: 2, title: 'Productos estratégicos', description: 'Multiplica tus puntos al vender productos clave.', iconName: 'award' },
+      { position: 3, title: 'Calidad y satisfacción', description: 'Las encuestas y la calidad también cuentan.', iconName: 'star' },
+    ]);
+
+    expect(component.createForm.controls.rules.controls).toHaveLength(3);
   });
 
   it('marks the end date when it is not later than the start date', async () => {
@@ -59,6 +73,7 @@ describe('GamificationSection', () => {
       goal: '100.00',
       valuePrecision: 2,
       goalUnit: 'ventas',
+      rules: [],
     });
 
     await component.createGamification(document.createElement('dialog'));

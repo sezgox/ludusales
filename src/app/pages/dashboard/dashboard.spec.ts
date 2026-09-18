@@ -248,5 +248,5 @@ function gamification(publicId: string, status: Gamification['status'], descript
 }
 
 function detail(item: Gamification): GamificationDetail {
-  return { ...item, prizes: [], ranking: [] };
+  return { ...item, prizes: [], ranking: [], rules: [] };
 }

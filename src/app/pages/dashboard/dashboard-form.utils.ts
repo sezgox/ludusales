@@ -4,6 +4,7 @@ const maxScaledValue = 9_000_000_000_000;
 
 export const decimalValidator = (precision: number): ValidatorFn => (control: AbstractControl): ValidationErrors | null => {
   const value = typeof control.value === 'string' ? control.value.trim() : '';
+  if (!value) return null;
   const match = /^(\d+)(?:\.(\d+))?$/.exec(value);
 
   if (!match || (match[2]?.length ?? 0) > precision) {

@@ -1,0 +1,40 @@
+<div class="rule-list" role="list" aria-label="Reglas de puntuación" [attr.data-revision]="revision()">
+  @for (rule of rules().controls; track rule; let index = $index) {
+    <article
+      class="rule-card"
+      role="listitem"
+      [class.is-dragging]="draggedIndex() === index"
+      draggable="true"
+      (dragstart)="startDrag(index, $event)"
+      (dragover)="allowDrop($event)"
+      (drop)="drop(index, $event)"
+      (dragend)="endDrag()"
+    >
+      <span class="rule-card__drag" aria-hidden="true">⋮⋮</span>
+      <span class="rule-card__icon" aria-hidden="true"><svg [lucideIcon]="rule.controls.iconName.value" [size]="22"></svg></span>
+      <div class="rule-card__content"><strong>{{ rule.controls.title.value || 'Nueva regla' }}</strong><p>{{ rule.controls.description.value || 'Completa esta regla.' }}</p></div>
+      <button class="rule-card__edit" type="button" aria-label="Editar regla" draggable="false" (dragstart)="$event.preventDefault()" (click)="openEdit(index, ruleDialog)">✎</button>
+    </article>
+  }
+  <button class="add-rule-placeholder" type="button" (click)="addRule(ruleDialog)"><span aria-hidden="true">+</span> Añadir regla</button>
+</div>
+
+<dialog #ruleDialog class="rule-dialog" aria-labelledby="rule-dialog-title" (close)="editingIndex.set(null)">
+  <div class="rule-dialog__form" [formGroup]="editorForm">
+    <header><h3 id="rule-dialog-title">{{ editingIndex() === null ? 'Nueva regla' : 'Editar regla' }}</h3><p>La posición se actualiza al arrastrar la regla.</p></header>
+    <label><span>Título</span><input type="text" maxlength="160" formControlName="title" required></label>
+    <label><span>Descripción</span><textarea rows="4" maxlength="2000" formControlName="description" required></textarea></label>
+    <div><span class="rule-dialog__label">Icono</span><app-rule-icon-picker [iconName]="editorForm.controls.iconName.value" (selected)="setIcon($event)" /></div>
+    @if (editorForm.invalid && (editorForm.touched || editorForm.dirty)) {
+      <p class="rule-dialog__error" role="alert">Completa título, descripción e icono.</p>
+    }
+    <footer>
+      @if (editingIndex() !== null) {
+        <button class="danger-button" type="button" (click)="removeEditingRule(ruleDialog)">Eliminar</button>
+      }
+      <span></span>
+      <button class="secondary-button" type="button" (click)="closeEdit(ruleDialog)">Cancelar</button>
+      <button class="primary-button" type="button" (click)="saveEdit(ruleDialog)">Guardar regla</button>
+    </footer>
+  </div>
+</dialog>

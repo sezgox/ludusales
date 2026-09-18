@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } 
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
+import { icons, provideLucideIcons } from '@lucide/angular';
 import { filter, firstValueFrom, map, startWith } from 'rxjs';
 import { Gamification, GamificationStatus } from '../../models/gamification';
 import { apiErrorMessage } from '../../services/api-error';
@@ -30,6 +31,7 @@ type DashboardMenuItem = { label: string; section: DashboardSection };
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [provideLucideIcons(...Object.values(icons))],
 })
 export class Dashboard {
   private readonly authService = inject(AuthService);
