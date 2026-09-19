@@ -5,7 +5,6 @@ import { firstValueFrom } from 'rxjs';
 import { BlockImage, BlockOneCard, BlockOneCardPayload, BlockTwoCard, GamificationDetail } from '../../../models/gamification';
 import { apiErrorMessage } from '../../../services/api-error';
 import { GamificationApiService } from '../../../services/gamification-api.service';
-import { ImageProcessingService } from '../../../services/image-processing.service';
 import { RuleIconPicker } from '../../../components/rule-icon-picker/rule-icon-picker';
 
 @Component({
@@ -17,7 +16,6 @@ import { RuleIconPicker } from '../../../components/rule-icon-picker/rule-icon-p
 })
 export class GamificationBlocks {
   private readonly api = inject(GamificationApiService);
-  private readonly imageProcessing = inject(ImageProcessingService);
   private readonly formBuilder = inject(NonNullableFormBuilder);
 
   readonly gamification = input.required<GamificationDetail>();
@@ -112,7 +110,7 @@ export class GamificationBlocks {
     if (!(input instanceof HTMLInputElement) || !input.files?.[0]) return;
     this.isSaving.set(true); this.feedback.set(null);
     try {
-      const image = (await firstValueFrom(this.api.uploadBlockImage(await this.imageProcessing.toUploadableWebp(input.files[0])))).image;
+      const image = (await firstValueFrom(this.api.uploadBlockImage(input.files[0]))).image;
       this.images.update((items) => [image, ...items]);
       this.twoForm.controls.imagePublicId.setValue(image.publicId);
     } catch (error) { this.feedback.set(apiErrorMessage(error, 'No se pudo subir la imagen.')); }

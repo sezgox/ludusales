@@ -94,7 +94,10 @@ export class GamificationApiService {
   }
 
   uploadBlockImage(image: Blob) {
-    return this.putWebp<{ ok: true; image: BlockImage }>('/superuser/block-images', image);
+    return this.http.put<{ ok: true; image: BlockImage }>(this.endpoint('/superuser/block-images'), image, {
+      withCredentials: true,
+      headers: new HttpHeaders({ 'Content-Type': image.type || 'application/octet-stream' }),
+    });
   }
 
   createBlockOneCard(gamificationPublicId: string, payload: BlockOneCardPayload) {

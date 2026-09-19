@@ -22,6 +22,10 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - It MUST pass all AXE checks.
 - It MUST follow all WCAG AA minimums, including focus management, color contrast, and ARIA attributes.
 
+## Visual verification
+
+- Después de cualquier cambio visual en HTML o CSS, comprobar siempre resultado renderizado mediante MCP de navegador o DevTools disponible. Corregir desbordamientos y fallos responsive antes de finalizar.
+
 ### Components
 
 - Keep components small and focused on a single responsibility
