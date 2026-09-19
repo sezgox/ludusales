@@ -1,4 +1,17 @@
 :host { display: block; }
+:host ::ng-deep app-gamification-blocks .blocks-layout { align-items: start; }
+:host ::ng-deep app-gamification-blocks .blocks-layout { display: grid; grid-template-columns: 1fr; gap: 24px; }
+:host ::ng-deep app-gamification-blocks .blocks-bottom { display: grid; grid-template-columns: minmax(0, 1.8fr) minmax(260px, .8fr); gap: 24px; align-items: start; }
+:host ::ng-deep app-gamification-blocks .metric-grid { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
+@media (max-width: 900px) { :host ::ng-deep app-gamification-blocks .blocks-bottom { grid-template-columns: 1fr; } }
+:host ::ng-deep app-gamification-blocks .block-dialog { position: fixed; inset: 0; box-sizing: border-box; margin: auto; max-height: calc(100dvh - 32px); overflow-y: auto; }
+:host ::ng-deep app-ranking-management-section .participant-form { display: none; }
+:host ::ng-deep app-ranking-management-section .participant-dialog { position: fixed; inset: 0; box-sizing: border-box; width: min(620px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); margin: auto; overflow-y: auto; border: 1px solid var(--color-border); border-radius: 12px; padding: 24px; background: var(--color-surface); color: var(--color-heading); box-shadow: 0 24px 70px rgba(20, 32, 24, .24); }
+:host ::ng-deep app-ranking-management-section .participant-dialog::backdrop { background: rgba(20, 32, 24, .5); }
+:host ::ng-deep app-ranking-management-section .participant-dialog__form { display: grid; gap: 14px; }
+:host ::ng-deep app-ranking-management-section .participant-dialog__form h3, :host ::ng-deep app-ranking-management-section .participant-dialog__form p { margin: 0; }
+:host ::ng-deep app-ranking-management-section .participant-dialog__form label { display: grid; gap: 7px; color: var(--color-heading); font-weight: 800; }
+:host ::ng-deep app-ranking-management-section .participant-dialog__actions { display: flex; justify-content: flex-end; gap: 10px; }
 .section-heading, .gamification-card__header, .section-actions, .section-actions--split { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
 .gamification-card { margin-top: 24px; border: 1px solid var(--color-border); border-radius: 10px; padding: 22px; background: var(--color-surface); }
 .gamification-card h3 { margin: 10px 0 0; color: var(--color-heading); font-size: 1.35rem; }

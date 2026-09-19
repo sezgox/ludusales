@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } 
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
-import { icons, provideLucideIcons } from '@lucide/angular';
+import { icons, LucideDynamicIcon, provideLucideIcons } from '@lucide/angular';
 import { filter, firstValueFrom, map, startWith } from 'rxjs';
 import { Gamification, GamificationStatus } from '../../models/gamification';
 import { apiErrorMessage } from '../../services/api-error';
@@ -15,13 +15,14 @@ import { PrizesSection } from './prizes-section/prizes-section';
 import { RankingSection } from './ranking-section/ranking-section';
 
 type DashboardSection = 'informacion' | 'premios' | 'gamificacion' | 'ranking';
-type DashboardMenuItem = { label: string; section: DashboardSection };
+type DashboardMenuItem = { label: string; section: DashboardSection; icon: string };
 
 @Component({
   selector: 'app-dashboard',
   imports: [
     GamificationSection,
     InformationSection,
+    LucideDynamicIcon,
     NgOptimizedImage,
     PrizesSection,
     RankingSection,
@@ -84,10 +85,10 @@ export class Dashboard {
     return this.companies().find((company) => company.public_id === selectedCompanyPublicId) ?? null;
   });
   readonly menu: DashboardMenuItem[] = [
-    { label: 'Información', section: 'informacion' },
-    { label: 'Premios', section: 'premios' },
-    { label: 'Gamificaciones', section: 'gamificacion' },
-    { label: 'Live Ranking', section: 'ranking' },
+    { label: 'Información', section: 'informacion', icon: 'info' },
+    { label: 'Premios', section: 'premios', icon: 'gift' },
+    { label: 'Gamificaciones', section: 'gamificacion', icon: 'gamepad-2' },
+    { label: 'Live Ranking', section: 'ranking', icon: 'trophy' },
   ];
   readonly activeSection = computed(() => this.sectionFromUrl(this.currentUrl()));
   readonly companyId = computed(() => this.company()?.public_id.slice(0, 8).toUpperCase() ?? 'SIN ID');

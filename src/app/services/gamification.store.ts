@@ -130,6 +130,7 @@ export class GamificationStore {
       })
       .catch((error: unknown) => {
         if (generation === this.generation) {
+          if (this.httpStatus(error) === 404) void this.ensureCompany(companyPublicId, true);
           this.setFeedback(
             companyPublicId,
             apiErrorMessage(error, 'No se pudo cargar la gamificación seleccionada.'),
@@ -157,6 +158,12 @@ export class GamificationStore {
     this.detailRequests.clear();
   }
 
+  private httpStatus(error: unknown): number | null {
+    return typeof error === 'object' && error !== null && 'status' in error && typeof error.status === 'number'
+      ? error.status
+      : null;
+  }
+
   private setCompanyGamifications(companyPublicId: string, gamifications: Gamification[]): void {
     this.cache.update((cache) => {
       const next = new Map(cache);
@@ -176,7 +183,7 @@ export class GamificationStore {
       const current = cache.get(companyPublicId) ?? { gamifications: [], details: new Map<string, GamificationDetail>() };
       const details = new Map(current.details);
       details.set(detail.publicId, detail);
-      const { prizes: _prizes, ranking: _ranking, ...summary } = detail;
+      const { prizes: _prizes, ranking: _ranking, blockOneCards: _blockOneCards, blockTwoCards: _blockTwoCards, ...summary } = detail;
       const gamifications = current.gamifications.map((gamification) =>
         gamification.publicId === detail.publicId ? summary : gamification,
       );

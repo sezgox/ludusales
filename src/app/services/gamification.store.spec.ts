@@ -152,7 +152,7 @@ function gamification(publicId: string, companyPublicId: string, description: st
 }
 
 function detail(item: Gamification): GamificationDetail {
-  return { ...item, prizes: [], ranking: [], rules: [] };
+  return { ...item, prizes: [], ranking: [], rules: [], blockOneCards: [], blockTwoCards: [] };
 }
 
 function listUrl(companyPublicId: string): string {

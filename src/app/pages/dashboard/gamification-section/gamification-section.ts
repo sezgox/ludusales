@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormArray, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -9,6 +8,7 @@ import { RuleEditor, RuleEditorForm } from '../../../components/rule-editor/rule
 import { apiErrorMessage } from '../../../services/api-error';
 import { GamificationApiService } from '../../../services/gamification-api.service';
 import { RankingManagementSection } from '../ranking-management-section/ranking-management-section';
+import { GamificationBlocks } from '../gamification-blocks/gamification-blocks';
 import {
   chronologicalDateRangeValidator,
   decimalValidator,
@@ -19,7 +19,7 @@ import {
 
 @Component({
   selector: 'app-gamification-section',
-  imports: [DatePipe, ReactiveFormsModule, RichTextEditor, RankingManagementSection, RuleEditor],
+  imports: [ReactiveFormsModule, RichTextEditor, RankingManagementSection, RuleEditor, GamificationBlocks],
   templateUrl: './gamification-section.html',
   styleUrl: './gamification-section.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

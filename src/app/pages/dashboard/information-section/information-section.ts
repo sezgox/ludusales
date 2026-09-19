@@ -27,13 +27,14 @@ export class InformationSection {
 
   readonly gamification = input.required<GamificationDetail>();
   readonly isSuperuser = input.required<boolean>();
-  readonly changed = output<void>();
+  readonly changed = output<string | null>();
   readonly isEditing = signal(false);
   readonly isSaving = signal(false);
   readonly isUploading = signal(false);
   readonly isEditingConfiguration = signal(false);
   readonly isSavingConfiguration = signal(false);
   readonly isSavingRules = signal(false);
+  readonly isTransitioning = signal(false);
   readonly rulesVersion = signal(0);
   readonly configurationAttempted = signal(false);
   readonly feedback = signal<string | null>(null);
@@ -52,6 +53,7 @@ export class InformationSection {
       goal: [''],
       valuePrecision: [0, [Validators.required, Validators.min(0), Validators.max(6)]],
       goalUnit: ['', Validators.maxLength(40)],
+      maxLiveRanking: [5, [Validators.required, Validators.min(3), Validators.max(1000)]],
     },
     { validators: chronologicalDateRangeValidator },
   );
@@ -109,7 +111,7 @@ export class InformationSection {
         }),
       );
       this.isEditing.set(false);
-      this.changed.emit();
+      this.changed.emit(this.gamification().publicId);
     } catch (error) {
       this.feedback.set(apiErrorMessage(error, 'No se pudo guardar la descripción.'));
     } finally {
@@ -131,7 +133,7 @@ export class InformationSection {
       const webp = await this.imageProcessing.toUploadableWebp(inputElement.files[0]);
       await firstValueFrom(this.api.uploadCover(this.gamification().publicId, webp));
       this.coverFeedback.set('Portada actualizada.');
-      this.changed.emit();
+      this.changed.emit(this.gamification().publicId);
     } catch (error) {
       this.coverFeedback.set(apiErrorMessage(error, 'No se pudo subir la portada.'));
     } finally {
@@ -151,7 +153,7 @@ export class InformationSection {
     try {
       await firstValueFrom(this.api.deleteCover(this.gamification().publicId));
       this.coverFeedback.set('Portada eliminada.');
-      this.changed.emit();
+      this.changed.emit(this.gamification().publicId);
     } catch (error) {
       this.coverFeedback.set(apiErrorMessage(error, 'No se pudo eliminar la portada.'));
     } finally {
@@ -202,10 +204,11 @@ export class InformationSection {
         goal: value.goal.trim() || null,
         valuePrecision: value.valuePrecision,
         goalUnit: value.goalUnit.trim() || null,
+        maxLiveRanking: value.maxLiveRanking,
       }));
       this.configurationAttempted.set(false);
       this.isEditingConfiguration.set(false);
-      this.changed.emit();
+      this.changed.emit(this.gamification().publicId);
     } catch (error) {
       this.configurationFeedback.set(apiErrorMessage(error, 'No se pudo guardar la configuración.'));
     } finally {
@@ -227,7 +230,7 @@ export class InformationSection {
 
     try {
       await firstValueFrom(this.api.update(this.gamification().publicId, { rules }));
-      this.changed.emit();
+      this.changed.emit(this.gamification().publicId);
     } catch (error) {
       this.rulesFeedback.set(apiErrorMessage(error, 'No se pudieron guardar las reglas.'));
     } finally {
@@ -256,9 +259,51 @@ export class InformationSection {
       goal: gamification.goal ?? '',
       valuePrecision: gamification.valuePrecision,
       goalUnit: gamification.goalUnit ?? '',
+      maxLiveRanking: gamification.maxLiveRanking,
     }, { emitEvent: false });
     this.setGoalValidator(gamification.valuePrecision);
     this.configurationForm.controls.valuePrecision[gamification.ranking.length ? 'disable' : 'enable']({ emitEvent: false });
+  }
+
+  async activate(): Promise<void> {
+    const gamification = this.gamification();
+    if (Date.parse(gamification.endAt) <= Date.now()) {
+      this.configurationFeedback.set('Guarda primero una fecha de fin futura antes de activar la gamificación.');
+      return;
+    }
+    await this.runTransition(() => firstValueFrom(this.api.activate(gamification.publicId)), 'No se pudo activar la gamificación.');
+  }
+
+  async deactivate(): Promise<void> {
+    if (!globalThis.confirm('¿Desactivar la gamificación? Podrás activarla de nuevo cuando quieras.')) return;
+    await this.runTransition(() => firstValueFrom(this.api.deactivate(this.gamification().publicId)), 'No se pudo desactivar la gamificación.');
+  }
+
+  async deleteGamification(): Promise<void> {
+    if (!globalThis.confirm('¿Eliminar esta gamificación y todos sus premios, bloques y participantes?')) return;
+    this.isTransitioning.set(true);
+    this.configurationFeedback.set(null);
+    try {
+      await firstValueFrom(this.api.deleteGamification(this.gamification().publicId));
+      this.changed.emit(null);
+    } catch (error) {
+      this.configurationFeedback.set(apiErrorMessage(error, 'No se pudo eliminar la gamificación.'));
+    } finally {
+      this.isTransitioning.set(false);
+    }
+  }
+
+  private async runTransition(operation: () => Promise<unknown>, fallback: string): Promise<void> {
+    this.isTransitioning.set(true);
+    this.configurationFeedback.set(null);
+    try {
+      await operation();
+      this.changed.emit(this.gamification().publicId);
+    } catch (error) {
+      this.configurationFeedback.set(apiErrorMessage(error, fallback));
+    } finally {
+      this.isTransitioning.set(false);
+    }
   }
 
   private resetRules(rules: GamificationRule[]): void {

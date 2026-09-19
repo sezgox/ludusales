@@ -82,7 +82,7 @@ export class RankingManagementSection {
   removeEditCustomField(index: number): void { this.editForm.controls.customFields.removeAt(index); }
   isExistingHeader(index: number): boolean { return index < this.rankingFieldHeaders().length; }
 
-  async addParticipant(): Promise<void> {
+  async addParticipant(dialog?: HTMLDialogElement): Promise<void> {
     if (this.participantForm.invalid || this.isFull()) {
       this.participantForm.markAllAsTouched();
       this.feedback.set(this.isFull() ? 'El ranking admite un máximo de 1.000 personas.' : this.validationMessage());
@@ -103,6 +103,7 @@ export class RankingManagementSection {
       const picture = this.createPicture();
       this.createPicture.set(null);
       this.changed.emit();
+      if (dialog) dialog.close();
       if (picture) {
         try {
           const webp = await this.imageProcessing.toUploadableWebp(picture);

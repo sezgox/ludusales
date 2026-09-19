@@ -32,7 +32,7 @@
       <div class="dashboard-sidebar-heading"><p class="eyebrow">Panel</p><h1>Dashboard</h1></div>
       <nav class="dashboard-nav" aria-label="Secciones del dashboard">
         @for (item of menu; track item.section) {
-          <a class="dashboard-nav-link" [class.is-active]="activeSection() === item.section" [routerLink]="dashboardPath(item.section)" [queryParams]="gamificationQuery()" [attr.aria-current]="activeSection() === item.section ? 'page' : null" (click)="closeMenu()"><span class="dashboard-nav-marker" aria-hidden="true"></span><span>{{ item.label }}</span></a>
+          <a class="dashboard-nav-link" [class.is-active]="activeSection() === item.section" [routerLink]="dashboardPath(item.section)" [queryParams]="gamificationQuery()" [attr.aria-current]="activeSection() === item.section ? 'page' : null" (click)="closeMenu()"><svg [lucideIcon]="item.icon" [size]="21" aria-hidden="true"></svg><span>{{ item.label }}</span></a>
         }
       </nav>
     </aside>
@@ -64,7 +64,7 @@
           @default {
             @if (selectedGamification(); as current) {
               @switch (activeSection()) {
-                @case ('informacion') {<app-information-section [gamification]="current" [isSuperuser]="isSuperuser()" (changed)="refreshSelectedDetail()" />}
+                @case ('informacion') {<app-information-section [gamification]="current" [isSuperuser]="isSuperuser()" (changed)="handleGamificationChanged($event)" />}
                 @case ('premios') {<app-prizes-section [gamification]="current" [isSuperuser]="isSuperuser()" (changed)="refreshSelectedDetail()" />}
                 @case ('ranking') {<app-ranking-section [gamification]="current" />}
               }

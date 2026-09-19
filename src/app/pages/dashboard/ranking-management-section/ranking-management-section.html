@@ -26,10 +26,24 @@
 
 @if (canEdit()) {
   <section class="ranking-import" aria-labelledby="ranking-import-title">
+    <button class="secondary-button small-button ranking-import__add" type="button" [disabled]="isSaving() || isFull()" (click)="participantDialog.showModal()">Añadir participante</button>
     <div><h3 id="ranking-import-title">Actualizar desde Excel</h3><p>La primera hoja requiere <code>participantCode</code>, <code>fullName</code> y <code>score</code>. Cualquier otra columna se añade al ranking; <code>image</code> es opcional y contiene fotos ancladas a cada fila.</p></div>
     <div class="ranking-import__actions"><button class="secondary-button small-button" type="button" [disabled]="isSaving()" (click)="downloadTemplate()">Descargar plantilla</button><label class="secondary-button small-button file-button">Elegir Excel<input type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.xlsx" [disabled]="isSaving()" (change)="selectImportFile($event)"></label><button class="primary-button small-button" type="button" [disabled]="isSaving() || !importFile()" (click)="importRanking()">Importar y reemplazar</button></div>
     @if (importFile()) {<p class="ranking-import__file">{{ importFile()!.name }}</p>}
   </section>
+
+  <dialog #participantDialog class="participant-dialog" aria-labelledby="participant-dialog-title">
+    <form class="participant-dialog__form" [formGroup]="participantForm" (ngSubmit)="addParticipant(participantDialog)">
+      <div><p class="eyebrow">Ranking global</p><h3 id="participant-dialog-title">Añadir participante</h3></div>
+      <label><span>Código de participante</span><input type="text" formControlName="participantCode" maxlength="128" autocomplete="off" required></label>
+      <label><span>Nombre completo</span><input type="text" formControlName="fullName" maxlength="160" autocomplete="off" required></label>
+      <label><span>Score ({{ gamification().goalUnit }})</span><input type="text" inputmode="decimal" formControlName="score" required></label>
+      <label><span>Foto opcional</span><input type="file" accept="image/jpeg,image/png,image/webp" [disabled]="isSaving()" (change)="selectCreatePicture($event)"></label>
+      <div class="custom-fields-editor" formArrayName="customFields"><div class="custom-fields-editor__heading"><strong>Campos adicionales</strong><button class="secondary-button small-button" type="button" [disabled]="isSaving()" (click)="addCreateCustomField()">Añadir campo</button></div>@for (field of participantForm.controls.customFields.controls; track $index; let index = $index) {<div class="custom-fields-editor__row" [formGroupName]="index"><input formControlName="name" maxlength="80" placeholder="Nombre del campo" [readonly]="isExistingHeader(index)"><input formControlName="value" maxlength="500" placeholder="Valor">@if (!isExistingHeader(index)) {<button class="secondary-button small-button" type="button" aria-label="Quitar campo" (click)="removeCreateCustomField(index)">×</button>}</div>}</div>
+      <p class="participant-form__note">Nombre y foto se comparten entre rankings de la empresa.</p>
+      <div class="participant-dialog__actions"><button class="secondary-button" type="button" [disabled]="isSaving()" (click)="participantDialog.close()">Cancelar</button><button class="primary-button" type="submit" [disabled]="isSaving() || isFull()">Añadir participante</button></div>
+    </form>
+  </dialog>
 }
 @if (feedback()) {<p class="section-feedback" role="alert">{{ feedback() }}</p>}
 

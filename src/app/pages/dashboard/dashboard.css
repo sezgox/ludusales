@@ -568,3 +568,43 @@
         padding: 22px;
     }
 }
+
+@media (min-width: 861px) {
+    .dashboard-layout { display: block; }
+
+    .dashboard-sidebar {
+        position: fixed;
+        top: 96px;
+        left: 0;
+        z-index: 40;
+        width: 56px;
+        padding: 10px;
+        overflow: hidden;
+        border-radius: 0 12px 12px 0;
+        box-shadow: 0 14px 34px rgba(20, 32, 24, 0.18);
+        transition: width 180ms ease;
+    }
+
+    .dashboard-sidebar:hover,
+    .dashboard-sidebar:focus-within,
+    .dashboard-sidebar.is-open { width: 238px; }
+
+    .dashboard-sidebar-heading { display: none; }
+    .dashboard-nav { gap: 6px; padding-top: 0; }
+
+    .dashboard-nav-link {
+        grid-template-columns: 24px minmax(0, 1fr);
+        width: 218px;
+        gap: 12px;
+        padding: 11px 16px;
+        white-space: nowrap;
+    }
+
+    .dashboard-nav-link svg { color: var(--color-primary); }
+    .dashboard-nav-link > span { opacity: 0; transition: opacity 120ms ease; }
+    .dashboard-sidebar:hover .dashboard-nav-link > span,
+    .dashboard-sidebar:focus-within .dashboard-nav-link > span,
+    .dashboard-sidebar.is-open .dashboard-nav-link > span { opacity: 1; }
+
+    .dashboard-content { min-width: 0; }
+}

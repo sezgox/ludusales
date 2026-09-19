@@ -49,7 +49,43 @@ export type GamificationDetail = Gamification & {
   prizes: Prize[];
   ranking: RankingEntry[];
   rules: GamificationRule[];
+  blockOneCards: BlockOneCard[];
+  blockTwoCards: BlockTwoCard[];
 };
+
+export type BlockOneCard = {
+  publicId: string;
+  title: string;
+  iconName: string;
+  value: string;
+  subvalue: string | null;
+  progressCurrent: string | null;
+  progressMax: string | null;
+  sortOrder: number;
+};
+
+export type BlockTwoCard = {
+  publicId: string;
+  imagePublicId: string;
+  imageUrl: string;
+  title: string;
+  description: string;
+  sortOrder: number;
+};
+
+export type BlockImage = { publicId: string; imageUrl: string; createdAt: string };
+
+export type BlockOneCardPayload = {
+  title: string;
+  iconName: string;
+  value: string;
+  subvalue: string | null;
+  hasProgress: boolean;
+  currentValue?: string;
+  maxValue?: string;
+};
+
+export type BlockTwoCardPayload = { imagePublicId: string; title: string; description: string };
 
 export type GamificationRule = {
   position: number;

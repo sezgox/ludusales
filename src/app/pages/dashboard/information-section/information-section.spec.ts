@@ -69,6 +69,19 @@ describe('InformationSection', () => {
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelectorAll('.rule-card')).toHaveLength(2);
   });
+
+  it('keeps lifecycle controls and Live Ranking limit inside configuration edit mode', () => {
+    fixture.componentRef.setInput('isSuperuser', true);
+    fixture.detectChanges();
+    const component = fixture.componentInstance;
+    component.editConfiguration();
+    fixture.detectChanges();
+
+    const limit = fixture.nativeElement.querySelector('[formControlName="maxLiveRanking"]') as HTMLInputElement;
+    expect(limit.value).toBe('5');
+    expect(fixture.nativeElement.querySelector('.configuration-lifecycle')?.textContent).toContain('Desactivar');
+    expect(fixture.nativeElement.querySelector('.configuration-lifecycle')?.textContent).toContain('Eliminar gamificación');
+  });
 });
 
 function gamification(): GamificationDetail {
@@ -91,6 +104,8 @@ function gamification(): GamificationDetail {
     closedAt: null,
     prizes: [],
     ranking: [],
+    blockOneCards: [],
+    blockTwoCards: [],
     rules: [
       { position: 1, title: 'Ventas cerradas', description: 'Suma puntos por cada venta realizada.', iconName: 'chart-column' },
     ],

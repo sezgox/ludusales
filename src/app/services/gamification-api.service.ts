@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { map } from 'rxjs';
-import { Gamification, GamificationDetail, GamificationPayload, Prize, PrizePayload, RankingPayload, RankingReplacementEntry } from '../models/gamification';
+import { BlockImage, BlockOneCard, BlockOneCardPayload, BlockTwoCard, BlockTwoCardPayload, Gamification, GamificationDetail, GamificationPayload, Prize, PrizePayload, RankingPayload, RankingReplacementEntry } from '../models/gamification';
 import { ApiUrlService } from './api-url.service';
 
 type OkResponse = { ok: true };
@@ -87,6 +87,46 @@ export class GamificationApiService {
       this.endpoint(`/superuser/gamifications/${encodeURIComponent(gamificationPublicId)}/image`),
       this.credentials,
     );
+  }
+
+  listBlockImages() {
+    return this.http.get<{ ok: true; images: BlockImage[] }>(this.endpoint('/superuser/block-images'), this.credentials);
+  }
+
+  uploadBlockImage(image: Blob) {
+    return this.putWebp<{ ok: true; image: BlockImage }>('/superuser/block-images', image);
+  }
+
+  createBlockOneCard(gamificationPublicId: string, payload: BlockOneCardPayload) {
+    return this.http.post<{ ok: true; card: BlockOneCard }>(this.endpoint(`/superuser/gamifications/${encodeURIComponent(gamificationPublicId)}/block-one-cards`), payload, this.credentials);
+  }
+
+  updateBlockOneCard(cardPublicId: string, payload: BlockOneCardPayload) {
+    return this.http.patch<{ ok: true; card: BlockOneCard }>(this.endpoint(`/superuser/block-one-cards/${encodeURIComponent(cardPublicId)}`), payload, this.credentials);
+  }
+
+  deleteBlockOneCard(cardPublicId: string) {
+    return this.http.delete<OkResponse>(this.endpoint(`/superuser/block-one-cards/${encodeURIComponent(cardPublicId)}`), this.credentials);
+  }
+
+  reorderBlockOneCards(gamificationPublicId: string, ids: string[]) {
+    return this.http.put<OkResponse>(this.endpoint(`/superuser/gamifications/${encodeURIComponent(gamificationPublicId)}/block-one-cards/order`), { ids }, this.credentials);
+  }
+
+  createBlockTwoCard(gamificationPublicId: string, payload: BlockTwoCardPayload) {
+    return this.http.post<{ ok: true; card: BlockTwoCard }>(this.endpoint(`/superuser/gamifications/${encodeURIComponent(gamificationPublicId)}/block-two-cards`), payload, this.credentials);
+  }
+
+  updateBlockTwoCard(cardPublicId: string, payload: BlockTwoCardPayload) {
+    return this.http.patch<{ ok: true; card: BlockTwoCard }>(this.endpoint(`/superuser/block-two-cards/${encodeURIComponent(cardPublicId)}`), payload, this.credentials);
+  }
+
+  deleteBlockTwoCard(cardPublicId: string) {
+    return this.http.delete<OkResponse>(this.endpoint(`/superuser/block-two-cards/${encodeURIComponent(cardPublicId)}`), this.credentials);
+  }
+
+  reorderBlockTwoCards(gamificationPublicId: string, ids: string[]) {
+    return this.http.put<OkResponse>(this.endpoint(`/superuser/gamifications/${encodeURIComponent(gamificationPublicId)}/block-two-cards/order`), { ids }, this.credentials);
   }
 
   createPrize(gamificationPublicId: string, payload: PrizePayload) {

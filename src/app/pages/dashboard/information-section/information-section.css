@@ -1,4 +1,5 @@
 :host { display: block; }
+.configuration-lifecycle { display: grid; gap: 8px; margin-top: 8px; border-top: 1px solid var(--color-border); padding-top: 16px; }.configuration-lifecycle p { margin: 0; color: var(--color-body); font-size: .8rem; }.configuration-lifecycle .section-actions { margin-top: 0; }
 .information-title h2 { margin: 0; color: var(--color-heading); font-size: clamp(1.7rem, 3vw, 2.35rem); line-height: 1.15; }
 .information-title > p { margin: 8px 0 0; color: var(--color-body); font-size: 1rem; }
 .gamification-title { margin: 18px 0 0; color: var(--color-heading); font-size: clamp(1.2rem, 2vw, 1.5rem); line-height: 1.25; }

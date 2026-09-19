@@ -64,5 +64,7 @@ function prizeGamification(status: GamificationDetail['status']): GamificationDe
     prizes: [],
     ranking: [],
     rules: [],
+    blockOneCards: [],
+    blockTwoCards: [],
   };
 }

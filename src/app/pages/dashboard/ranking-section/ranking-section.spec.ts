@@ -38,6 +38,8 @@ function rankingGamification(): GamificationDetail {
       entry('four', 'Diego', 4, '20.00'), entry('five', 'Elena', 5, '15.00'), entry('six', 'Fran', 6, '10.00'),
     ],
     rules: [],
+    blockOneCards: [],
+    blockTwoCards: [],
   };
 }
 
