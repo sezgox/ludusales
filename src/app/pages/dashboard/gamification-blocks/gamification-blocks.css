@@ -19,13 +19,13 @@
 }
 .metric-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 288px), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 14px;
 }
 .metric-card,
 .card-placeholder {
   position: relative;
-  min-height: 158px;
+  box-sizing: border-box;
   border: 1px solid var(--color-border);
   border-radius: 12px;
   padding: 18px;
@@ -36,7 +36,7 @@
 .metric-card,
 .metric-grid > .card-placeholder {
   aspect-ratio: 2 / 1;
-  min-height: 144px;
+  min-height: 160px;
 }
 .metric-card__summary {
   display: flex;
@@ -75,7 +75,8 @@
 .progress-copy {
   display: flex;
   justify-content: space-between;
-  margin-top: 12px;
+  margin-top: auto;
+  padding-top: 12px;
   color: var(--color-body);
   font-size: 0.75rem;
   font-weight: 700;
@@ -276,6 +277,13 @@
   }
 }
 @media (max-width: 460px) {
+  .metric-grid {
+    grid-template-columns: 1fr;
+  }
+  .metric-card,
+  .metric-grid > .card-placeholder {
+    aspect-ratio: auto;
+  }
   .form-pair {
     grid-template-columns: 1fr;
   }
