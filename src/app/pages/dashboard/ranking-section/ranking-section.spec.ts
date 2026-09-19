@@ -41,6 +41,6 @@ function rankingGamification(): GamificationDetail {
   };
 }
 
-function entry(externalParticipantId: string, fullName: string, position: number, score: string) {
-  return { externalParticipantId, fullName, pictureUrl: null, position, score, createdAt: '2027-01-01', updatedAt: '2027-01-01' };
+function entry(participantCode: string, fullName: string, position: number, score: string) {
+  return { participantCode, fullName, pictureUrl: null, position, score, createdAt: '2027-01-01', updatedAt: '2027-01-01' };
 }

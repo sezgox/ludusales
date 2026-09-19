@@ -5,7 +5,7 @@
 
 @if (visibleEntries().length) {
   <section class="bar-ranking" aria-label="Live Ranking">
-    @for (entry of visibleEntries(); track entry.externalParticipantId) {
+    @for (entry of visibleEntries(); track entry.participantCode) {
       <article class="bar-ranking__entry" [attr.aria-label]="'Posición ' + entry.position + ': ' + entry.fullName + ', ' + entry.score + (gamification().goalUnit ? ' ' + gamification().goalUnit : '')">
         <span class="bar-ranking__position" aria-hidden="true">{{ entry.position }}</span>
         @if (entry.pictureUrl) {

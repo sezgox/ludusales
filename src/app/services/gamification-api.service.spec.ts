@@ -62,6 +62,26 @@ describe('GamificationApiService', () => {
     request.flush({ ok: true });
   });
 
+  it('replaces a ranking with participant codes', () => {
+    service.replaceRanking('game', [{ participantCode: 'ana-001', fullName: 'Ana', score: '10.00' }]).subscribe();
+    const request = httpMock.expectOne('http://localhost:8787/superuser/gamifications/game/ranking');
+    expect(request.request.method).toBe('PUT');
+    expect(request.request.body).toEqual({ entries: [{ participantCode: 'ana-001', fullName: 'Ana', score: '10.00' }] });
+    request.flush({ ok: true, count: 1 });
+  });
+
+  it('sends dynamic ranking headers and per-entry values', () => {
+    service.replaceRanking('game', [{
+      participantCode: 'ana-001', fullName: 'Ana', score: '10.00', customFields: { Email: 'ana@example.com' },
+    }], ['Email']).subscribe();
+    const request = httpMock.expectOne('http://localhost:8787/superuser/gamifications/game/ranking');
+    expect(request.request.body).toEqual({
+      fieldHeaders: ['Email'],
+      entries: [{ participantCode: 'ana-001', fullName: 'Ana', score: '10.00', customFields: { Email: 'ana@example.com' } }],
+    });
+    request.flush({ ok: true, count: 1 });
+  });
+
   it('uploads participant pictures through their encoded ranking route', () => {
     const image = new Blob(['webp'], { type: 'image/webp' });
     service.uploadRankingParticipantPicture('game', 'person/one', image).subscribe();

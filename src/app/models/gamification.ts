@@ -13,6 +13,7 @@ export type Gamification = {
   valuePrecision: number;
   goalUnit: string | null;
   maxLiveRanking: number;
+  rankingFieldHeaders?: string[];
   status: GamificationStatus;
   outcome: GamificationOutcome;
   createdAt: string;
@@ -34,11 +35,12 @@ export type Prize = {
 };
 
 export type RankingEntry = {
-  externalParticipantId: string;
+  participantCode: string;
   fullName: string;
   pictureUrl: string | null;
   position: number;
   score: string;
+  customFields?: Record<string, string>;
   createdAt: string;
   updatedAt: string;
 };
@@ -77,4 +79,14 @@ export type PrizePayload = {
 export type RankingPayload = {
   fullName: string;
   score: string;
+  customFields?: Record<string, string>;
+  fieldHeaders?: string[];
+  previousParticipantCode?: string;
+};
+
+export type RankingReplacementEntry = {
+  participantCode: string;
+  fullName: string;
+  score: string;
+  customFields?: Record<string, string>;
 };

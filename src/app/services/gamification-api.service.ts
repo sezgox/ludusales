@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { map } from 'rxjs';
-import { Gamification, GamificationDetail, GamificationPayload, Prize, PrizePayload, RankingPayload } from '../models/gamification';
+import { Gamification, GamificationDetail, GamificationPayload, Prize, PrizePayload, RankingPayload, RankingReplacementEntry } from '../models/gamification';
 import { ApiUrlService } from './api-url.service';
 
 type OkResponse = { ok: true };
@@ -126,36 +126,44 @@ export class GamificationApiService {
     );
   }
 
-  upsertRankingEntry(gamificationPublicId: string, externalParticipantId: string, payload: RankingPayload) {
+  replaceRanking(gamificationPublicId: string, entries: RankingReplacementEntry[], fieldHeaders?: string[]) {
+    return this.http.put<{ ok: true; count: number }>(
+      this.endpoint(`/superuser/gamifications/${encodeURIComponent(gamificationPublicId)}/ranking`),
+      { entries, ...(fieldHeaders ? { fieldHeaders } : {}) },
+      this.credentials,
+    );
+  }
+
+  upsertRankingEntry(gamificationPublicId: string, participantCode: string, payload: RankingPayload) {
     return this.http.put<OkResponse>(
       this.endpoint(
-        `/superuser/gamifications/${encodeURIComponent(gamificationPublicId)}/ranking/${encodeURIComponent(externalParticipantId)}`,
+        `/superuser/gamifications/${encodeURIComponent(gamificationPublicId)}/ranking/${encodeURIComponent(participantCode)}`,
       ),
       payload,
       this.credentials,
     );
   }
 
-  deleteRankingEntry(gamificationPublicId: string, externalParticipantId: string) {
+  deleteRankingEntry(gamificationPublicId: string, participantCode: string) {
     return this.http.delete<OkResponse>(
       this.endpoint(
-        `/superuser/gamifications/${encodeURIComponent(gamificationPublicId)}/ranking/${encodeURIComponent(externalParticipantId)}`,
+        `/superuser/gamifications/${encodeURIComponent(gamificationPublicId)}/ranking/${encodeURIComponent(participantCode)}`,
       ),
       this.credentials,
     );
   }
 
-  uploadRankingParticipantPicture(gamificationPublicId: string, externalParticipantId: string, image: Blob) {
+  uploadRankingParticipantPicture(gamificationPublicId: string, participantCode: string, image: Blob) {
     return this.putWebp<{ ok: true; pictureUrl: string }>(
-      `/superuser/gamifications/${encodeURIComponent(gamificationPublicId)}/ranking/${encodeURIComponent(externalParticipantId)}/picture`,
+      `/superuser/gamifications/${encodeURIComponent(gamificationPublicId)}/ranking/${encodeURIComponent(participantCode)}/picture`,
       image,
     );
   }
 
-  deleteRankingParticipantPicture(gamificationPublicId: string, externalParticipantId: string) {
+  deleteRankingParticipantPicture(gamificationPublicId: string, participantCode: string) {
     return this.http.delete<OkResponse>(
       this.endpoint(
-        `/superuser/gamifications/${encodeURIComponent(gamificationPublicId)}/ranking/${encodeURIComponent(externalParticipantId)}/picture`,
+        `/superuser/gamifications/${encodeURIComponent(gamificationPublicId)}/ranking/${encodeURIComponent(participantCode)}/picture`,
       ),
       this.credentials,
     );

@@ -5,45 +5,66 @@
 
 @if (canEdit()) {
   <form class="participant-form" [formGroup]="participantForm" (ngSubmit)="addParticipant()">
+    <label><span>Código de participante</span><input type="text" formControlName="participantCode" maxlength="128" autocomplete="off" required></label>
     <label><span>Nombre completo</span><input type="text" formControlName="fullName" maxlength="160" autocomplete="off" required></label>
     <label><span>Score ({{ gamification().goalUnit }})</span><input type="text" inputmode="decimal" formControlName="score" required></label>
     <label><span>Foto opcional</span><input type="file" accept="image/jpeg,image/png,image/webp" [disabled]="isSaving()" (change)="selectCreatePicture($event)"></label>
     <button class="primary-button" type="submit" [disabled]="isSaving() || isFull()">Añadir persona</button>
+    <div class="custom-fields-editor" formArrayName="customFields">
+      <div class="custom-fields-editor__heading"><strong>Campos adicionales</strong><button class="secondary-button small-button" type="button" [disabled]="isSaving()" (click)="addCreateCustomField()">Añadir campo</button></div>
+      @for (field of participantForm.controls.customFields.controls; track $index; let index = $index) {
+        <div class="custom-fields-editor__row" [formGroupName]="index">
+          <input formControlName="name" maxlength="80" placeholder="Nombre del campo" [readonly]="isExistingHeader(index)">
+          <input formControlName="value" maxlength="500" placeholder="Valor">
+          @if (!isExistingHeader(index)) {<button class="secondary-button small-button" type="button" aria-label="Quitar campo" (click)="removeCreateCustomField(index)">×</button>}
+        </div>
+      }
+    </div>
+    <p class="participant-form__note">Editar el nombre o la foto actualiza el perfil en los demás rankings de la empresa.</p>
   </form>
 }
+
+@if (canEdit()) {
+  <section class="ranking-import" aria-labelledby="ranking-import-title">
+    <div><h3 id="ranking-import-title">Actualizar desde Excel</h3><p>La primera hoja requiere <code>participantCode</code>, <code>fullName</code> y <code>score</code>. Cualquier otra columna se añade al ranking; <code>image</code> es opcional y contiene fotos ancladas a cada fila.</p></div>
+    <div class="ranking-import__actions"><button class="secondary-button small-button" type="button" [disabled]="isSaving()" (click)="downloadTemplate()">Descargar plantilla</button><label class="secondary-button small-button file-button">Elegir Excel<input type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.xlsx" [disabled]="isSaving()" (change)="selectImportFile($event)"></label><button class="primary-button small-button" type="button" [disabled]="isSaving() || !importFile()" (click)="importRanking()">Importar y reemplazar</button></div>
+    @if (importFile()) {<p class="ranking-import__file">{{ importFile()!.name }}</p>}
+  </section>
+}
 @if (feedback()) {<p class="section-feedback" role="alert">{{ feedback() }}</p>}
+
 @if (gamification().ranking.length) {
   <section class="podium" aria-label="Podio del ranking global">
-    @for (entry of podiumEntries(); track entry.externalParticipantId; let index = $index) {
+    @for (entry of podiumEntries(); track entry.participantCode; let index = $index) {
       <article class="podium-entry" [class.podium-entry--first]="index === 0" [class.podium-entry--second]="index === 1" [class.podium-entry--third]="index === 2">
-        @if (entry.pictureUrl) {
-          <img class="podium-entry__avatar" [src]="entry.pictureUrl" [alt]="'Foto de ' + entry.fullName">
-        } @else {
-          <span class="podium-entry__avatar podium-entry__avatar--placeholder" aria-hidden="true">{{ initials(entry.fullName) }}</span>
-        }
-        @if (editingParticipantId() === entry.externalParticipantId) {
-          <label class="visually-hidden" [for]="'podium-name-' + entry.externalParticipantId">Nombre</label><input [id]="'podium-name-' + entry.externalParticipantId" type="text" maxlength="160" [formControl]="editForm.controls.fullName">
-          <label class="visually-hidden" [for]="'podium-score-' + entry.externalParticipantId">Score</label><input [id]="'podium-score-' + entry.externalParticipantId" type="text" inputmode="decimal" [formControl]="editForm.controls.score">
+        @if (entry.pictureUrl) {<img class="podium-entry__avatar" [src]="entry.pictureUrl" [alt]="'Foto de ' + entry.fullName">} @else {<span class="podium-entry__avatar podium-entry__avatar--placeholder" aria-hidden="true">{{ initials(entry.fullName) }}</span>}
+        @if (editingParticipantId() === entry.participantCode) {
+          <input type="text" maxlength="128" [formControl]="editForm.controls.participantCode" aria-label="Código de participante">
+          <input type="text" maxlength="160" [formControl]="editForm.controls.fullName" aria-label="Nombre">
+          <input type="text" inputmode="decimal" [formControl]="editForm.controls.score" aria-label="Score">
+          <div class="podium-custom-fields">@for (field of editForm.controls.customFields.controls; track $index; let fieldIndex = $index) {<div><input [formControl]="field.controls.name" maxlength="80" [readonly]="isExistingHeader(fieldIndex)" aria-label="Campo"><input [formControl]="field.controls.value" maxlength="500" aria-label="Valor">@if (!isExistingHeader(fieldIndex)) {<button class="secondary-button small-button" type="button" (click)="removeEditCustomField(fieldIndex)">×</button>}</div>}<button class="secondary-button small-button" type="button" (click)="addEditCustomField()">Añadir campo</button></div>
           <div class="podium-entry__actions"><button class="primary-button small-button" type="button" [disabled]="isSaving()" (click)="saveParticipant(entry)">Guardar</button><button class="secondary-button small-button" type="button" (click)="cancelEdit()">Cancelar</button></div>
         } @else {
           <span class="podium-entry__position">{{ entry.position }}</span><strong>{{ entry.fullName }}</strong><span>{{ entry.score }} {{ gamification().goalUnit }}</span>
-          @if (canEdit()) {<div class="podium-entry__actions"><button class="secondary-button small-button" type="button" [disabled]="isSaving()" (click)="editParticipant(entry)">Editar</button><label class="secondary-button small-button file-button">Foto<input type="file" accept="image/jpeg,image/png,image/webp" [disabled]="isSaving()" (change)="uploadPicture(entry, $event)"></label>@if (entry.pictureUrl) {<button class="secondary-button small-button" type="button" [disabled]="isSaving()" (click)="deletePicture(entry)">Quitar foto</button>}<button class="danger-button small-button" type="button" [disabled]="isSaving()" (click)="deleteParticipant(entry)">Eliminar</button></div>}
+          @for (header of rankingFieldHeaders(); track header) {@if (entry.customFields?.[header]) {<small>{{ header }}: {{ entry.customFields?.[header] }}</small>}}
+          @if (canEdit()) {<div class="podium-entry__actions"><button class="secondary-button small-button" type="button" [disabled]="isSaving()" (click)="editParticipant(entry)">Editar</button><label class="secondary-button small-button file-button">Foto<input type="file" accept="image/jpeg,image/png,image/webp" [disabled]="isSaving()" (change)="uploadPicture(entry, $event)"></label>@if (entry.pictureUrl) {<button class="secondary-button small-button" type="button" [disabled]="isSaving()" (click)="deletePicture(entry)">Quitar foto</button>}<button class="danger-button small-button" type="button" [disabled]="isSaving()" (click)="deleteParticipant(entry)">Quitar</button></div>}
         }
       </article>
     }
   </section>
 
   @if (remainingEntries().length) {
-    <div class="ranking-table-wrap"><table><caption class="visually-hidden">Resto de la clasificación global</caption><thead><tr><th scope="col">Posición</th><th scope="col">Participante</th><th scope="col">Score</th>@if (canEdit()) {<th scope="col">Acciones</th>}</tr></thead><tbody>
-      @for (entry of remainingEntries(); track entry.externalParticipantId) {
+    <div class="ranking-table-wrap"><table><caption class="visually-hidden">Resto de la clasificación global</caption><thead><tr><th scope="col">Posición</th><th scope="col">Participante</th>@for (header of rankingFieldHeaders(); track header) {<th scope="col">{{ header }}</th>}<th scope="col">Score</th></tr></thead><tbody>
+      @for (entry of remainingEntries(); track entry.participantCode) {
         <tr><td class="position"><span>{{ entry.position }}</span></td>
-          @if (editingParticipantId() === entry.externalParticipantId) {
-            <td><label class="visually-hidden" [for]="'ranking-name-' + entry.externalParticipantId">Nombre</label><input [id]="'ranking-name-' + entry.externalParticipantId" type="text" maxlength="160" [formControl]="editForm.controls.fullName"></td>
-            <td><label class="visually-hidden" [for]="'ranking-score-' + entry.externalParticipantId">Score</label><input [id]="'ranking-score-' + entry.externalParticipantId" type="text" inputmode="decimal" [formControl]="editForm.controls.score"></td>
-            <td><div class="row-actions"><button class="primary-button small-button" type="button" [disabled]="isSaving()" (click)="saveParticipant(entry)">Guardar</button><button class="secondary-button small-button" type="button" (click)="cancelEdit()">Cancelar</button></div></td>
+          @if (editingParticipantId() === entry.participantCode) {
+            <td class="participant-edit"><input type="text" maxlength="128" [formControl]="editForm.controls.participantCode" aria-label="Código de participante"><input type="text" maxlength="160" [formControl]="editForm.controls.fullName" aria-label="Nombre">@for (field of editForm.controls.customFields.controls; track $index; let fieldIndex = $index) {@if (!isExistingHeader(fieldIndex)) {<div class="inline-extra-field"><input [formControl]="field.controls.name" maxlength="80" placeholder="Campo"><input [formControl]="field.controls.value" maxlength="500" placeholder="Valor"><button class="secondary-button small-button" type="button" (click)="removeEditCustomField(fieldIndex)">×</button></div>}}<button class="secondary-button small-button" type="button" (click)="addEditCustomField()">Añadir campo</button><div class="row-actions"><button class="primary-button small-button" type="button" [disabled]="isSaving()" (click)="saveParticipant(entry)">Guardar</button><button class="secondary-button small-button" type="button" (click)="cancelEdit()">Cancelar</button></div></td>
+            @for (field of editForm.controls.customFields.controls; track $index; let index = $index) {@if (index < rankingFieldHeaders().length) {<td><input [formControl]="field.controls.value" maxlength="500" [attr.aria-label]="field.controls.name.value"></td>}}
+            <td><input type="text" inputmode="decimal" [formControl]="editForm.controls.score" aria-label="Score"></td>
           } @else {
-            <td><span class="participant"><!-- Avatar stays decorative so name remains table text --><span class="participant__avatar">@if (entry.pictureUrl) {<img [src]="entry.pictureUrl" [alt]="''">} @else {<span aria-hidden="true">{{ initials(entry.fullName) }}</span>}</span>{{ entry.fullName }}</span></td><td><strong>{{ entry.score }}</strong> {{ gamification().goalUnit }}</td>
-            @if (canEdit()) {<td><div class="row-actions"><button class="secondary-button small-button" type="button" [disabled]="isSaving()" (click)="editParticipant(entry)">Editar</button><label class="secondary-button small-button file-button">Foto<input type="file" accept="image/jpeg,image/png,image/webp" [disabled]="isSaving()" (change)="uploadPicture(entry, $event)"></label>@if (entry.pictureUrl) {<button class="secondary-button small-button" type="button" [disabled]="isSaving()" (click)="deletePicture(entry)">Quitar foto</button>}<button class="danger-button small-button" type="button" [disabled]="isSaving()" (click)="deleteParticipant(entry)">Eliminar</button></div></td>}
+            <td><span class="participant"><span class="participant__avatar">@if (entry.pictureUrl) {<img [src]="entry.pictureUrl" [alt]="''">} @else {<span aria-hidden="true">{{ initials(entry.fullName) }}</span>}</span>{{ entry.fullName }}</span>@if (canEdit()) {<div class="row-actions"><button class="secondary-button small-button" type="button" [disabled]="isSaving()" (click)="editParticipant(entry)">Editar</button><label class="secondary-button small-button file-button">Foto<input type="file" accept="image/jpeg,image/png,image/webp" [disabled]="isSaving()" (change)="uploadPicture(entry, $event)"></label>@if (entry.pictureUrl) {<button class="secondary-button small-button" type="button" [disabled]="isSaving()" (click)="deletePicture(entry)">Quitar foto</button>}<button class="danger-button small-button" type="button" [disabled]="isSaving()" (click)="deleteParticipant(entry)">Quitar</button></div>}</td>
+            @for (header of rankingFieldHeaders(); track header) {<td>{{ entry.customFields?.[header] || '—' }}</td>}
+            <td><strong>{{ entry.score }}</strong> {{ gamification().goalUnit }}</td>
           }
         </tr>
       }
