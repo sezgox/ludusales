@@ -57,7 +57,7 @@
         } @else {
           <h3>{{ prize.name }}</h3>
           <p class="prize-meta">Puesto {{ prize.rankingPosition }}</p>
-          @if (prize.estimatedValue !== null) {<p class="prize-meta">Valor estimado: {{ prize.estimatedValue | currency:'EUR':'symbol':'1.2-2':'es-ES' }}</p>}
+          @if (hasEstimatedValue(prize)) {<p class="prize-meta">Valor estimado: {{ prize.estimatedValue | currency:'EUR':'symbol':'1.2-2':'es-ES' }}</p>}
           @if (canEdit()) {
             <div class="card-actions">
               <button class="secondary-button" type="button" (click)="editPrize(prize)">Editar</button>

@@ -4,7 +4,7 @@ import { TestRequest } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { Router, provideRouter } from '@angular/router';
-import { Gamification, GamificationDetail } from '../../models/gamification';
+import { Gamification, GamificationDetail, Prize } from '../../models/gamification';
 import { AuthService } from '../../services/auth.service';
 import { GamificationStore } from '../../services/gamification.store';
 import { Dashboard } from './dashboard';
@@ -116,18 +116,37 @@ describe('Dashboard', () => {
     expect(fixture.debugElement.query(By.directive(InformationSection)).componentInstance.canEdit()).toBe(true);
   });
 
-  it('reuses the global list and detail when the dashboard section is recreated', async () => {
+  it('refreshes prize data when entering the prizes section', async () => {
     await setupCompany('/dashboard/informacion', [activeGamification], activeGamification);
+    const staleDetail = { ...detail(activeGamification), prizes: [prize('first-prize', 'Premio antiguo', 1)] };
+    const cachePromise = gamificationStore.ensureDetail(demoCompany.public_id, activeGamification.publicId, true);
+    httpMock.expectOne(`http://localhost:8787/companies/${demoCompany.public_id}/gamifications/${activeGamification.publicId}`)
+      .flush({ ok: true, gamification: staleDetail });
+    await cachePromise;
     fixture.destroy();
 
     await router.navigateByUrl(`/dashboard/premios?gamification=${activeGamification.publicId}`);
     createComponent();
+    const detailRequest = await waitForRequest(
+      `http://localhost:8787/companies/${demoCompany.public_id}/gamifications/${activeGamification.publicId}`,
+    );
+    detailRequest.flush({
+      ok: true,
+      gamification: {
+        ...detail(activeGamification),
+        prizes: [
+          prize('first-prize', 'Primer premio', 1),
+          prize('second-prize', 'Segundo premio', 2),
+          prize('third-prize', 'Tercer premio', 3),
+        ],
+      },
+    });
     await fixture.whenStable();
     fixture.detectChanges();
 
     expect(component.activeSection()).toBe('premios');
     expect(component.selectedGamification()?.publicId).toBe(activeGamification.publicId);
-    httpMock.expectNone(() => true);
+    expect(fixture.nativeElement.querySelectorAll('.prize-card')).toHaveLength(3);
   });
 
   it('changes company through the selector and clears the previous gamification context', async () => {
@@ -250,4 +269,17 @@ function gamification(publicId: string, status: Gamification['status'], descript
 
 function detail(item: Gamification): GamificationDetail {
   return { ...item, prizes: [], ranking: [], rules: [], blockOneCards: [], blockTwoCards: [] };
+}
+
+function prize(publicId: string, name: string, rankingPosition: number): Prize {
+  return {
+    publicId,
+    name,
+    pictureUrl: null,
+    sortOrder: rankingPosition - 1,
+    rankingPosition,
+    estimatedValue: null,
+    createdAt: '2027-01-01 00:00:00',
+    updatedAt: '2027-01-01 00:00:00',
+  };
 }

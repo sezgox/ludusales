@@ -49,6 +49,7 @@ export class Dashboard {
   );
   private readonly routeCompanyPublicId = computed(() => this.companyPublicIdFromUrl(this.currentUrl()));
   private readonly routeGamificationPublicId = computed(() => this.gamificationPublicIdFromUrl(this.currentUrl()));
+  private lastPrizeDetailRefreshKey: string | null = null;
   readonly companies = this.authService.companies;
   readonly gamifications = this.gamificationStore.gamifications;
   readonly selectedGamificationPublicId = this.gamificationStore.selectedGamificationPublicId;
@@ -58,12 +59,20 @@ export class Dashboard {
   readonly gamificationFeedback = this.gamificationStore.feedback;
   readonly isMenuOpen = signal(false);
   readonly isCreatingCompany = signal(false);
+  readonly isSavingCompany = signal(false);
+  readonly isDeletingCompany = signal(false);
   readonly createCompanyFeedback = signal<string | null>(null);
+  readonly editCompanyFeedback = signal<string | null>(null);
+  readonly deleteCompanyFeedback = signal<string | null>(null);
   readonly isSuperuser = computed(() => this.authService.role() === 'superuser');
   readonly createCompanyForm = this.formBuilder.group({
     companyName: ['', [Validators.required, Validators.maxLength(160)]],
     email: ['', [Validators.email, Validators.maxLength(254)]],
     accessCode: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(80)]],
+  });
+  readonly editCompanyForm = this.formBuilder.group({
+    name: ['', [Validators.required, Validators.maxLength(160)]],
+    email: ['', [Validators.email, Validators.maxLength(254)]],
   });
   readonly selectedCompanyPublicId = computed(() => {
     if (!this.isSuperuser()) {
@@ -121,6 +130,9 @@ export class Dashboard {
     const companyPublicId = this.selectedCompanyPublicId();
     const requestedPublicId = this.routeGamificationPublicId();
     const gamifications = this.gamifications();
+    const activeSection = this.activeSection();
+
+    if (activeSection !== 'premios') this.lastPrizeDetailRefreshKey = null;
 
     if (
       !companyPublicId ||
@@ -134,7 +146,16 @@ export class Dashboard {
     if (this.selectedGamificationPublicId() !== selectedPublicId) {
       this.gamificationStore.selectGamification(selectedPublicId);
     }
-    if (selectedPublicId) void this.gamificationStore.ensureDetail(companyPublicId, selectedPublicId);
+    if (selectedPublicId) {
+      const prizeDetailRefreshKey = `${companyPublicId}:${selectedPublicId}`;
+      const refreshPrizes = activeSection === 'premios' && this.lastPrizeDetailRefreshKey !== prizeDetailRefreshKey;
+      if (refreshPrizes) this.lastPrizeDetailRefreshKey = prizeDetailRefreshKey;
+      void this.gamificationStore.ensureDetail(
+        companyPublicId,
+        selectedPublicId,
+        refreshPrizes,
+      );
+    }
 
     if (requestedPublicId !== selectedPublicId) {
       void this.setGamificationQuery(selectedPublicId, true);
@@ -178,6 +199,30 @@ export class Dashboard {
     if (!this.isCreatingCompany() && dialog.open) dialog.close();
   }
 
+  openEditCompanyDialog(dialog: HTMLDialogElement): void {
+    const company = this.company();
+    if (!company) return;
+
+    const email = this.companies().find((item) => item.public_id === company.public_id)?.email ?? '';
+    this.editCompanyForm.reset({ name: company.name, email });
+    this.editCompanyFeedback.set(null);
+    if (!dialog.open) dialog.showModal();
+  }
+
+  closeEditCompanyDialog(dialog: HTMLDialogElement): void {
+    if (!this.isSavingCompany() && dialog.open) dialog.close();
+  }
+
+  openDeleteCompanyDialog(editDialog: HTMLDialogElement, deleteDialog: HTMLDialogElement): void {
+    this.deleteCompanyFeedback.set(null);
+    if (editDialog.open) editDialog.close();
+    if (!deleteDialog.open) deleteDialog.showModal();
+  }
+
+  closeDeleteCompanyDialog(dialog: HTMLDialogElement): void {
+    if (!this.isDeletingCompany() && dialog.open) dialog.close();
+  }
+
   async createCompanyAccount(dialog: HTMLDialogElement): Promise<void> {
     if (this.createCompanyForm.invalid) {
       this.createCompanyForm.markAllAsTouched();
@@ -206,6 +251,54 @@ export class Dashboard {
       this.createCompanyFeedback.set(apiErrorMessage(error, 'No se pudo crear la empresa. Comprueba los datos.'));
     } finally {
       this.isCreatingCompany.set(false);
+    }
+  }
+
+  async updateCompany(dialog: HTMLDialogElement): Promise<void> {
+    const companyPublicId = this.selectedCompanyPublicId();
+
+    if (!companyPublicId || this.editCompanyForm.invalid) {
+      this.editCompanyForm.markAllAsTouched();
+      this.editCompanyFeedback.set('Revisa el nombre de la empresa.');
+      return;
+    }
+
+    this.isSavingCompany.set(true);
+    this.editCompanyFeedback.set(null);
+
+    try {
+      const formValue = this.editCompanyForm.getRawValue();
+      await firstValueFrom(
+        this.authService.updateCompany(companyPublicId, {
+          name: formValue.name.trim(),
+          email: formValue.email.trim() || null,
+        }),
+      );
+      dialog.close();
+    } catch (error) {
+      this.editCompanyFeedback.set(apiErrorMessage(error, 'No se pudo actualizar la empresa.'));
+    } finally {
+      this.isSavingCompany.set(false);
+    }
+  }
+
+  async deleteSelectedCompany(dialog: HTMLDialogElement): Promise<void> {
+    const companyPublicId = this.selectedCompanyPublicId();
+    if (!companyPublicId) return;
+
+    this.isDeletingCompany.set(true);
+    this.deleteCompanyFeedback.set(null);
+
+    try {
+      await firstValueFrom(this.authService.deleteCompany(companyPublicId));
+      this.gamificationStore.clear();
+      dialog.close();
+      const nextCompanyPublicId = this.companies().at(0)?.public_id;
+      await this.router.navigateByUrl(this.dashboardPath(this.activeSection(), nextCompanyPublicId));
+    } catch (error) {
+      this.deleteCompanyFeedback.set(apiErrorMessage(error, 'No se pudo eliminar la empresa.'));
+    } finally {
+      this.isDeletingCompany.set(false);
     }
   }
 

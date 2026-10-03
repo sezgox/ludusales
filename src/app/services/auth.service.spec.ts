@@ -167,4 +167,52 @@ describe('AuthService', () => {
       },
     ]);
   });
+
+  it('updates a company name in the superuser company list', () => {
+    service.companies.set([
+      {
+        public_id: '82b4c7b9-68d1-4cc6-9e36-41d4db4e05f0',
+        name: 'Ludus Sales Demo',
+      },
+    ]);
+
+    service
+      .updateCompany('82b4c7b9-68d1-4cc6-9e36-41d4db4e05f0', {
+        name: 'Ludus Sales Actualizada',
+        email: 'actualizada@ludusales.local',
+      })
+      .subscribe();
+
+    const request = httpMock.expectOne('http://localhost:8787/superuser/companies/82b4c7b9-68d1-4cc6-9e36-41d4db4e05f0');
+    expect(request.request.method).toBe('PATCH');
+    expect(request.request.body).toEqual({ name: 'Ludus Sales Actualizada', email: 'actualizada@ludusales.local' });
+    request.flush({
+      ok: true,
+      company: {
+        public_id: '82b4c7b9-68d1-4cc6-9e36-41d4db4e05f0',
+        name: 'Ludus Sales Actualizada',
+        email: 'actualizada@ludusales.local',
+      },
+    });
+
+    expect(service.companies()[0].name).toBe('Ludus Sales Actualizada');
+    expect(service.companies()[0].email).toBe('actualizada@ludusales.local');
+  });
+
+  it('removes a deleted company from the superuser company list', () => {
+    service.companies.set([
+      {
+        public_id: '82b4c7b9-68d1-4cc6-9e36-41d4db4e05f0',
+        name: 'Ludus Sales Demo',
+      },
+    ]);
+
+    service.deleteCompany('82b4c7b9-68d1-4cc6-9e36-41d4db4e05f0').subscribe();
+
+    const request = httpMock.expectOne('http://localhost:8787/superuser/companies/82b4c7b9-68d1-4cc6-9e36-41d4db4e05f0');
+    expect(request.request.method).toBe('DELETE');
+    request.flush({ ok: true });
+
+    expect(service.companies()).toEqual([]);
+  });
 });

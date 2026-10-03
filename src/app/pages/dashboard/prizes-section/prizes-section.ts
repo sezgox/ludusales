@@ -94,6 +94,10 @@ export class PrizesSection {
     this.feedback.set(null);
   }
 
+  hasEstimatedValue(prize: Prize): boolean {
+    return typeof prize.estimatedValue === 'number' && Number.isFinite(prize.estimatedValue);
+  }
+
   async savePrize(prize: Prize): Promise<void> {
     if (this.editForm.invalid) {
       this.editForm.markAllAsTouched();

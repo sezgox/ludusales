@@ -1,7 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { GamificationDetail } from '../../../models/gamification';
+import { GamificationDetail, Prize } from '../../../models/gamification';
 import { PrizesSection } from './prizes-section';
 
 describe('PrizesSection', () => {
@@ -41,6 +41,22 @@ describe('PrizesSection', () => {
     expect(component.canEdit()).toBe(true);
     expect(fixture.nativeElement.querySelector('.create-prize')).not.toBeNull();
   });
+
+  it('does not show an empty estimated-value label while another prize is being edited', () => {
+    const firstPrize = prize('first-prize', 'Experiencia gastronómica', 1, Number.NaN);
+    const secondPrize = prize('second-prize', 'Tarjeta regalo', 2, null);
+    fixture.componentRef.setInput('gamification', {
+      ...prizeGamification('draft'),
+      prizes: [firstPrize, secondPrize],
+    });
+    fixture.detectChanges();
+
+    component.editPrize(secondPrize);
+    fixture.detectChanges();
+
+    const firstCard = (fixture.nativeElement.querySelectorAll('.prize-card') as NodeListOf<HTMLElement>)[0];
+    expect(firstCard.textContent).not.toContain('Valor estimado:');
+  });
 });
 
 function prizeGamification(status: GamificationDetail['status']): GamificationDetail {
@@ -67,5 +83,23 @@ function prizeGamification(status: GamificationDetail['status']): GamificationDe
     rules: [],
     blockOneCards: [],
     blockTwoCards: [],
+  };
+}
+
+function prize(
+  publicId: string,
+  name: string,
+  rankingPosition: number,
+  estimatedValue: number | null,
+): Prize {
+  return {
+    publicId,
+    name,
+    pictureUrl: null,
+    sortOrder: rankingPosition - 1,
+    rankingPosition,
+    estimatedValue,
+    createdAt: '2027-01-01',
+    updatedAt: '2027-01-01',
   };
 }

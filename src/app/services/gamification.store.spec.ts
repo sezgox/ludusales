@@ -61,6 +61,30 @@ describe('GamificationStore', () => {
     await Promise.all([firstDetail, secondDetail]);
   });
 
+  it('refreshes detail after an in-flight request when forced', async () => {
+    const item = gamification('game-a', companyA, '<p>Primera</p>');
+    store.selectCompany(companyA);
+    await loadCompany(companyA, item);
+    store.selectGamification(item.publicId);
+
+    const initialLoad = store.ensureDetail(companyA, item.publicId);
+    const forcedRefresh = store.ensureDetail(companyA, item.publicId, true);
+    httpMock.expectOne(detailUrl(companyA, item.publicId)).flush({
+      ok: true,
+      gamification: detail(item),
+    });
+    await initialLoad;
+
+    const refreshed = { ...item, description: '<p>Completa</p>' };
+    httpMock.expectOne(detailUrl(companyA, item.publicId)).flush({
+      ok: true,
+      gamification: detail(refreshed),
+    });
+    await forcedRefresh;
+
+    expect(store.selectedGamification()?.description).toBe('<p>Completa</p>');
+  });
+
   it('keeps separate caches and selections for every visited company', async () => {
     const itemA = gamification('game-a', companyA, '<p>Empresa A</p>');
     const itemB = gamification('game-b', companyB, '<p>Empresa B</p>');

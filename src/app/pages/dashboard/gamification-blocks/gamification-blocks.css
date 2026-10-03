@@ -11,6 +11,10 @@
 .blocks-two {
   min-width: 0;
 }
+.blocks-one {
+  container-type: inline-size;
+  container-name: metrics;
+}
 .section-heading {
   margin-bottom: 12px;
 }
@@ -19,7 +23,7 @@
 }
 .metric-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 320px));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 14px;
 }
 .metric-card,
@@ -35,8 +39,12 @@
 }
 .metric-card,
 .metric-grid > .card-placeholder {
-  aspect-ratio: 2 / 1;
   min-height: 160px;
+}
+.metric-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 .metric-card__summary {
   display: flex;
@@ -52,12 +60,14 @@
   display: block;
   margin: 0;
   color: var(--color-body);
+  overflow-wrap: anywhere;
 }
 .metric-card strong {
   display: block;
   margin-top: 6px;
   color: var(--color-heading);
   font-size: 1.35rem;
+  overflow-wrap: anywhere;
 }
 .metric-card small {
   margin-top: 4px;
@@ -268,6 +278,18 @@
 .upload {
   color: var(--color-primary);
 }
+@container metrics (max-width: 1080px) {
+  .metric-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@container metrics (max-width: 860px) {
+  .metric-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@container metrics (max-width: 620px) {
+  .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@container metrics (max-width: 480px) {
+  .metric-grid { grid-template-columns: 1fr; }
+}
 @media (max-width: 900px) {
   .blocks-layout {
     grid-template-columns: 1fr;
@@ -277,13 +299,6 @@
   }
 }
 @media (max-width: 460px) {
-  .metric-grid {
-    grid-template-columns: 1fr;
-  }
-  .metric-card,
-  .metric-grid > .card-placeholder {
-    aspect-ratio: auto;
-  }
   .form-pair {
     grid-template-columns: 1fr;
   }

@@ -9,7 +9,7 @@ export type AuthenticatedCompany = {
   name: string;
 };
 
-export type DashboardCompany = AuthenticatedCompany;
+export type DashboardCompany = AuthenticatedCompany & { email?: string | null };
 export type AuthRole = 'company' | 'superuser';
 
 type CompanyAuthResponse = {
@@ -31,6 +31,11 @@ export type CreateCompanyAccountPayload = {
   accountName: string;
   email: string | null;
   accessCode: string;
+};
+
+export type UpdateCompanyPayload = {
+  name: string;
+  email: string | null;
 };
 
 type CreateCompanyAccountResponse = {
@@ -106,6 +111,32 @@ export class AuthService {
           );
         }),
       );
+  }
+
+  updateCompany(companyPublicId: string, payload: UpdateCompanyPayload) {
+    return this.http
+      .patch<{ ok: true; company: DashboardCompany }>(
+        this.apiUrl.endpoint(`/superuser/companies/${companyPublicId}`),
+        payload,
+        { withCredentials: true },
+      )
+      .pipe(
+        tap((response) => {
+          this.companies.update((companies) =>
+            companies
+              .map((company) => (company.public_id === companyPublicId ? response.company : company))
+              .sort((left, right) => left.name.localeCompare(right.name, 'es-ES')),
+          );
+        }),
+      );
+  }
+
+  deleteCompany(companyPublicId: string) {
+    return this.http
+      .delete<{ ok: true }>(this.apiUrl.endpoint(`/superuser/companies/${companyPublicId}`), {
+        withCredentials: true,
+      })
+      .pipe(tap(() => this.companies.update((companies) => companies.filter((company) => company.public_id !== companyPublicId))));
   }
 
   private applyAuthResponse(response: AuthResponse): void {

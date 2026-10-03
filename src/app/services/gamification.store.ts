@@ -115,7 +115,11 @@ export class GamificationStore {
   ensureDetail(companyPublicId: string, gamificationPublicId: string, force = false): Promise<void> {
     const key = detailKey(companyPublicId, gamificationPublicId);
     const pending = this.detailRequests.get(key);
-    if (pending) return pending;
+    if (pending) {
+      return force
+        ? pending.then(() => this.ensureDetail(companyPublicId, gamificationPublicId, true))
+        : pending;
+    }
     if (!force && this.hasDetail(companyPublicId, gamificationPublicId)) return Promise.resolve();
 
     const generation = this.generation;
