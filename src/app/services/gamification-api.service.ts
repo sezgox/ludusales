@@ -224,7 +224,7 @@ export class GamificationApiService {
   }
 
   private withEffectiveStatus<T extends Gamification>(gamification: T): T {
-    const isExpired = gamification.status === 'active' && Date.parse(gamification.endAt) <= Date.now();
+    const isExpired = gamification.status === 'active' && gamification.endAt.slice(0, 10) < new Date().toISOString().slice(0, 10);
     return isExpired ? { ...gamification, status: 'inactive' } : gamification;
   }
 }

@@ -96,6 +96,7 @@ function gamification(): GamificationDetail {
     goal: '100',
     valuePrecision: 0,
     goalUnit: 'ventas',
+    rankingUnit: 'Ludu Points',
     maxLiveRanking: 5,
     status: 'active',
     outcome: 'pending',

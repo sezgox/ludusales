@@ -3,7 +3,7 @@ import {
   chronologicalDateRangeValidator,
   decimalValidator,
   richTextRequiredValidator,
-  toIsoDate,
+  toDateOnly,
 } from './dashboard-form.utils';
 
 describe('dashboard form utilities', () => {
@@ -19,22 +19,23 @@ describe('dashboard form utilities', () => {
     expect(richTextRequiredValidator(new FormControl('<p><strong>Reto</strong></p>'))).toBeNull();
   });
 
-  it('converts local date values to UTC ISO strings', () => {
-    expect(toIsoDate('not-a-date')).toBeNull();
-    expect(toIsoDate('2027-01-01T09:00')).toMatch(/^2027-01-01T/);
+  it('accepts calendar dates without a time', () => {
+    expect(toDateOnly('not-a-date')).toBeNull();
+    expect(toDateOnly('2027-02-29')).toBeNull();
+    expect(toDateOnly('2027-01-01')).toBe('2027-01-01');
   });
 
   it('requires the end date to be later than the start date', () => {
     const form = new FormGroup(
       {
-        startAt: new FormControl('2027-01-02T09:00'),
-        endAt: new FormControl('2027-01-01T09:00'),
+        startAt: new FormControl('2027-01-02'),
+        endAt: new FormControl('2027-01-01'),
       },
       chronologicalDateRangeValidator,
     );
 
     expect(form.errors).toEqual({ dateRange: true });
-    form.controls.endAt.setValue('2027-01-03T09:00');
+    form.controls.endAt.setValue('2027-01-03');
     expect(form.errors).toBeNull();
   });
 });

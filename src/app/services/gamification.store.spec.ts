@@ -142,6 +142,7 @@ function gamification(publicId: string, companyPublicId: string, description: st
     goal: '100.00',
     valuePrecision: 2,
     goalUnit: 'ventas',
+    rankingUnit: 'Ludu Points',
     maxLiveRanking: 5,
     status: 'active',
     outcome: 'pending',

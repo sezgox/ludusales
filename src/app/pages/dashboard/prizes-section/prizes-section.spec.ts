@@ -55,6 +55,7 @@ function prizeGamification(status: GamificationDetail['status']): GamificationDe
     goal: '100.00',
     valuePrecision: 2,
     goalUnit: 'ventas',
+    rankingUnit: 'Ludu Points',
     maxLiveRanking: 5,
     status,
     outcome: status === 'inactive' || status === 'closed' ? 'missed' : 'pending',

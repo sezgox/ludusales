@@ -35,6 +35,7 @@ describe('GamificationSection', () => {
       goal: '12.345',
       valuePrecision: 2,
       goalUnit: '   ',
+      rankingUnit: 'Ludu Points',
       rules: [],
     });
 
@@ -62,17 +63,21 @@ describe('GamificationSection', () => {
     ]);
 
     expect(component.createForm.controls.rules.controls).toHaveLength(3);
+    expect(component.createForm.controls.rankingUnit.value).toBe('Ludu Points');
+    expect((fixture.nativeElement.querySelector('#create-start-at') as HTMLInputElement).type).toBe('date');
+    expect((fixture.nativeElement.querySelector('#create-end-at') as HTMLInputElement).type).toBe('date');
   });
 
   it('marks the end date when it is not later than the start date', async () => {
     component.createForm.setValue({
       title: 'Reto válido',
       description: '<p>Reto válido</p>',
-      startAt: '2027-01-02T09:00',
-      endAt: '2027-01-01T09:00',
+      startAt: '2027-01-02',
+      endAt: '2027-01-01',
       goal: '100.00',
       valuePrecision: 2,
       goalUnit: 'ventas',
+      rankingUnit: 'Ludu Points',
       rules: [],
     });
 

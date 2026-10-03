@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormArray, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import { RichTextEditor } from '../../../components/rich-text-editor/rich-text-editor';
-import { GamificationDetail, GamificationPayload, GamificationRule, GamificationStatus } from '../../../models/gamification';
+import { defaultRankingUnit, GamificationDetail, GamificationPayload, GamificationRule, GamificationStatus } from '../../../models/gamification';
 import { RuleEditor, RuleEditorForm } from '../../../components/rule-editor/rule-editor';
 import { apiErrorMessage } from '../../../services/api-error';
 import { GamificationApiService } from '../../../services/gamification-api.service';
@@ -13,8 +13,9 @@ import {
   chronologicalDateRangeValidator,
   decimalValidator,
   richTextRequiredValidator,
-  toIsoDate,
-  toLocalDateTime,
+  toDateInputValue,
+  toDateOnly,
+  todayDate,
 } from '../dashboard-form.utils';
 
 @Component({
@@ -52,6 +53,7 @@ export class GamificationSection {
       goal: [''],
       valuePrecision: [0, [Validators.required, Validators.min(0), Validators.max(6)]],
       goalUnit: ['', Validators.maxLength(40)],
+      rankingUnit: [defaultRankingUnit, [Validators.required, Validators.maxLength(40)]],
       rules: this.formBuilder.array<RuleEditorForm>([]),
     },
     { validators: chronologicalDateRangeValidator },
@@ -64,6 +66,7 @@ export class GamificationSection {
       goal: [''],
       valuePrecision: [0, [Validators.required, Validators.min(0), Validators.max(6)]],
       goalUnit: ['', Validators.maxLength(40)],
+      rankingUnit: [defaultRankingUnit, [Validators.required, Validators.maxLength(40)]],
       maxLiveRanking: [5, [Validators.required, Validators.min(3), Validators.max(1000)]],
       rules: this.formBuilder.array<RuleEditorForm>([]),
     },
@@ -109,16 +112,17 @@ export class GamificationSection {
 
   openCreateDialog(dialog: HTMLDialogElement): void {
     const start = new Date();
-    start.setSeconds(0, 0);
-    const end = new Date(start.getTime() + 30 * 24 * 60 * 60 * 1000);
+    const end = new Date(start);
+    end.setDate(end.getDate() + 30);
     this.createForm.reset({
       title: '',
       description: '<p></p>',
-      startAt: toLocalDateTime(start.toISOString()),
-      endAt: toLocalDateTime(end.toISOString()),
+      startAt: todayDate(start),
+      endAt: todayDate(end),
       goal: '',
       valuePrecision: 0,
       goalUnit: '',
+      rankingUnit: defaultRankingUnit,
     });
     this.resetRules(this.createForm.controls.rules, presetRules);
     this.createRulesVersion.update((version) => version + 1);
@@ -212,15 +216,14 @@ export class GamificationSection {
     const gamification = this.gamification();
 
     if (!gamification) return;
-    if (Date.parse(gamification.endAt) > Date.now()) {
+    if (toDateInputValue(gamification.endAt) >= todayDate()) {
       void this.activate();
       return;
     }
 
     const newEnd = new Date();
     newEnd.setDate(newEnd.getDate() + 30);
-    newEnd.setSeconds(0, 0);
-    this.activationForm.reset({ endAt: toLocalDateTime(newEnd.toISOString()) });
+    this.activationForm.reset({ endAt: todayDate(newEnd) });
     this.feedback.set(null);
     dialog.showModal();
   }
@@ -229,10 +232,10 @@ export class GamificationSection {
     const gamification = this.gamification();
 
     if (!gamification) return;
-    const endAt = dialog ? toIsoDate(this.activationForm.controls.endAt.value) : null;
-    if (dialog && (!endAt || endAt <= new Date().toISOString())) {
+    const endAt = dialog ? toDateOnly(this.activationForm.controls.endAt.value) : null;
+    if (dialog && (!endAt || endAt < todayDate())) {
       this.activationForm.controls.endAt.markAsTouched();
-      this.feedback.set('Indica una nueva fecha de fin posterior a este momento.');
+      this.feedback.set('Indica una nueva fecha de fin igual o posterior a hoy.');
       return;
     }
 
@@ -294,13 +297,13 @@ export class GamificationSection {
   private payloadFromCreateForm(): GamificationPayload | null {
     if (this.createForm.invalid) return null;
     const value = this.createForm.getRawValue();
-    return this.buildPayload(value.title, value.description, value.startAt, value.endAt, value.goal, value.valuePrecision, value.goalUnit, value.rules);
+    return this.buildPayload(value.title, value.description, value.startAt, value.endAt, value.goal, value.valuePrecision, value.goalUnit, value.rankingUnit, value.rules);
   }
 
   private payloadFromEditForm(): Partial<GamificationPayload> | null {
     if (this.editForm.invalid) return null;
     const value = this.editForm.getRawValue();
-    const payload = this.buildPayload(value.title, '', value.startAt, value.endAt, value.goal, value.valuePrecision, value.goalUnit, value.rules);
+    const payload = this.buildPayload(value.title, '', value.startAt, value.endAt, value.goal, value.valuePrecision, value.goalUnit, value.rankingUnit, value.rules);
 
     if (!payload) return null;
     const { description: _description, ...editablePayload } = payload;
@@ -315,10 +318,11 @@ export class GamificationSection {
     goal: string,
     valuePrecision: number,
     goalUnit: string,
+    rankingUnit: string,
     rules: GamificationRule[],
   ): GamificationPayload | null {
-    const startAt = toIsoDate(startAtValue);
-    const endAt = toIsoDate(endAtValue);
+    const startAt = toDateOnly(startAtValue);
+    const endAt = toDateOnly(endAtValue);
 
     if (!startAt || !endAt || endAt <= startAt) return null;
     const normalizedRules = this.normalizeRules(rules);
@@ -331,6 +335,7 @@ export class GamificationSection {
       goal: goal.trim() || null,
       valuePrecision,
       goalUnit: goalUnit.trim() || null,
+      rankingUnit: rankingUnit.trim(),
       rules: normalizedRules,
     };
   }
@@ -338,11 +343,12 @@ export class GamificationSection {
   private resetEditForm(gamification: GamificationDetail): void {
     this.editForm.reset({
       title: gamification.title,
-      startAt: toLocalDateTime(gamification.startAt),
-      endAt: toLocalDateTime(gamification.endAt),
+      startAt: toDateInputValue(gamification.startAt),
+      endAt: toDateInputValue(gamification.endAt),
       goal: gamification.goal ?? '',
       valuePrecision: gamification.valuePrecision,
       goalUnit: gamification.goalUnit ?? '',
+      rankingUnit: gamification.rankingUnit,
       maxLiveRanking: gamification.maxLiveRanking,
     });
     this.resetRules(this.editForm.controls.rules, gamification.rules);

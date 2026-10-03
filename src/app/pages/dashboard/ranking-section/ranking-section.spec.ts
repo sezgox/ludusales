@@ -31,7 +31,7 @@ function rankingGamification(): GamificationDetail {
   return {
     publicId: 'game-id', companyPublicId: 'company-id', title: 'Reto', description: '<p>Reto</p>', imageUrl: null,
     startAt: '2027-01-01T09:00:00.000Z', endAt: '2027-02-01T09:00:00.000Z', goal: '100.00', valuePrecision: 2,
-    goalUnit: 'ventas', maxLiveRanking: 5, status: 'active', outcome: 'pending', createdAt: '2027-01-01', updatedAt: '2027-01-01',
+    goalUnit: 'ventas', rankingUnit: 'Ludu Points', maxLiveRanking: 5, status: 'active', outcome: 'pending', createdAt: '2027-01-01', updatedAt: '2027-01-01',
     closedAt: null, prizes: [],
     ranking: [
       entry('one', 'Ana', 1, '50.00'), entry('two', 'Bea', 1, '50.00'), entry('three', 'Carla', 3, '25.00'),
