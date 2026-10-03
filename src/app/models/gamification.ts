@@ -1,5 +1,6 @@
 export type GamificationStatus = 'draft' | 'active' | 'inactive' | 'closed';
 export type GamificationOutcome = 'pending' | 'achieved' | 'missed' | 'not_applicable';
+export const defaultRankingUnit = 'Ludu Points';
 
 export type Gamification = {
   publicId: string;
@@ -12,6 +13,7 @@ export type Gamification = {
   goal: string | null;
   valuePrecision: number;
   goalUnit: string | null;
+  rankingUnit: string;
   maxLiveRanking: number;
   rankingFieldHeaders?: string[];
   status: GamificationStatus;
@@ -102,6 +104,7 @@ export type GamificationPayload = {
   goal: string | null;
   valuePrecision: number;
   goalUnit: string | null;
+  rankingUnit: string;
   maxLiveRanking?: number;
   rules?: GamificationRule[];
 };

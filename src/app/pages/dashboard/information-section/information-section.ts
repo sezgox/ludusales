@@ -7,11 +7,11 @@ import { LucideDynamicIcon } from '@lucide/angular';
 import { firstValueFrom } from 'rxjs';
 import { RichTextEditor } from '../../../components/rich-text-editor/rich-text-editor';
 import { RuleEditor, RuleEditorForm } from '../../../components/rule-editor/rule-editor';
-import { GamificationDetail, GamificationRule } from '../../../models/gamification';
+import { defaultRankingUnit, GamificationDetail, GamificationRule } from '../../../models/gamification';
 import { apiErrorMessage } from '../../../services/api-error';
 import { GamificationApiService } from '../../../services/gamification-api.service';
 import { ImageProcessingService } from '../../../services/image-processing.service';
-import { chronologicalDateRangeValidator, decimalValidator, richTextRequiredValidator, toIsoDate, toLocalDateTime } from '../dashboard-form.utils';
+import { chronologicalDateRangeValidator, decimalValidator, richTextRequiredValidator, toDateInputValue, toDateOnly, todayDate } from '../dashboard-form.utils';
 
 @Component({
   selector: 'app-information-section',
@@ -53,6 +53,7 @@ export class InformationSection {
       goal: [''],
       valuePrecision: [0, [Validators.required, Validators.min(0), Validators.max(6)]],
       goalUnit: ['', Validators.maxLength(40)],
+      rankingUnit: [defaultRankingUnit, [Validators.required, Validators.maxLength(40)]],
       maxLiveRanking: [5, [Validators.required, Validators.min(3), Validators.max(1000)]],
     },
     { validators: chronologicalDateRangeValidator },
@@ -185,8 +186,8 @@ export class InformationSection {
     }
 
     const value = this.configurationForm.getRawValue();
-    const startAt = toIsoDate(value.startAt);
-    const endAt = toIsoDate(value.endAt);
+    const startAt = toDateOnly(value.startAt);
+    const endAt = toDateOnly(value.endAt);
 
     if (!startAt || !endAt || endAt <= startAt) {
       this.configurationFeedback.set('Revisa los campos marcados antes de guardar.');
@@ -204,6 +205,7 @@ export class InformationSection {
         goal: value.goal.trim() || null,
         valuePrecision: value.valuePrecision,
         goalUnit: value.goalUnit.trim() || null,
+        rankingUnit: value.rankingUnit.trim(),
         maxLiveRanking: value.maxLiveRanking,
       }));
       this.configurationAttempted.set(false);
@@ -254,11 +256,12 @@ export class InformationSection {
   private resetConfigurationForm(gamification: GamificationDetail): void {
     this.configurationForm.reset({
       title: gamification.title,
-      startAt: toLocalDateTime(gamification.startAt),
-      endAt: toLocalDateTime(gamification.endAt),
+      startAt: toDateInputValue(gamification.startAt),
+      endAt: toDateInputValue(gamification.endAt),
       goal: gamification.goal ?? '',
       valuePrecision: gamification.valuePrecision,
       goalUnit: gamification.goalUnit ?? '',
+      rankingUnit: gamification.rankingUnit,
       maxLiveRanking: gamification.maxLiveRanking,
     }, { emitEvent: false });
     this.setGoalValidator(gamification.valuePrecision);
@@ -267,7 +270,7 @@ export class InformationSection {
 
   async activate(): Promise<void> {
     const gamification = this.gamification();
-    if (Date.parse(gamification.endAt) <= Date.now()) {
+    if (toDateInputValue(gamification.endAt) < todayDate()) {
       this.configurationFeedback.set('Guarda primero una fecha de fin futura antes de activar la gamificación.');
       return;
     }

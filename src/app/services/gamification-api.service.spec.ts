@@ -33,6 +33,7 @@ describe('GamificationApiService', () => {
       goal: '125.50',
       valuePrecision: 2,
       goalUnit: 'ventas',
+      rankingUnit: 'Ludu Points',
     };
     service.create('company-id', payload).subscribe();
     const request = httpMock.expectOne('http://localhost:8787/superuser/companies/company-id/gamifications');
