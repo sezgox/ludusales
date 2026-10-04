@@ -7,21 +7,27 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ContactForm } from '@components/contact-form/contact-form';
 import { LandingHeader } from '@components/landing-header/landing-header';
 import { ScrollRevealDirective } from '../../directives/scroll-reveal.directive';
 
 @Component({
   selector: 'app-landing',
-  imports: [LandingHeader, NgOptimizedImage, ContactForm, ScrollRevealDirective],
+  imports: [LandingHeader, NgOptimizedImage, ContactForm, RouterLink, ScrollRevealDirective],
   templateUrl: './landing.html',
   styleUrl: './landing.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '[class]': 'pageClass',
+  },
 })
 export class Landing {
   private readonly destroyRef = inject(DestroyRef);
+  private readonly route = inject(ActivatedRoute);
 
   readonly performanceProgress = signal(0);
+  readonly pageClass = `landing--${this.route.snapshot.data['landingPage'] ?? 'home'}`;
 
   constructor() {
     afterNextRender(() => {

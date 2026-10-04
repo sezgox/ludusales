@@ -1,16 +1,15 @@
 <header class="landing-header">
-    <a href="#hero" class="landing-header__brand" aria-label="Volver al inicio">
+    <a routerLink="/" class="landing-header__brand" aria-label="Volver al inicio">
         <img ngSrc="assets/components/landing-header/ludu-logo.webp" width="40" height="40" alt="" class="landing-header__logo" priority>
         <img ngSrc="assets/components/landing-header/ludus-sales-wordmark.png" width="724" height="128" alt="Ludus Sales" class="landing-header__wordmark" priority>
     </a>
     <nav class="landing-header__nav" aria-label="Principal">
-        <a href="#gamification" class="landing-header__link">Qué es</a>
-        <a href="#motivation-gap" class="landing-header__link">Problema</a>
-        <a href="#solution" class="landing-header__link">Solución</a>
-        <a href="#how-it-works" class="landing-header__link">Cómo funciona</a>
-        <a href="#pilot-campaign" class="landing-header__link">Piloto 30-Días</a>
-        <a href="#about-us" class="landing-header__link">Nosotros</a>
-        <a href="#contact" class="landing-header__cta hover-button active-button">Comienza con el cambio</a>
+        <a routerLink="/" routerLinkActive="landing-header__link--active" [routerLinkActiveOptions]="{ exact: true }" class="landing-header__link">Inicio</a>
+        <a routerLink="/gamificacion" routerLinkActive="landing-header__link--active" class="landing-header__link">Qué es</a>
+        <a routerLink="/como-funciona" routerLinkActive="landing-header__link--active" class="landing-header__link">Cómo funciona</a>
+        <a routerLink="/campana-piloto" routerLinkActive="landing-header__link--active" class="landing-header__link">Piloto 30-Días</a>
+        <a routerLink="/nosotros" routerLinkActive="landing-header__link--active" class="landing-header__link">Nosotros</a>
+        <a routerLink="/nosotros" fragment="contact" class="landing-header__cta hover-button active-button">Comienza con el cambio</a>
         <a routerLink="/login" class="landing-header__access hover-button active-button">Acceso</a>
     </nav>
 </header>

@@ -1,11 +1,32 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
-import { Landing } from './pages/landing/landing';
 
 export const routes: Routes = [
   {
     path: '',
-    component: Landing,
+    pathMatch: 'full',
+    data: { landingPage: 'home' },
+    loadComponent: () => import('./pages/landing/landing').then((module) => module.Landing),
+  },
+  {
+    path: 'gamificacion',
+    data: { landingPage: 'gamification' },
+    loadComponent: () => import('./pages/landing/landing').then((module) => module.Landing),
+  },
+  {
+    path: 'como-funciona',
+    data: { landingPage: 'how-it-works' },
+    loadComponent: () => import('./pages/landing/landing').then((module) => module.Landing),
+  },
+  {
+    path: 'campana-piloto',
+    data: { landingPage: 'pilot-campaign' },
+    loadComponent: () => import('./pages/landing/landing').then((module) => module.Landing),
+  },
+  {
+    path: 'nosotros',
+    data: { landingPage: 'about-us' },
+    loadComponent: () => import('./pages/landing/landing').then((module) => module.Landing),
   },
   {
     path: 'login',

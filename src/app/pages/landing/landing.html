@@ -97,7 +97,7 @@
                         </div>
                     </article>
                 </div>
-                <img ngSrc="assets/pages/landing/gamification/mobile.webp" width="640" height="741" alt="Vista móvil de la experiencia gamificada" class="max-w-sm w-full h-auto" sizes="(max-width: 767px) 82vw, 33vw">
+                <img ngSrc="assets/pages/landing/gamification/mobile.webp" width="640" height="741" alt="Vista móvil de la experiencia gamificada" class="max-w-sm w-full h-auto" priority sizes="(max-width: 767px) 82vw, 33vw">
             </div>
         </section>
     </div>
@@ -873,19 +873,18 @@
 
             <div class="footer-column">
                 <p class="text-white text-xl font-semibold">Navegación</p>
-                <a href="#gamification" class="text-white/70 text-xl">Qué es</a>
-                <a href="#motivation-gap" class="text-white/70 text-xl">Problema</a>
-                <a href="#solution" class="text-white/70 text-xl">Solución</a>
-                <a href="#how-it-works" class="text-white/70 text-xl">Cómo funciona</a>
-                <a href="#pilot-campaign" class="text-white/70 text-xl">Piloto 30-Días</a>
-                <a href="#about-us" class="text-white/70 text-xl">Nosotros</a>
-                <a href="#contact" class="text-white/70 text-xl">Comienza con el cambio</a>
+                <a routerLink="/" class="text-white/70 text-xl">Inicio</a>
+                <a routerLink="/gamificacion" class="text-white/70 text-xl">Qué es</a>
+                <a routerLink="/como-funciona" class="text-white/70 text-xl">Cómo funciona</a>
+                <a routerLink="/campana-piloto" class="text-white/70 text-xl">Piloto 30-Días</a>
+                <a routerLink="/nosotros" class="text-white/70 text-xl">Nosotros</a>
+                <a routerLink="/nosotros" fragment="contact" class="text-white/70 text-xl">Comienza con el cambio</a>
             </div>
 
             <div class="footer-column">
                 <p class="text-white text-xl font-semibold">Empresa</p>
-                <a href="#about-us" class="text-white/70 text-xl">Sobre nosotros</a>
-                <a href="#contact" class="text-white/70 text-xl">Contacto</a>
+                <a routerLink="/nosotros" class="text-white/70 text-xl">Sobre nosotros</a>
+                <a routerLink="/nosotros" fragment="contact" class="text-white/70 text-xl">Contacto</a>
             </div>
 
             <div class="footer-column">

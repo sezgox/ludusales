@@ -42,6 +42,11 @@
     text-decoration: none;
 }
 
+.landing-header__link--active {
+    color: var(--color-primary);
+    font-weight: 700;
+}
+
 .landing-header__cta {
     display: inline-flex;
     align-items: center;
