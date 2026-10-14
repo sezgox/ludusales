@@ -175,6 +175,8 @@ select:focus-visible {
 .landing--home #difference,
 .landing--home #about-us,
 .landing--home #contact,
+.landing--home #platform,
+.landing--home #faq,
 .landing--gamification #hero,
 .landing--gamification #dashboard,
 .landing--gamification #how-it-works,
@@ -184,6 +186,8 @@ select:focus-visible {
 .landing--gamification #difference,
 .landing--gamification #about-us,
 .landing--gamification #contact,
+.landing--gamification #platform,
+.landing--gamification #faq,
 .landing--how-it-works .section-wrapper,
 .landing--how-it-works #motivation-gap,
 .landing--how-it-works #solution,
@@ -194,6 +198,7 @@ select:focus-visible {
 .landing--how-it-works #difference,
 .landing--how-it-works #about-us,
 .landing--how-it-works #contact,
+.landing--how-it-works #platform,
 .landing--pilot-campaign .section-wrapper,
 .landing--pilot-campaign #motivation-gap,
 .landing--pilot-campaign #solution,
@@ -203,6 +208,9 @@ select:focus-visible {
 .landing--pilot-campaign #gamification-types,
 .landing--pilot-campaign #about-us,
 .landing--pilot-campaign #contact,
+.landing--pilot-campaign #testimonials,
+.landing--pilot-campaign #difference,
+.landing--pilot-campaign #faq,
 .landing--about-us .section-wrapper,
 .landing--about-us #motivation-gap,
 .landing--about-us #solution,
@@ -212,6 +220,16 @@ select:focus-visible {
 .landing--about-us #gamification-types,
 .landing--about-us #pilot-campaign,
 .landing--about-us #testimonials,
-.landing--about-us #difference {
+.landing--about-us #difference,
+.landing--about-us #platform,
+.landing--about-us #faq {
     display: none;
+}
+
+.landing--pilot-campaign #platform {
+    display: flex !important;
+}
+
+.landing--pilot-campaign #contact {
+    display: flex !important;
 }

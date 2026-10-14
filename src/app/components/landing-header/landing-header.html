@@ -1,15 +1,31 @@
 <header class="landing-header">
-    <a routerLink="/" class="landing-header__brand" aria-label="Volver al inicio">
-        <img ngSrc="assets/components/landing-header/ludu-logo.webp" width="40" height="40" alt="" class="landing-header__logo" priority>
-        <img ngSrc="assets/components/landing-header/ludus-sales-wordmark.png" width="724" height="128" alt="Ludus Sales" class="landing-header__wordmark" priority>
-    </a>
+    <div class="landing-header__side">
+        <a routerLink="/" class="landing-header__brand" aria-label="Volver al inicio">
+            <img ngSrc="assets/pages/landing/home/brand.png" width="234" height="52" alt="Ludus Sales" class="landing-header__wordmark" priority>
+        </a>
+    </div>
+
     <nav class="landing-header__nav" aria-label="Principal">
-        <a routerLink="/" routerLinkActive="landing-header__link--active" [routerLinkActiveOptions]="{ exact: true }" class="landing-header__link">Inicio</a>
-        <a routerLink="/gamificacion" routerLinkActive="landing-header__link--active" class="landing-header__link">Qué es</a>
-        <a routerLink="/como-funciona" routerLinkActive="landing-header__link--active" class="landing-header__link">Cómo funciona</a>
+        <a routerLink="/gamificacion" routerLinkActive="landing-header__link--active" class="landing-header__link">Gamificación de ventas</a>
+        <a routerLink="/como-funciona" routerLinkActive="landing-header__link--active" class="landing-header__link">Funcionamiento</a>
         <a routerLink="/campana-piloto" routerLinkActive="landing-header__link--active" class="landing-header__link">Piloto 30-Días</a>
         <a routerLink="/nosotros" routerLinkActive="landing-header__link--active" class="landing-header__link">Nosotros</a>
-        <a routerLink="/nosotros" fragment="contact" class="landing-header__cta hover-button active-button">Comienza con el cambio</a>
-        <a routerLink="/login" class="landing-header__access hover-button active-button">Acceso</a>
     </nav>
+
+    <div class="landing-header__side landing-header__side--end">
+        <div class="landing-header__actions">
+            <a routerLink="/nosotros" fragment="contact" class="landing-header__cta hover-button active-button">Agendar reunión</a>
+            <a routerLink="/login" class="landing-header__access hover-button active-button" aria-label="Acceso">
+                <span class="landing-header__access-label">Acceso</span>
+                <svg lucideLogIn [size]="18" class="landing-header__access-icon" aria-hidden="true"></svg>
+            </a>
+        </div>
+    </div>
 </header>
+
+<nav class="landing-header__mobile-nav" aria-label="Secciones">
+    <a routerLink="/gamificacion" routerLinkActive="landing-header__mobile-link--active" class="landing-header__mobile-link">Gamificación</a>
+    <a routerLink="/como-funciona" routerLinkActive="landing-header__mobile-link--active" class="landing-header__mobile-link">Funcionamiento</a>
+    <a routerLink="/campana-piloto" routerLinkActive="landing-header__mobile-link--active" class="landing-header__mobile-link">Piloto 30-Días</a>
+    <a routerLink="/nosotros" routerLinkActive="landing-header__mobile-link--active" class="landing-header__mobile-link">Nosotros</a>
+</nav>

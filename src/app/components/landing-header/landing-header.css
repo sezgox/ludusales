@@ -12,26 +12,37 @@
     backdrop-filter: blur(16px);
 }
 
-.landing-header__brand {
+.landing-header__side {
+    display: flex;
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.landing-header__side--end {
+    justify-content: flex-end;
+}
+
+.landing-header__actions {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 10px;
+}
+
+.landing-header__brand {
+    display: flex;
+    align-items: center;
     min-width: 0;
     flex-shrink: 0;
     text-decoration: none;
     color: inherit;
 }
 
-.landing-header__logo {
-    width: 40px;
-    height: 40px;
-    flex-shrink: 0;
-}
-
 .landing-header__nav {
     display: flex;
     align-items: center;
-    gap: 24px;
+    justify-content: center;
+    gap: clamp(12px, 1.8vw, 24px);
     min-width: 0;
 }
 
@@ -78,10 +89,12 @@
     white-space: nowrap;
 }
 
-@media (min-width: 1024px) {
-    .landing-header__cta + .landing-header__access {
-        margin-left: -12px;
-    }
+.landing-header__access-icon {
+    display: none;
+}
+
+.landing-header__mobile-nav {
+    display: none;
 }
 
 @media (max-width: 1023px) {
@@ -99,22 +112,62 @@
     }
 
     .landing-header__nav {
-        flex: 1;
-        justify-content: flex-end;
-        gap: 8px;
-    }
-
-    .landing-header__link {
         display: none;
     }
 
-    .landing-header__access,
     .landing-header__cta {
         width: auto;
         max-width: 100%;
         padding: 11px 14px;
         font-size: 0.875rem;
         text-align: center;
+    }
+
+    .landing-header__actions {
+        gap: 8px;
+    }
+
+    .landing-header__access {
+        width: 42px;
+        height: 42px;
+        padding: 0;
+    }
+
+    .landing-header__access-label {
+        display: none;
+    }
+
+    .landing-header__access-icon {
+        display: block;
+    }
+
+    .landing-header__mobile-nav {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        overflow-x: auto;
+        padding: 11px 16px;
+        background: #f6f9f0;
+        border-bottom: 1px solid rgba(104, 174, 69, 0.16);
+        scrollbar-width: none;
+    }
+
+    .landing-header__mobile-nav::-webkit-scrollbar {
+        display: none;
+    }
+
+    .landing-header__mobile-link {
+        flex: 0 0 auto;
+        color: var(--color-body);
+        font-size: 0.875rem;
+        line-height: 1.2;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    .landing-header__mobile-link--active {
+        color: var(--color-primary);
+        font-weight: 700;
     }
 }
 
@@ -133,10 +186,6 @@
 
     .landing-header__wordmark {
         width: 132px;
-    }
-
-    .landing-header__access {
-        display: none;
     }
 
     .landing-header__cta {

@@ -2,37 +2,17 @@
 <main>
     <div class="section-wrapper">
         <section id="hero">
-            <div class="chip">
-                <hr class="dot"/>
-                <h1>Gamificación para Equipos de Ventas</h1>
-            </div>
-            <h2 class="text-title font-semibold text-5xl md:text-6xl lg:text-7xl text-center mt-8 mb-8">SUBE DE NIVEL TUS VENTAS CON <span class="text-[#448E39] font-bold ">GAMIFICACIÓN</span> ESTRATÉGICA</h2>
-            <p class="text-body text-center text-xl lg:max-w-[40vw]">Un enfoque moderno para motivar a los equipos de ventas, impulsar un rendimiento constante y construir una cultura del logro.</p>
-
-            <div class="flex gap-4 mt-4">
-                <a href="#pilot-campaign" class="px-4 py-2 hover-button active-button btn-accent text-xl rounded-lg btn-piloto cursor-pointer text-center no-underline">Prueba piloto 30-Días →</a>
-                <a href="#contact" class="px-4 py-2 hover-button active-button text-black text-xl rounded-lg bg-white border-[#BBD1F8] border cursor-pointer text-center no-underline">Lo quiero para mi equipo</a>
-            </div>
-
-            <p class="text-body text-cente font-bold text-3xl">Más actividad. Más constancia. Más ventas.</p>
-
-            <div class="flex gap-4 md:gap-10 lg:gap-16 justify-center">
-                <div class="flex flex-col gap-1 justify-center">
-                    <p class="text-primary font-bold text-4xl text-center">+20-30%</p>
-                    <p class="text-body text-center text-sm">Actividad Comercial</p>
+            <div class="hero-content">
+                <div class="hero-copy">
+                    <h1><span>GAMIFICACIÓN</span> de ventas para Equipos Comerciales</h1>
+                    <p>Diseñamos sistemas de gamificación comercial para aumentar la actividad comercial, mejorar la motivación y conseguir resultados más constantes.</p>
+                    <div class="hero-actions">
+                        <a routerLink="/campana-piloto" class="hero-primary-action hover-button active-button">Ver Prueba Piloto</a>
+                        <a routerLink="/gamificacion" class="hero-text-action">Descubre más</a>
+                        <a routerLink="/como-funciona" class="hero-text-action">Cómo funciona</a>
+                    </div>
                 </div>
-                <div class="flex flex-col gap-1 justify-center">
-                    <p class="text-primary font-bold text-4xl text-center">30 Días</p>
-                    <p class="text-body text-center text-sm">Resultados tangibles rápidos</p>
-                </div>
-                <div class="flex flex-col gap-1 justify-center">
-                    <p class="text-primary font-bold text-4xl text-center">+50%</p>
-                    <p class="text-body text-center text-sm">Motivación de equipos</p>
-                </div>
-            </div>
-
-            <div class="performance-bar mb-8 max-w-[90vw] md:max-w-[70vw] lg:max-w-[30vw] w-full py-1 px-2 rounded-lg" [style.--performance-progress]="performanceProgress() + '%'">
-                <p class="text-center text-white">Activando sistema de rendimiento... {{ performanceProgress() }}%</p>
+                <img ngSrc="assets/pages/landing/home/hero-product.png" width="1536" height="1024" alt="Resultados y progreso de un equipo comercial" class="hero-product" priority>
             </div>
         </section>
 
@@ -41,10 +21,9 @@
             <div class="flex gap-8 flex-col md:flex-row w-full justify-center mb-[10vh]">
                 <div class="flex flex-col max-w-2xl gap-4">
                     <article class="flex bg-white border border-primary px-4 py-8 gap-8 rounded-2xl">
-                        <img ngSrc="assets/pages/landing/gamification/controller.webp" width="512" height="512" alt="Mando que representa dinámicas de juego" class="w-20 h-20">
                         <div class="flex flex-col">
-                            <p class="text-title text-2xl">La <b>gamificación</b> consiste en aplicar <b>dinámicas de juego al trabajo</b></p>
-                            <p class="text-title text-[16px]">(Puntos, niveles, retos, rankings, recompensas...)</p>
+                            <p class="text-title text-2xl">“La <b>gamificación</b> consiste en aplicar <b>dinámicas de juego</b> a ámbitos no lúdicos, como el educativo o el profesional.”</p>
+                            <p class="text-title text-[16px]">(Puntos, niveles, retos, rankings, recompensas…)</p>
                         </div>
                     </article>
                     <article class="flex flex-col custom-gr border-primary px-4 py-8 rounded-2xl gap-4">
@@ -54,7 +33,7 @@
                                 <path d="M46.6667 71.6667C60.4738 71.6667 71.6667 60.4738 71.6667 46.6667C71.6667 32.8595 60.4738 21.6667 46.6667 21.6667C32.8595 21.6667 21.6667 32.8595 21.6667 46.6667C21.6667 60.4738 32.8595 71.6667 46.6667 71.6667Z" stroke="white" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
                                 <path d="M46.6667 55C51.269 55 55 51.269 55 46.6667C55 42.0643 51.269 38.3333 46.6667 38.3333C42.0643 38.3333 38.3333 42.0643 38.3333 46.6667C38.3333 51.269 42.0643 55 46.6667 55Z" stroke="white" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
-                            <p class="text-white text-2xl">Su objetivo no es "jugar", sino <b>motivar</b> a las personas para que hagan más y mejor.</p>
+                            <p class="text-white text-2xl">Su objetivo no es “jugar”, sino <b>motivar</b> a las personas para que hagan más y mejor.</p>
                         </div>
                         <div class="flex border border-[#FFFFFF33] text-white text-xl font-medium justify-evenly px-2 py-4 rounded-lg text-center">
                             <div class="flex flex-col w-28 items-center">
@@ -97,7 +76,7 @@
                         </div>
                     </article>
                 </div>
-                <img ngSrc="assets/pages/landing/gamification/mobile.webp" width="640" height="741" alt="Vista móvil de la experiencia gamificada" class="max-w-sm w-full h-auto" priority sizes="(max-width: 767px) 82vw, 33vw">
+                <img ngSrc="assets/pages/landing/gamification/sales-laptop.png" width="1594" height="987" alt="Panel de objetivos, retos y premios de Ludus Sales" class="w-[473px] max-w-full h-auto self-center flex-none" priority sizes="(max-width: 767px) 82vw, 33vw">
             </div>
         </section>
     </div>
@@ -304,15 +283,14 @@
 
     <section id="dashboard">
         <div class="dashboard-hero">
-            <h2 class="text-white text-4xl md:text-5xl lg:text-6xl font-semibold text-center">Ranking, Progreso y Actividad en Tiempo Real</h2>
-            <img ngSrc="assets/pages/landing/dashboard/dashboard.webp" width="1200" height="721" alt="Dashboard de ranking, progreso y actividad en tiempo real" class="dashboard-image rounded-2xl" priority sizes="(max-width: 768px) 100vw, 80vw">
+            <h2>Ranking, Progreso y Actividad en Tiempo Real</h2>
+            <div class="dashboard-showcase" aria-label="Ejemplos de la plataforma Ludus Sales">
+                <img ngSrc="assets/pages/landing/home/dashboard-main.png" width="1536" height="1024" alt="Panel de ranking y métricas comerciales" class="dashboard-image dashboard-image--main" priority>
+                <img ngSrc="assets/pages/landing/home/dashboard-overlay-a.png" width="1536" height="1024" alt="Clasificación en directo" class="dashboard-image dashboard-image--overlay-a">
+                <img ngSrc="assets/pages/landing/home/dashboard-overlay-b.png" width="1536" height="1024" alt="Detalles de una gamificación comercial" class="dashboard-image dashboard-image--overlay-b">
+            </div>
         </div>
 
-        <div class="dashboard-cta">
-            <p class="text-white text-2xl md:text-3xl font-semibold text-center">¿Listo para transformar tu equipo de ventas?</p>
-            <p class="text-white/85 text-lg md:text-2xl text-center">Únete a otras empresas que ya confían en la Gamificación para obtener resultados</p>
-            <a href="#pilot-campaign" class="btn-accent text-title px-8 py-3 rounded-lg text-lg font-medium cursor-pointer hover-button active-button text-center no-underline">Prueba Piloto</a>
-        </div>
     </section>
 
     <section id="how-it-works">
@@ -477,6 +455,72 @@
             </div>
         </article>
     </section>
+
+    <div class="dashboard-cta">
+        <h3>¿Listo para transformar tu equipo de ventas?</h3>
+        <p>Únete a otras empresas que ya confían en la Gamificación para obtener resultados</p>
+        <a routerLink="/campana-piloto" class="btn-accent hover-button active-button">Prueba Piloto</a>
+    </div>
+
+    <section id="faq" aria-labelledby="faq-title">
+        <h2 id="faq-title">Preguntas Frecuentes</h2>
+        <div class="faq-list">
+            <details open>
+                <summary>
+                    <span>¿Qué es Ludus Sales y cómo funciona?</span>
+                    <span class="faq-toggle-icon" aria-hidden="true">
+                        <svg lucideChevronDown [size]="20"></svg>
+                    </span>
+                </summary>
+                <p>Ludus Sales transforma los objetivos comerciales de tu empresa en experiencias de juego diseñadas para motivar a tu equipo y mejorar sus resultados. Creamos competiciones, retos, rankings y sistemas de recompensas personalizados que convierten el trabajo diario en una experiencia más dinámica, participativa y motivadora.</p>
+            </details>
+            <details open>
+                <summary>
+                    <span>¿Para qué tipo de empresas está pensado Ludus Sales?</span>
+                    <span class="faq-toggle-icon" aria-hidden="true">
+                        <svg lucideChevronDown [size]="20"></svg>
+                    </span>
+                </summary>
+                <p>Nuestro servicio está dirigido a empresas de cualquier sector que cuenten con equipos comerciales y quieran impulsar su rendimiento. Trabajamos con organizaciones de diferentes tamaños, adaptando cada gamificación a sus objetivos, estructura comercial y necesidades específicas.</p>
+            </details>
+            <details open>
+                <summary>
+                    <span>¿Qué necesita mi empresa para empezar?</span>
+                    <span class="faq-toggle-icon" aria-hidden="true">
+                        <svg lucideChevronDown [size]="20"></svg>
+                    </span>
+                </summary>
+                <p>¡Muy poco! Solo necesitamos conocer cómo funciona tu equipo comercial, cuáles son tus objetivos y qué indicadores de rendimiento utilizáis. A partir de esta información, diseñamos una experiencia de gamificación adaptada a tu empresa y nos encargamos de preparar todo lo necesario para ponerla en marcha.</p>
+            </details>
+            <details open>
+                <summary>
+                    <span>¿Cómo pueden los comerciales seguir su progreso?</span>
+                    <span class="faq-toggle-icon" aria-hidden="true">
+                        <svg lucideChevronDown [size]="20"></svg>
+                    </span>
+                </summary>
+                <p>Cada gamificación cuenta con un dashboard online donde los participantes pueden consultar los retos, objetivos, clasificaciones, logros y premios disponibles. De esta forma, todo el equipo puede seguir la evolución de la competición y conocer su progreso de manera sencilla y visual.</p>
+            </details>
+            <details open>
+                <summary>
+                    <span>¿Las gamificaciones son personalizadas para cada empresa?</span>
+                    <span class="faq-toggle-icon" aria-hidden="true">
+                        <svg lucideChevronDown [size]="20"></svg>
+                    </span>
+                </summary>
+                <p>Sí. Cada empresa tiene objetivos, equipos y necesidades diferentes. Por eso, diseñamos gamificaciones a medida, adaptando las dinámicas de juego, los indicadores de rendimiento, la duración, los retos y las recompensas a cada organización. No utilizamos una solución genérica: creamos una experiencia alineada con lo que tu empresa quiere conseguir.</p>
+            </details>
+            <details open>
+                <summary>
+                    <span>¿Cómo puedo contratar Ludus Sales?</span>
+                    <span class="faq-toggle-icon" aria-hidden="true">
+                        <svg lucideChevronDown [size]="20"></svg>
+                    </span>
+                </summary>
+                <p>Es muy sencillo. Contacta con nosotros y agendaremos una primera reunión para conocer tu empresa, tus objetivos y las necesidades de tu equipo comercial. A partir de ahí, te explicaremos cómo podemos ayudarte y prepararemos una propuesta adaptada a tu organización, sin compromiso.</p>
+            </details>
+        </div>
+    </section>
     <section id="gamification-types">
         <div class="types-heading">
             <h2 class="text-title text-4xl md:text-5xl lg:text-6xl font-semibold text-center">Tipos de Gamificación</h2>
@@ -548,12 +592,12 @@
     </section>
     <section id="pilot-campaign">
         <div class="pilot-heading">
-            <h2 class="text-white text-4xl md:text-5xl lg:text-6xl font-semibold text-center">Comienza tu Primera Campaña</h2>
-            <p class="text-white/90 text-xl md:text-2xl text-center max-w-5xl">Prueba el enfoque con un equipo pequeño antes de comprometerte a una implementación completa. Bajo riesgo, retroalimentación rápida y resultados medibles.</p>
+            <h2 class="text-title text-4xl md:text-5xl lg:text-6xl font-semibold text-center">Comienza tu Primera Campaña</h2>
+            <p class="text-body text-xl md:text-2xl text-center max-w-5xl">Prueba el enfoque con un equipo pequeño antes de comprometerte a una implementación completa. Bajo riesgo, retroalimentación rápida y resultados medibles.</p>
         </div>
 
         <div class="pilot-grid">
-            <article class="pilot-card" appScrollReveal="slide-left">
+            <article class="pilot-card">
                 <div class="pilot-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g clip-path="url(#clip0_11_3845)">
                     <path d="M6.66669 1.6665V4.99984" stroke="#278537" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
@@ -574,7 +618,7 @@
                 </div>
             </article>
 
-            <article class="pilot-card" appScrollReveal="slide-right" [revealDelay]="70">
+            <article class="pilot-card">
                 <div class="pilot-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M13.3333 17.5V15.8333C13.3333 14.9493 12.9821 14.1014 12.357 13.4763C11.7319 12.8512 10.884 12.5 9.99996 12.5H4.99996C4.1159 12.5 3.26806 12.8512 2.64294 13.4763C2.01782 14.1014 1.66663 14.9493 1.66663 15.8333V17.5" stroke="#278537" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M7.49996 9.16667C9.34091 9.16667 10.8333 7.67428 10.8333 5.83333C10.8333 3.99238 9.34091 2.5 7.49996 2.5C5.65901 2.5 4.16663 3.99238 4.16663 5.83333C4.16663 7.67428 5.65901 9.16667 7.49996 9.16667Z" stroke="#278537" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
@@ -588,7 +632,7 @@
                 </div>
             </article>
 
-            <article class="pilot-card" appScrollReveal="slide-left" [revealDelay]="140">
+            <article class="pilot-card">
                 <div class="pilot-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M13.3333 17.5V15.8333C13.3333 14.9493 12.9821 14.1014 12.357 13.4763C11.7319 12.8512 10.884 12.5 9.99996 12.5H4.99996C4.1159 12.5 3.26806 12.8512 2.64294 13.4763C2.01782 14.1014 1.66663 14.9493 1.66663 15.8333V17.5" stroke="#278537" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M7.49996 9.16667C9.34091 9.16667 10.8333 7.67428 10.8333 5.83333C10.8333 3.99238 9.34091 2.5 7.49996 2.5C5.65901 2.5 4.16663 3.99238 4.16663 5.83333C4.16663 7.67428 5.65901 9.16667 7.49996 9.16667Z" stroke="#278537" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
@@ -602,7 +646,7 @@
                 </div>
             </article>
 
-            <article class="pilot-card" appScrollReveal="slide-right" [revealDelay]="210">
+            <article class="pilot-card">
                 <div class="pilot-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M13.3333 17.5V15.8333C13.3333 14.9493 12.9821 14.1014 12.357 13.4763C11.7319 12.8512 10.884 12.5 9.99996 12.5H4.99996C4.1159 12.5 3.26806 12.8512 2.64294 13.4763C2.01782 14.1014 1.66663 14.9493 1.66663 15.8333V17.5" stroke="#278537" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M7.49996 9.16667C9.34091 9.16667 10.8333 7.67428 10.8333 5.83333C10.8333 3.99238 9.34091 2.5 7.49996 2.5C5.65901 2.5 4.16663 3.99238 4.16663 5.83333C4.16663 7.67428 5.65901 9.16667 7.49996 9.16667Z" stroke="#278537" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
@@ -617,7 +661,7 @@
             </article>
         </div>
 
-        <article class="pilot-price-card" appScrollReveal="scale-in">
+        <article class="pilot-price-card">
             <h3 class="text-subtitle text-4xl font-semibold text-center">Inversión Programa Piloto</h3>
             <div class="pilot-price-row">
                 <p class="pilot-price">800€</p>
@@ -627,12 +671,48 @@
             <p class="text-body text-lg text-center">Generalmente programada dentro de 5 a 7 días hábiles</p>
         </article>
 
-        <div class="pilot-pill" appScrollReveal="scale-in" [revealDelay]="120">
-            <span class="pilot-pill-icon" aria-hidden="true"><svg width="37" height="33" viewBox="0 0 37 33" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M18.4134 11.1712V17.8379M18.4134 24.5046H18.43M15.5634 2.60457L1.4467 26.1712C1.15564 26.6753 1.00164 27.2467 1.00001 27.8288C0.998383 28.4108 1.14918 28.9831 1.43741 29.4888C1.72564 29.9944 2.14124 30.4158 2.64288 30.711C3.14451 31.0062 3.7147 31.1648 4.2967 31.1712H32.53C33.112 31.1648 33.6822 31.0062 34.1839 30.711C34.6855 30.4158 35.1011 29.9944 35.3893 29.4888C35.6775 28.9831 35.8283 28.4108 35.8267 27.8288C35.8251 27.2467 35.6711 26.6753 35.38 26.1712L21.2634 2.60457C20.9662 2.11475 20.5479 1.70977 20.0487 1.42871C19.5495 1.14765 18.9863 1 18.4134 1C17.8405 1 17.2772 1.14765 16.778 1.42871C16.2788 1.70977 15.8605 2.11475 15.5634 2.60457Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                </span>
-            <p class="text-white text-2xl text-center">SOLO <span class="font-semibold">5 PLAZAS/MES</span> DISPONIBLES</p>
+    </section>
+
+    <section id="contact">
+        <div class="contact-heading">
+            <h2 class="text-white text-4xl md:text-5xl lg:text-6xl font-semibold text-center">¿Listo para Transformar a tu Equipo de Ventas?</h2>
+            <p class="contact-lead text-center text-xl md:text-2xl max-w-5xl">Comienza con una reunión gratuita de 30 minutos para analizar los desafíos de tu equipo y si un marco de gamificación es la opción adecuada.</p>
+        </div>
+
+        <article class="contact-card" appScrollReveal="scale-in">
+            <app-contact-form submitLabel="Agendar Llamada →" />
+
+            <div class="contact-divider"></div>
+
+            <div class="contact-meta">
+                <p class="contact-meta-text">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M6.66669 1.6665V4.99984" stroke="currentColor" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M13.3333 1.6665V4.99984" stroke="currentColor" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M15.8333 3.3335H4.16667C3.24619 3.3335 2.5 4.07969 2.5 5.00016V16.6668C2.5 17.5873 3.24619 18.3335 4.16667 18.3335H15.8333C16.7538 18.3335 17.5 17.5873 17.5 16.6668V5.00016C17.5 4.07969 16.7538 3.3335 15.8333 3.3335Z" stroke="currentColor" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2.5 8.3335H17.5" stroke="currentColor" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Respuesta en 48H
+                </p>
+                <a href="mailto:juan.mateo@ludusales.com" class="contact-meta-text contact-meta-link">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M2.5 5.83317L9.0755 10.5965C9.66835 11.0215 10.3317 11.0215 10.9245 10.5965L17.5 5.83317" stroke="currentColor" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M15.8333 3.3335H4.16667C3.24619 3.3335 2.5 4.07969 2.5 5.00016V15.0002C2.5 15.9206 3.24619 16.6668 4.16667 16.6668H15.8333C16.7538 16.6668 17.5 15.9206 17.5 15.0002V5.00016C17.5 4.07969 16.7538 3.3335 15.8333 3.3335Z" stroke="currentColor" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    juan.mateo@ludusales.com
+                </a>
+            </div>
+        </article>
+
+        <p class="contact-note text-center text-lg">Sin obligaciones. Sin presión. Solo una conversación sincera sobre si este servicio es lo que necesitas.</p>
+    </section>
+
+    <section id="platform" aria-labelledby="platform-title">
+        <h2 id="platform-title">Nuestra Plataforma Personalizada</h2>
+        <div class="platform-showcase" aria-label="Vistas de la plataforma Ludus Sales">
+            <img ngSrc="assets/pages/landing/home/dashboard-main.png" width="1536" height="1024" alt="Panel de ranking y métricas comerciales" class="platform-image platform-image--main">
+            <img ngSrc="assets/pages/landing/home/dashboard-overlay-a.png" width="1536" height="1024" alt="Clasificación de equipo en tiempo real" class="platform-image platform-image--overlay-a">
+            <img ngSrc="assets/pages/landing/home/dashboard-overlay-b.png" width="1536" height="1024" alt="Información de una campaña de gamificación" class="platform-image platform-image--overlay-b">
         </div>
     </section>
 
@@ -827,40 +907,6 @@
         </article>
     </section>
 
-    <section id="contact">
-        <div class="contact-heading">
-            <h2 class="text-white text-4xl md:text-5xl lg:text-6xl font-semibold text-center">¿Listo para Transformar a tu Equipo de Ventas?</h2>
-            <p class="contact-lead text-center text-xl md:text-2xl max-w-5xl">Comienza con una reunión gratuita de 30 minutos para analizar los desafíos de tu equipo y si un marco de gamificación es la opción adecuada.</p>
-        </div>
-
-        <article class="contact-card" appScrollReveal="scale-in">
-            <app-contact-form submitLabel="Agendar Llamada →" />
-
-            <div class="contact-divider"></div>
-
-            <div class="contact-meta">
-                <p class="contact-meta-text">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                        <path d="M6.66669 1.6665V4.99984" stroke="currentColor" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M13.3333 1.6665V4.99984" stroke="currentColor" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M15.8333 3.3335H4.16667C3.24619 3.3335 2.5 4.07969 2.5 5.00016V16.6668C2.5 17.5873 3.24619 18.3335 4.16667 18.3335H15.8333C16.7538 18.3335 17.5 17.5873 17.5 16.6668V5.00016C17.5 4.07969 16.7538 3.3335 15.8333 3.3335Z" stroke="currentColor" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M2.5 8.3335H17.5" stroke="currentColor" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    Respuesta en 48H
-                </p>
-                <a href="mailto:juan.mateo@ludusales.com" class="contact-meta-text contact-meta-link">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                        <path d="M2.5 5.83317L9.0755 10.5965C9.66835 11.0215 10.3317 11.0215 10.9245 10.5965L17.5 5.83317" stroke="currentColor" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M15.8333 3.3335H4.16667C3.24619 3.3335 2.5 4.07969 2.5 5.00016V15.0002C2.5 15.9206 3.24619 16.6668 4.16667 16.6668H15.8333C16.7538 16.6668 17.5 15.9206 17.5 15.0002V5.00016C17.5 4.07969 16.7538 3.3335 15.8333 3.3335Z" stroke="currentColor" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    juan.mateo@ludusales.com
-                </a>
-            </div>
-        </article>
-
-        <p class="contact-note text-center text-lg">Sin obligaciones. Sin presión. Solo una conversación sincera sobre si este servicio es lo que necesitas.</p>
-    </section>
-
     <footer id="site-footer">
         <div class="footer-grid">
             <div class="footer-brand">
@@ -891,7 +937,7 @@
                 <p class="text-white text-xl font-semibold">Conecta</p>
                 <div class="footer-socials">
                     <a href="https://www.linkedin.com/in/juan-manuel-mateo-79358b122/" class="footer-social" aria-label="LinkedIn de Juan Manuel Mateo" target="_blank" rel="noopener noreferrer">in</a>
-                    <a href="mailto:juan.mateo@ludusales.com" class="footer-social" aria-label="Enviar email a juan.mateo@ludusales.com">✉</a>
+                    <a href="mailto:juan.mateo@ludusales.com" class="footer-social" aria-label="Enviar email a juan.mateo@ludusales.com"><svg lucideMail [size]="16" aria-hidden="true"></svg></a>
                 </div>
                 <a href="mailto:juan.mateo@ludusales.com" class="text-white/60 text-lg">juan.mateo@ludusales.com</a>
             </div>
