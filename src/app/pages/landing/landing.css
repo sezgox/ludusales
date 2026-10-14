@@ -965,18 +965,11 @@ section {
 
 .faq-toggle-icon svg {
     grid-area: 1 / 1;
+    transition: transform 180ms ease;
 }
 
-.faq-toggle-icon__minus {
-    display: none;
-}
-
-.faq-list details[open] .faq-toggle-icon__plus {
-    display: none;
-}
-
-.faq-list details[open] .faq-toggle-icon__minus {
-    display: block;
+.faq-list details[open] .faq-toggle-icon svg {
+    transform: rotate(180deg);
 }
 
 .faq-list p {
