@@ -24,4 +24,5 @@ export class Landing {
   private readonly route = inject(ActivatedRoute);
 
   readonly pageClass = `landing--${this.route.snapshot.data['landingPage'] ?? 'home'}`;
+  readonly showDashboardCta = this.route.snapshot.data['landingPage'] === 'how-it-works';
 }

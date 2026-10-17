@@ -7,9 +7,9 @@
                     <h1><span>GAMIFICACIÓN</span> de ventas para Equipos Comerciales</h1>
                     <p>Diseñamos sistemas de gamificación comercial para aumentar la actividad comercial, mejorar la motivación y conseguir resultados más constantes.</p>
                     <div class="hero-actions">
-                        <a routerLink="/campana-piloto" class="hero-primary-action hover-button active-button">Ver Prueba Piloto</a>
+                        <a routerLink="/piloto" class="hero-primary-action hover-button active-button">Ver Prueba Piloto</a>
                         <a routerLink="/gamificacion" class="hero-text-action">Descubre más</a>
-                        <a routerLink="/como-funciona" class="hero-text-action">Cómo funciona</a>
+                        <a routerLink="/funcionamiento" class="hero-text-action">Cómo funciona</a>
                     </div>
                 </div>
                 <img ngSrc="assets/pages/landing/home/hero-product.png" width="1536" height="1024" alt="Resultados y progreso de un equipo comercial" class="hero-product" priority>
@@ -456,13 +456,14 @@
         </article>
     </section>
 
-    <div class="dashboard-cta">
-        <h3>¿Listo para transformar tu equipo de ventas?</h3>
-        <p>Únete a otras empresas que ya confían en la Gamificación para obtener resultados</p>
-        <a routerLink="/campana-piloto" class="btn-accent hover-button active-button">Prueba Piloto</a>
-    </div>
-
     <section id="faq" aria-labelledby="faq-title">
+        @if (showDashboardCta) {
+            <div class="dashboard-cta">
+                <h3>¿Listo para transformar tu equipo de ventas?</h3>
+                <p>Únete a otras empresas que ya confían en la Gamificación para obtener resultados</p>
+                <a routerLink="/piloto" class="btn-accent hover-button active-button">Prueba Piloto</a>
+            </div>
+        }
         <h2 id="faq-title">Preguntas Frecuentes</h2>
         <div class="faq-list">
             <details>
@@ -921,8 +922,8 @@
                 <p class="text-white text-xl font-semibold">Navegación</p>
                 <a routerLink="/" class="text-white/70 text-xl">Inicio</a>
                 <a routerLink="/gamificacion" class="text-white/70 text-xl">Qué es</a>
-                <a routerLink="/como-funciona" class="text-white/70 text-xl">Cómo funciona</a>
-                <a routerLink="/campana-piloto" class="text-white/70 text-xl">Piloto 30-Días</a>
+                <a routerLink="/funcionamiento" class="text-white/70 text-xl">Cómo funciona</a>
+                <a routerLink="/piloto" class="text-white/70 text-xl">Piloto 30-Días</a>
                 <a routerLink="/nosotros" class="text-white/70 text-xl">Nosotros</a>
                 <a routerLink="/nosotros" fragment="contact" class="text-white/70 text-xl">Comienza con el cambio</a>
             </div>

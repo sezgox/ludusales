@@ -14,12 +14,12 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/landing/landing').then((module) => module.Landing),
   },
   {
-    path: 'como-funciona',
+    path: 'funcionamiento',
     data: { landingPage: 'how-it-works' },
     loadComponent: () => import('./pages/landing/landing').then((module) => module.Landing),
   },
   {
-    path: 'campana-piloto',
+    path: 'piloto',
     data: { landingPage: 'pilot-campaign' },
     loadComponent: () => import('./pages/landing/landing').then((module) => module.Landing),
   },
