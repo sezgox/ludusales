@@ -1339,11 +1339,6 @@ section {
     color: var(--color-title);
 }
 
-.pilot-price-card .btn-accent {
-    padding: 8px 24px;
-    font-size: 0.875rem;
-}
-
 .pilot-price-card > p {
     font-size: 0.75rem;
 }
