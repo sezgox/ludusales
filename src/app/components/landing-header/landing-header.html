@@ -2,8 +2,9 @@
 <header class="top" [class.dark]="theme.dark()">
   <nav class="wrap nav" [attr.aria-label]="i18n.text('Navegación principal', 'Main navigation')">
     <a class="brand" routerLink="/" [attr.aria-label]="i18n.text('Ludus Sales, inicio', 'Ludus Sales, home')"><img ngSrc="assets/pages/landing/home/mark.png" alt="" width="32" height="32" priority><span><b>Ludus</b> <i>Sales</i></span></a>
-    <button class="burger" type="button" aria-controls="landing-menu" [attr.aria-expanded]="menuOpen()" (click)="menuOpen.set(!menuOpen())">{{ i18n.text('Menú', 'Menu') }}</button>
+    <button class="burger" type="button" aria-controls="landing-menu" [attr.aria-expanded]="menuOpen()" [attr.aria-label]="menuOpen() ? i18n.text('Cerrar menú', 'Close menu') : i18n.text('Abrir menú', 'Open menu')" (click)="menuOpen.set(!menuOpen())">@if (menuOpen()) { <svg lucideX [size]="22" aria-hidden="true"></svg> } @else { <svg lucideMenu [size]="22" aria-hidden="true"></svg> }</button>
     <ul class="menu" id="landing-menu" [class.open]="menuOpen()">
+      <li class="preferences preferences-mobile"><ng-container *ngTemplateOutlet="preferenceControls" /></li>
       <li><a routerLink="/funcionamiento" routerLinkActive="current" ariaCurrentWhenActive="page" (click)="menuOpen.set(false)">{{ i18n.text('Cómo funciona', 'How it works') }}</a></li>
       <li><a routerLink="/gamificacion" routerLinkActive="current" ariaCurrentWhenActive="page" (click)="menuOpen.set(false)">{{ i18n.text('Gamificación comercial', 'Sales gamification') }}</a></li>
       <li><a routerLink="/piloto" routerLinkActive="current" ariaCurrentWhenActive="page" (click)="menuOpen.set(false)">{{ i18n.text('Planes', 'Plans') }}</a></li>
@@ -12,8 +13,11 @@
       <li class="m-cta"><a class="m-login" routerLink="/login" (click)="menuOpen.set(false)">{{ i18n.text('Acceso clientes', 'Client login') }}</a></li>
       <li class="m-cta"><a routerLink="/contacto" (click)="menuOpen.set(false)">{{ i18n.text('Agendar reunión', 'Book a meeting') }}</a></li>
     </ul>
-    <div class="lang" role="group" [attr.aria-label]="i18n.text('Idioma', 'Language')"><button type="button" [attr.aria-pressed]="i18n.language() === 'es'" (click)="i18n.language.set('es')">ES</button><button type="button" [attr.aria-pressed]="i18n.language() === 'en'" (click)="i18n.language.set('en')">EN</button></div>
-    <button type="button" class="theme-btn" [attr.aria-label]="i18n.text('Modo claro / oscuro', 'Light / dark mode')" [attr.aria-pressed]="theme.dark()" (click)="theme.toggle()">@if (theme.dark()) { <svg lucideSun [size]="16" aria-hidden="true"></svg> } @else { <svg lucideMoon [size]="16" aria-hidden="true"></svg> }</button>
+    <div class="preferences preferences-desktop"><ng-container *ngTemplateOutlet="preferenceControls" /></div>
     <div class="nav-btns"><a class="btn btn-green" routerLink="/login">{{ i18n.text('Acceso clientes', 'Client login') }}</a><a class="btn btn-gold" routerLink="/contacto">{{ i18n.text('Agendar reunión', 'Book a meeting') }}</a></div>
   </nav>
 </header>
+<ng-template #preferenceControls>
+  <div class="lang" role="group" [attr.aria-label]="i18n.text('Idioma', 'Language')"><button type="button" [attr.aria-pressed]="i18n.language() === 'es'" (click)="i18n.select('es')">ES</button><button type="button" [attr.aria-pressed]="i18n.language() === 'en'" (click)="i18n.select('en')">EN</button></div>
+  <button type="button" class="theme-btn" [attr.aria-label]="i18n.text('Modo claro / oscuro', 'Light / dark mode')" [attr.aria-pressed]="theme.dark()" (click)="theme.toggle()">@if (theme.dark()) { <svg lucideSun [size]="16" aria-hidden="true"></svg> } @else { <svg lucideMoon [size]="16" aria-hidden="true"></svg> }</button>
+</ng-template>

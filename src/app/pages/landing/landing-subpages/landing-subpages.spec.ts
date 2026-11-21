@@ -36,6 +36,7 @@ describe('LandingSubpages', () => {
   ])('renders the %s page', (page, heading) => {
     const fixture = TestBed.createComponent(LandingSubpages);
     fixture.componentRef.setInput('page', page);
+    TestBed.inject(LandingLanguage).select('es');
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('h1').textContent).toContain(heading);
   });

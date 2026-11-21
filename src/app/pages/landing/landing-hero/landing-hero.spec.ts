@@ -10,6 +10,7 @@ describe('LandingHero', () => {
     await TestBed.configureTestingModule({ imports: [LandingHero], providers: [provideRouter([])] }).compileComponents();
     fixture = TestBed.createComponent(LandingHero);
     hero = fixture.componentInstance;
+    hero.i18n.select('es');
     fixture.detectChanges();
   });
 

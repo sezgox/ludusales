@@ -30,14 +30,15 @@ describe('ContactForm', () => {
   });
 
   it('sends all fields and preserves the selected goals', async () => {
-    component.form.patchValue({
+    const details = {
       firstName: 'Ana Pérez', email: 'ana@example.com', company: 'Empresa', teamSize: '8 a 25',
-      role: 'Directora', phone: '600123456', goals: ['Captar nuevos clientes'],
+      lastName: '', role: 'Directora', phone: '600123456', goals: ['Captar nuevos clientes', 'Activar a todo el equipo'],
       founderInterest: 'Solo quiero información', source: 'LinkedIn', message: 'Más información',
-    });
+    };
+    component.form.patchValue(details);
     const result = component.submit();
     const request = TestBed.inject(HttpTestingController).expectOne((req) => req.url.endsWith('/contact'));
-    expect(request.request.body).toMatchObject({ role: 'Directora', goals: ['Captar nuevos clientes'], message: 'Más información' });
+    expect(request.request.body).toEqual(details);
     request.flush({});
     await result;
     expect(component.status()).toBe('sent');

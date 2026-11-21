@@ -21,4 +21,15 @@ describe('LandingHeader', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('exposes an accessible menu button and updates its expanded state', () => {
+    fixture.detectChanges();
+    const button: HTMLButtonElement = fixture.nativeElement.querySelector('.burger');
+    expect(button.getAttribute('aria-expanded')).toBe('false');
+    expect(button.getAttribute('aria-label')).toBeTruthy();
+    button.click();
+    fixture.detectChanges();
+    expect(button.getAttribute('aria-expanded')).toBe('true');
+    expect(button.getAttribute('aria-controls')).toBe('landing-menu');
+  });
 });
