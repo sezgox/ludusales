@@ -29,6 +29,11 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/landing/landing').then((module) => module.Landing),
   },
   {
+    path: 'contacto',
+    data: { landingPage: 'contact' },
+    loadComponent: () => import('./pages/landing/landing').then((module) => module.Landing),
+  },
+  {
     path: 'login',
     loadComponent: () => import('./pages/login/login').then((module) => module.Login),
   },

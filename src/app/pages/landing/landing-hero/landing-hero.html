@@ -1,0 +1,26 @@
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <a class="offer" routerLink="/piloto"><span>{{ i18n.text('Fundadores', 'Founders') }}</span>{{ i18n.text('Piloto de 30 días gratis · plazas limitadas →', 'Free 30-day pilot · limited spots →') }}</a>
+      <h1>{{ i18n.text('Convierte tus objetivos de venta en un reto que tu equipo', 'Turn your sales targets into a challenge your team') }} <em class="hl">{{ i18n.text('quiere ganar', 'wants to win') }}</em>.</h1>
+      <p class="lead">{{ i18n.text('Diseñamos y gestionamos gamificaciones a medida para equipos comerciales: competiciones, retos de equipo, logros, niveles o premios, según lo que necesite vuestro negocio. Tú no configuras nada. Nosotros lo montamos todo y tu equipo juega.', "We design and run custom gamification for sales teams: competitions, team challenges, achievements, levels or rewards, depending on what your business needs. You don't set anything up. We build it all and your team plays.") }}</p>
+      <div class="ctas">
+        <a class="btn btn-gold" routerLink="/contacto">{{ i18n.text('Solicitar piloto gratuito', 'Request a free pilot') }}</a>
+        <a class="btn btn-soft" routerLink="/funcionamiento">{{ i18n.text('Ver cómo funciona', 'See how it works') }}</a>
+      </div>
+      <ul class="ticks"><li>{{ i18n.text('En marcha en 3 semanas', 'Live in 3 weeks') }}</li><li>{{ i18n.text('100 % a medida', '100% tailored') }}</li><li>{{ i18n.text('Informe de resultados', 'Results report') }}</li></ul>
+    </div>
+    <div class="play-wrap">
+      <p class="play-hint"><i aria-hidden="true"></i>{{ i18n.text('Interactivo: pulsa los botones y sube de nivel', 'Interactive: tap the buttons and level up') }}<svg lucideArrowDownRight [size]="40" aria-hidden="true"></svg></p>
+      <div class="play" [class.nudge]="actionCount() === 0" role="region" [attr.aria-label]="i18n.text('Minijuego: prueba a vender jugando', 'Mini-game: try selling by playing')">
+        <div class="play-top"><span class="play-tag">{{ i18n.text('Pruébalo tú', 'Try it yourself') }}</span><button type="button" class="reset" (click)="reset()">{{ i18n.text('Reiniciar', 'Reset') }}</button></div>
+        <div class="player"><span class="ava" aria-hidden="true">{{ i18n.text('TÚ', 'YOU') }}</span><div><b>{{ i18n.text('Tu comercial', 'Your sales rep') }}</b><span>{{ i18n.text('Nivel', 'Level') }} {{ level() }}</span></div>@if (streak() >= 2) { <span class="streak">{{ i18n.text('Racha x', 'Streak x') }}{{ streak() }}</span> }</div>
+        <div class="score"><strong aria-live="polite">{{ formattedPoints() }}</strong><span>pts</span>@if (actionCount() > 0) { @for (action of [actionCount()]; track action) { <em class="pop go" aria-hidden="true">+{{ lastPoints() }}</em> } }</div>
+        <div class="xp"><div class="xp-l"><span>{{ i18n.text('Hasta el nivel', 'To level') }} {{ level() + 1 }}</span><span>{{ progress() }} / 300</span></div><div class="xp-bar" role="progressbar" [attr.aria-label]="i18n.text('Progreso hacia el siguiente nivel', 'Progress to the next level')" [attr.aria-valuenow]="progress()" aria-valuemin="0" aria-valuemax="300"><i [style.width.%]="progress() / 3"></i></div></div>
+        <div class="gbadges">@for (badge of badges(); track badge.id) { <div class="gb" [class.on]="badge.unlocked" [class.new]="badge.id === lastBadge()"><i aria-hidden="true">@if (badge.unlocked) { <svg lucideCheck [size]="14"></svg> } @else { <svg lucideLockKeyhole [size]="14"></svg> }</i><span>{{ i18n.text(badge.es, badge.en) }}</span><span class="sr-only">{{ badge.unlocked ? i18n.text('desbloqueado', 'unlocked') : i18n.text('bloqueado', 'locked') }}</span></div> }</div>
+        <div class="acts"><button type="button" class="act act-a" (click)="addPoints(100)">{{ i18n.text('Cerrar venta', 'Close a sale') }} <b>+100</b><span class="tap" aria-hidden="true">{{ i18n.text('Pulsa aquí', 'Tap here') }}</span></button><button type="button" class="act act-b" (click)="addPoints(200)">{{ i18n.text('Nuevo cliente', 'New client') }} <b>+200</b></button></div>
+        @if (points() >= 600) { <div class="win"><p>{{ i18n.text('Eso es vender jugando. Imagina a todo tu equipo así.', "That's selling by playing. Imagine your whole team like this.") }}</p><a class="btn" routerLink="/contacto">{{ i18n.text('Probarlo con mi equipo →', 'Try it with my team →') }}</a></div> }
+      </div>
+    </div>
+  </div>
+</section>

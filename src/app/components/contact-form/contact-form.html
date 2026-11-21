@@ -1,21 +1,19 @@
-<form class="contact-form stack" [formGroup]="form" (ngSubmit)="submit()" novalidate>
-    <div class="contact-form-row">
-        <input class="form-input contact-input" type="text" formControlName="firstName" autocomplete="given-name" aria-label="Nombre" placeholder="Nombre" />
-        <input class="form-input contact-input" type="text" formControlName="lastName" autocomplete="family-name" aria-label="Apellidos" placeholder="Apellidos" />
-    </div>
-    <input class="form-input contact-input" type="email" formControlName="email" autocomplete="email" aria-label="Email de contacto" placeholder="Email contacto" />
-    <input class="form-input contact-input" type="text" formControlName="company" autocomplete="organization" aria-label="Nombre de tu empresa" placeholder="Nombre de tu empresa" />
-    <input class="form-input contact-input" type="text" formControlName="teamSize" aria-label="Tamaño del equipo de ventas" placeholder="Tamaño del equipo de ventas" />
-    <button class="primary-button contact-button" type="submit" [disabled]="status() === 'sending'">
-        {{ status() === 'sending' ? 'Enviando...' : submitLabel() }}
-    </button>
-    @if (form.invalid && form.touched) {
-        <p class="form-feedback contact-form-feedback" aria-live="polite">Completa todos los campos antes de agendar la llamada.</p>
-    }
-    @if (status() === 'sent') {
-        <p class="form-feedback contact-form-feedback contact-form-feedback--success" aria-live="polite">Solicitud enviada. Te contactaremos pronto.</p>
-    }
-    @if (status() === 'error') {
-        <p class="form-feedback contact-form-feedback" aria-live="polite">No hemos podido enviar la solicitud. Escríbenos a {{ contactEmail() }}.</p>
-    }
+<form class="lead-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+  <h2>{{ i18n.text('Solicita tu reunión', 'Request your meeting') }}</h2>
+  <p class="sub">{{ i18n.text('Los campos con * son obligatorios.', 'Fields marked * are required.') }}</p>
+  <div class="f"><label for="contact-name">{{ i18n.text('Nombre y apellidos *', 'Full name *') }}</label><input id="contact-name" type="text" formControlName="firstName" autocomplete="name" maxlength="80" required></div>
+  <div class="f"><label for="contact-role">{{ i18n.text('Cargo *', 'Job title *') }}</label><input id="contact-role" type="text" formControlName="role" autocomplete="organization-title" [placeholder]="i18n.text('Director comercial', 'Sales director')" maxlength="160" required></div>
+  <div class="f"><label for="contact-company">{{ i18n.text('Empresa *', 'Company *') }}</label><input id="contact-company" type="text" formControlName="company" autocomplete="organization" maxlength="160" required></div>
+  <div class="f"><label for="contact-email">{{ i18n.text('Email de trabajo *', 'Work email *') }}</label><input id="contact-email" type="email" formControlName="email" autocomplete="email" maxlength="254" required></div>
+  <div class="f"><label for="contact-phone">{{ i18n.text('Teléfono', 'Phone') }}</label><input id="contact-phone" type="tel" formControlName="phone" autocomplete="tel" maxlength="40"></div>
+  <div class="f"><label for="contact-size">{{ i18n.text('Comerciales en el equipo *', 'Salespeople on the team *') }}</label><select id="contact-size" formControlName="teamSize" required><option value="">{{ i18n.text('Selecciona', 'Select') }}</option><option value="1 a 7">1–7</option><option value="8 a 25">8–25</option><option value="26 a 50">26–50</option><option value="51 a 150">51–150</option><option value="Más de 150">{{ i18n.text('Más de 150', 'More than 150') }}</option></select></div>
+  <fieldset class="f full"><legend>{{ i18n.text('¿Qué quieres mejorar? *', 'What do you want to improve? *') }}</legend><div class="pills">@for (goal of goals; track goal[0]) { <label><input type="checkbox" [checked]="form.controls.goals.value.includes(goal[0])" (change)="toggleGoal(goal[0], $event)">{{ i18n.text(goal[0], goal[1]) }}</label> }</div></fieldset>
+  <fieldset class="f full"><legend>{{ i18n.text('¿Te interesa el Programa Fundadores? *', 'Are you interested in the Founders Program? *') }}</legend><div class="pills"><label><input type="radio" formControlName="founderInterest" value="Sí, quiero optar al piloto gratuito">{{ i18n.text('Sí, quiero optar al piloto gratuito', 'Yes, I want to apply for the free pilot') }}</label><label><input type="radio" formControlName="founderInterest" value="Solo quiero información">{{ i18n.text('Solo quiero información', 'I only want information') }}</label></div></fieldset>
+  <div class="f full"><label for="contact-source">{{ i18n.text('¿Cómo nos has conocido?', 'How did you hear about us?') }}</label><select id="contact-source" formControlName="source"><option value="">{{ i18n.text('Selecciona', 'Select') }}</option><option>LinkedIn</option><option value="Recomendación">{{ i18n.text('Recomendación', 'Recommendation') }}</option><option value="Visita en persona">{{ i18n.text('Visita en persona', 'In-person visit') }}</option><option>Email</option><option value="Buscador">{{ i18n.text('Buscador', 'Search engine') }}</option><option value="Otro">{{ i18n.text('Otro', 'Other') }}</option></select></div>
+  <div class="f full"><label for="contact-message">{{ i18n.text('Cuéntanos algo más', 'Tell us more') }}</label><textarea id="contact-message" formControlName="message" maxlength="2000" [placeholder]="i18n.text('Sector, cómo trabaja el equipo, qué habéis probado antes…', 'Industry, how your team works, what you have tried before…')"></textarea></div>
+  @if (form.invalid && form.touched) { <p class="err" role="alert">{{ i18n.text('Completa los campos obligatorios y comprueba el email.', 'Complete the required fields and check your email address.') }}</p> }
+  @if (status() === 'sent') { <p class="success" role="status">{{ i18n.text('Solicitud enviada. Te contactaremos pronto.', 'Request sent. We will contact you soon.') }}</p> }
+  @if (status() === 'error') { <p class="err" role="alert">{{ i18n.text('No hemos podido enviar la solicitud. Escríbenos a', 'We could not send your request. Write to') }} {{ contactEmail() }}.</p> }
+  <button class="btn" type="submit" [disabled]="status() === 'sending'">{{ status() === 'sending' ? i18n.text('Enviando...', 'Sending...') : submitLabel() }}</button>
+  <p class="legal">{{ i18n.text('Usaremos tus datos solo para responder a tu solicitud.', 'We will only use your details to respond to your request.') }}</p>
 </form>

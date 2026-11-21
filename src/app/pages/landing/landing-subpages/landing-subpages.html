@@ -1,0 +1,258 @@
+@if (page() === 'gamification') {
+<section class="page">
+<div class="page-hero"><div class="wrap">
+<p class="crumb"><a routerLink="/">{{ translate("Inicio") }}</a> / {{ translate(&apos;Gamificación comercial&apos;) }}</p>
+<p class="eyebrow">{{ translate("Gamificación comercial") }}</p>
+<h1>{{ translate("Vender") }} <em class="hl">{{ translate("jugando") }}</em>.</h1>
+<p class="lead">{{ translate("Las mecánicas de juego que mueven a un equipo comercial, y cómo las combinamos para el tuyo.") }}</p>
+</div></div>
+
+<div class="sec"><div class="wrap whatis">
+<div>
+<p class="eyebrow">{{ translate("¿Qué es la gamificación?") }}</p>
+<h2 style="margin-top:14px">{{ translate("Usar las mecánicas de los juegos para motivar en el trabajo.") }}</h2>
+<p class="def" style="margin-top:16px">{{ translate("El objetivo no es jugar. Es que tu equipo") }} <b>{{ translate("haga más y mejor, con constancia") }}</b>{{ translate(", porque quiere y no porque se lo exigen.") }}</p>
+</div>
+<div [attr.aria-label]='translate("Ilustración: cuatro carriles con distintas mecánicas de juego avanzando hacia la meta")' class="race">
+<div class="race-top"><span class="t1">{{ translate("Cada mecánica, un carril") }}</span><span class="rlive"><i></i>{{ translate("En juego") }}</span></div>
+<div class="lanes">
+<div class="lane"><span class="num">1</span><div class="strip" style="--c:var(--g1)"><span class="name">{{ translate("Retos") }}</span><span class="runner" style="--t:5.2s;--dl:-.4s"></span></div></div>
+<div class="lane"><span class="num">2</span><div class="strip" style="--c:var(--g2)"><span class="name">{{ translate("Logros") }}</span><span class="runner" style="--t:6.1s;--dl:-1.6s"></span></div></div>
+<div class="lane"><span class="num">3</span><div class="strip" style="--c:var(--g3)"><span class="name">{{ translate("Competición") }}</span><span class="runner" style="--t:4.7s;--dl:-2.4s"></span></div></div>
+<div class="lane"><span class="num">4</span><div class="strip" style="--c:var(--g4)"><span class="name">{{ translate("Progresión") }}</span><span class="runner" style="--t:5.6s;--dl:-.9s"></span></div></div>
+</div>
+<p class="race-foot">{{ translate("Torneos · Colaborativo · Progresión · Logros · A medida") }}</p>
+</div>
+</div></div>
+
+<div class="sec alt"><div class="wrap">
+<div class="head"><p class="eyebrow">{{ translate("Las piezas del juego") }}</p><h2>{{ translate("Combinamos las mecánicas que encajan con tu equipo.") }}</h2><p class="lead">{{ translate("No todas las campañas usan todas. Algunas funcionan con retos y logros, sin ranking ni plataforma. Pulsa cada pieza para verla.") }}</p></div>
+<div (keydown)="onTabKey($event)" [attr.aria-label]='translate("Mecánicas")' class="tabs" id="sc-tabs" role="tablist">
+<button (click)="selectedMechanic.set(0)" [attr.aria-selected]="selectedMechanic() === 0" aria-controls="sc-0" id="sct-0" role="tab" type="button">{{ translate("Retos") }}</button>
+<button (click)="selectedMechanic.set(1)" [attr.aria-selected]="selectedMechanic() === 1" aria-controls="sc-1" id="sct-1" role="tab" type="button">{{ translate("Puntos") }}</button>
+<button (click)="selectedMechanic.set(2)" [attr.aria-selected]="selectedMechanic() === 2" aria-controls="sc-2" id="sct-2" role="tab" type="button">{{ translate("Logros y premios") }}</button>
+<button (click)="selectedMechanic.set(3)" [attr.aria-selected]="selectedMechanic() === 3" aria-controls="sc-3" id="sct-3" role="tab" type="button">{{ translate("Competición") }}</button>
+<button (click)="selectedMechanic.set(4)" [attr.aria-selected]="selectedMechanic() === 4" aria-controls="sc-4" id="sct-4" role="tab" type="button">{{ translate("Portal") }}</button>
+</div>
+<div [hidden]="selectedMechanic() !== 0" aria-labelledby="sct-0" class="panel" id="sc-0" role="tabpanel">
+<div><span class="tag">{{ translate("Retos") }}</span><h3>{{ translate("Objetivos semanales que mantienen el ritmo.") }}</h3><p>{{ translate("Los retos concentran el esfuerzo en lo que importa esa semana y reparten la actividad durante todo el mes. Pueden ser individuales o de todo el equipo.") }}</p><ul><li>{{ translate("Un reto nuevo cada semana") }}</li><li>{{ translate("Individuales o colectivos") }}</li><li>{{ translate("Bonificación al completarlo") }}</li></ul></div>
+<div class="vis"><div class="mv-reto"><small>{{ translate("Reto de la semana") }}</small><strong>{{ translate("Consigue 5 nuevos clientes esta semana") }}</strong><span class="bigp">+300 pts</span><div class="mv-prog"><i></i></div><div class="meta2"><span>{{ translate("3 de 5 completados") }}</span><span>{{ translate("Quedan 2 días") }}</span></div></div></div>
+</div>
+<div [hidden]="selectedMechanic() !== 1" aria-labelledby="sct-1" class="panel" id="sc-1" role="tabpanel">
+<div><span class="tag">{{ translate("Puntos") }}</span><h3>{{ translate("Puntos por lo que de verdad importa.") }}</h3><p>{{ translate("La puntuación le dice al equipo qué es prioritario. Si quieres captar clientes, captar clientes vale más.") }}</p><ul><li>{{ translate("Entre 3 y 5 acciones puntuables") }}</li><li>{{ translate("Resultado y actividad, combinados") }}</li><li>{{ translate("Reglas que se explican en un minuto") }}</li></ul></div>
+<div class="vis"><div class="mv-pts"><div><strong>+100</strong><span>{{ translate("Venta realizada") }}</span></div><div><strong>+200</strong><span>{{ translate("Nuevo cliente") }}</span></div><div><strong>+75</strong><span>{{ translate("Upselling") }}</span></div><div><strong>+300</strong><span>{{ translate("Reto semanal completado") }}</span></div></div></div>
+</div>
+<div [hidden]="selectedMechanic() !== 2" aria-labelledby="sct-2" class="panel" id="sc-2" role="tabpanel">
+<div><span class="tag">{{ translate("Logros y premios") }}</span><h3>{{ translate("Reconocimiento para todo el equipo.") }}</h3><p>{{ translate("Insignias que reconocen logros de cualquier persona, no solo de quien gana, y premios alineados con el objetivo de la campaña.") }}</p><ul><li>{{ translate("Insignias por logros y por mejora personal") }}</li><li>{{ translate("Premios individuales o de equipo") }}</li><li>{{ translate("Entrega de premios al cerrar la campaña") }}</li></ul></div>
+<div class="vis"><div class="vis-col"><div class="mv-pod"><div><b>2º</b><span>150 €</span></div><div><b>1º</b><span>300 €</span></div><div><b>3º</b><span>75 €</span></div></div><div class="badges"><span>{{ translate("Primera venta") }}</span><span>{{ translate("Objetivo semanal") }}</span><span>{{ translate("Racha de 3 ventas") }}</span></div></div></div>
+</div>
+<div [hidden]="selectedMechanic() !== 3" aria-labelledby="sct-3" class="panel" id="sc-3" role="tabpanel">
+<div><span class="tag">{{ translate("Competición") }}</span><h3>{{ translate("Competición sana, cuando encaja.") }}</h3><p>{{ translate("Para equipos que se motivan comparándose. La diseñamos para que todos tengan opciones, no solo los tres primeros.") }}</p><ul><li>{{ translate("Individual, por zonas o por equipos") }}</li><li>{{ translate("Ligas por nivel y rankings semanales") }}</li><li>{{ translate("Mínimos de calidad para optar a premio") }}</li></ul></div>
+<div class="vis"><div class="mv-rank"><div><span>1</span><i style="width:100%">{{ translate("Zona Madrid") }}</i><b>2.450</b></div><div><span>2</span><i style="width:90%">{{ translate("Zona Barcelona") }}</i><b>2.210</b></div><div><span>3</span><i style="width:78%">{{ translate("Zona Valencia") }}</i><b>1.930</b></div><div><span>4</span><i style="width:66%">{{ translate("Zona Sevilla") }}</i><b>1.620</b></div></div></div>
+</div>
+<div [hidden]="selectedMechanic() !== 4" aria-labelledby="sct-4" class="panel" id="sc-4" role="tabpanel">
+<div><span class="tag">{{ translate("Portal Ludus") }}</span><h3>{{ translate("Todo el reto, en un solo lugar.") }}</h3><p>{{ translate("Un panel online con objetivos, retos, logros y premios. Lo actualizamos nosotros con vuestros datos.") }}</p><ul><li>{{ translate("Accesible desde el móvil o el ordenador") }}</li><li>{{ translate("Imagen y temática de vuestra campaña") }}</li><li>{{ translate("Ranking y resultados en directo") }}</li></ul></div>
+<div class="vis"><img [attr.alt]='translate("Portal Ludus: ranking global con podio, información de la campaña y ranking en directo")' height="722" ngSrc="assets/pages/landing/designer/portal.webp" width="1280"/></div>
+</div>
+</div></div>
+<div class="sec"><div class="wrap">
+<div class="head"><p class="eyebrow">{{ translate("Flexibilidad") }}</p><h2>{{ translate("Tipos de gamificación") }}</h2><p class="lead">{{ translate("No todas las empresas son iguales. No todas las gamificaciones son iguales.") }}</p></div>
+<div class="tcards">
+<article class="tcard t-green"><svg [size]="28" aria-hidden="true" lucideTarget></svg><h3>{{ translate("Competitivos o torneos") }}</h3><p>{{ translate("Ideal para equipos motivados por rankings y por superar metas.") }}</p></article>
+<article class="tcard t-deep"><svg [size]="28" aria-hidden="true" lucideUsers></svg><h3>{{ translate("Colaborativo") }}</h3><p>{{ translate("Funciona cuando el éxito se mide en grupo.") }}</p></article>
+<article class="tcard t-gold"><svg [size]="28" aria-hidden="true" lucideChartColumn></svg><h3>{{ translate("Por progresión") }}</h3><p>{{ translate("Para equipos que valoran el crecimiento personal.") }}</p></article>
+<article class="tcard t-orange"><svg [size]="28" aria-hidden="true" lucideTrendingUp></svg><h3>{{ translate("Basado en logros") }}</h3><p>{{ translate("Equipos que disfrutan desbloqueando insignias y reconocimientos.") }}</p></article>
+<div class="type-custom"><span class="ico type-ico" style="width:56px;height:56px;border-radius:14px;display:grid;place-items:center"><svg [size]="28" aria-hidden="true" lucideSparkles></svg></span><div><h3>{{ translate("Personalizado") }}</h3><p>{{ translate("Sistemas flexibles adaptados a culturas y objetivos únicos. Porque tu equipo no es como los demás.") }}</p><div class="tcustom-tags"><span>{{ translate("Sin moldes") }}</span><span>{{ translate("100 % flexible") }}</span><span>{{ translate("Tu equipo, tus reglas") }}</span></div></div><a class="btn btn-gold" routerLink="/contacto">{{ translate("Diseñar el nuestro") }}</a></div>
+</div>
+</div></div>
+<div class="sec cta-full"><div class="wrap">
+<div><h2>{{ translate("¿Qué quieres mover en tu equipo?") }}</h2><p>{{ translate("Captación, producto, ticket medio, constancia o activar al equipo: cada objetivo tiene su juego.") }}</p></div>
+<a class="btn btn-gold" routerLink="/piloto">{{ translate("Elige tu plan →") }}</a>
+</div></div>
+</section>
+}
+@if (page() === 'how-it-works') {
+<section class="page">
+<div class="page-hero"><div class="wrap">
+<p class="crumb"><a routerLink="/">{{ translate("Inicio") }}</a> {{ translate("/ Cómo funciona") }}</p>
+<p class="eyebrow">{{ translate("Cómo funciona") }}</p>
+<h1>{{ translate("Así convertimos tus objetivos en un juego.") }}</h1>
+<p class="lead">{{ translate("Partimos de vuestros objetivos y de cómo es vuestro equipo. Diseñamos la mecánica que encaja con vuestra cultura, la ponemos en marcha y la seguimos contigo: una competición, un reto de equipo, un sistema de logros o una progresión por niveles.") }}</p>
+</div></div>
+<div class="sec"><div class="wrap">
+<div class="head"><p class="eyebrow">{{ translate("Portal Ludus") }}</p><h2>{{ translate("Todo el reto, en un solo lugar.") }}</h2><p class="lead">{{ translate("Cada gamificación puede tener su propio dashboard online. El equipo consulta retos, objetivos, logros y premios, y tú ves el rendimiento sin perseguir hojas de cálculo. Lo configuramos y lo actualizamos nosotros.") }}</p></div>
+<div class="portal-shot"><img [attr.alt]='translate("Portal Ludus: ranking global con podio e indicadores, información de la campaña Super Reto Comercial y ranking en directo")' height="722" ngSrc="assets/pages/landing/designer/portal.webp" width="1280"/></div>
+<div class="pchips"><span>{{ translate("Ranking") }}<small>{{ translate("en directo") }}</small></span><span>{{ translate("Retos") }}<small>{{ translate("semanales") }}</small></span><span>{{ translate("Objetivos") }}<small>{{ translate("visibles") }}</small></span><span>{{ translate("Logros") }}<small>{{ translate("e insignias") }}</small></span><span>{{ translate("Premios") }}<small>{{ translate("claros") }}</small></span><span>{{ translate("Resultados") }}<small>{{ translate("medibles") }}</small></span></div>
+</div></div>
+<div class="sec alt"><div class="wrap split">
+<div class="head" style="margin:0"><p class="eyebrow">{{ translate("Un ejemplo") }}</p><h2>{{ translate("Super Reto Comercial: una competición por puntos.") }}</h2><p class="lead">{{ translate("4 semanas y 15 comerciales. Objetivo: aumentar ventas y captar nuevos clientes. Es solo un tipo de campaña entre muchos.") }}</p><p class="lead" style="font-size:16px">{{ translate("Premios del ejemplo: 300 €, 150 € y 75 € para el podio, más insignias por logros como primera venta, objetivo semanal o racha de 3 ventas.") }}</p></div>
+<div class="pointlist">
+<div class="pt"><strong>+100</strong><span>{{ translate("Venta realizada") }}<small>{{ translate("Cada cierre suma al marcador individual.") }}</small></span></div>
+<div class="pt"><strong>+200</strong><span>{{ translate("Nuevo cliente") }}<small>{{ translate("La captación puntúa el doble.") }}</small></span></div>
+<div class="pt"><strong>+75</strong><span>{{ translate("Upselling") }}<small>{{ translate("Vender más a quien ya es cliente.") }}</small></span></div>
+<div class="pt"><strong>+300</strong><span>{{ translate("Reto semanal completado") }}<small>{{ translate("Por ejemplo, 5 nuevos clientes esta semana.") }}</small></span></div>
+</div>
+</div></div>
+<div class="sec strip"><div class="wrap">
+<div class="toolbar"><p>{{ translate("Trabajamos con los datos que ya usáis") }}<small>{{ translate("Sin instalar nada ni cambiar de herramientas.") }}</small></p><div class="tools"><div class="tool"><svg [size]="28" aria-hidden="true" lucideFileSpreadsheet></svg>Excel</div><div class="tool"><svg [size]="28" aria-hidden="true" lucideFileSpreadsheet></svg>Google Sheets</div><div class="tool"><svg [size]="28" aria-hidden="true" lucideFileSpreadsheet></svg>CSV</div><div class="tool"><svg [size]="28" aria-hidden="true" lucideDatabase></svg>{{ translate("Tu CRM") }}</div><div class="tool"><svg [size]="28" aria-hidden="true" lucideChartColumn></svg>{{ translate("Informes") }}</div></div></div>
+</div></div>
+<div class="sec alt"><div class="wrap">
+<div class="head"><p class="eyebrow">{{ translate("Metodología") }}</p><h2>{{ translate("Tres pasos, sin carga extra para tu equipo.") }}</h2></div>
+<div class="steps">
+<div class="step"><span class="n">1</span><h3>{{ translate("Análisis") }}</h3><p>{{ translate("Entendemos el negocio, analizamos el equipo y definimos objetivos y KPIs.") }}</p><ul><li>{{ translate("Tamaño del equipo") }}</li><li>{{ translate("Productos o servicios a impulsar") }}</li><li>{{ translate("Formato y frecuencia de los datos") }}</li></ul></div>
+<div class="step"><span class="n">2</span><h3>{{ translate("Diseño") }}</h3><p>{{ translate("Tres propuestas de gamificación y selección conjunta de la final.") }}</p><ul><li>{{ translate("Tipo de gamificación y mecánicas") }}</li><li>{{ translate("Temática según vuestra cultura") }}</li><li>{{ translate("Premios y recompensas") }}</li></ul></div>
+<div class="step"><span class="n">3</span><h3>{{ translate("Implementación") }}</h3><p>{{ translate("Configuramos el sistema, creamos el material visual y lanzamos.") }}</p><ul><li>{{ translate("Seguimiento periódico") }}</li><li>{{ translate("Dudas resueltas en tiempo real") }}</li><li>{{ translate("Ajustes sobre la marcha") }}</li></ul></div>
+</div>
+<div [attr.aria-label]='translate("Calendario de preparación")' class="timeline">
+<div class="tl"><b>{{ translate("Semana 0") }}</b><span>{{ translate("Análisis") }}</span><small>{{ translate("Reunión inicial, datos y KPIs") }}</small></div>
+<div class="tl"><b>{{ translate("Semanas 1–2") }}</b><span>{{ translate("Diseño") }}</span><small>{{ translate("Propuestas, validación y presentación") }}</small></div>
+<div class="tl"><b>{{ translate("Semanas 1–2") }}</b><span>{{ translate("Preparación") }}</span><small>{{ translate("Configuración y materiales visuales") }}</small></div>
+<div class="tl"><b>{{ translate("Semana 3") }}</b><span>{{ translate("Lanzamiento") }}</span><small>{{ translate("Arranca la campaña") }}</small></div>
+</div>
+</div></div>
+<div class="sec"><div class="wrap split">
+<div class="head" style="margin:0"><p class="eyebrow">{{ translate("Qué recibirás") }}</p><h2>{{ translate("Todo incluido, del análisis al informe final.") }}</h2><p class="lead">{{ translate("No cobramos extras por funcionalidades esenciales.") }}</p></div>
+<ul class="checks"><li>{{ translate("Análisis inicial del equipo y objetivos") }}</li><li>{{ translate("3 propuestas de gamificación") }}</li><li>{{ translate("Material visual de la campaña") }}</li><li>{{ translate("Seguimiento durante la gamificación") }}</li><li>{{ translate("Entrega de premios y recompensas") }}</li><li>{{ translate("Informe final de resultados con recomendaciones") }}</li></ul>
+</div></div>
+<div class="sec alt"><div class="wrap">
+<div class="head"><p class="eyebrow">{{ translate("Reparto de tareas") }}</p><h2>{{ translate("Nosotros diseñamos el sistema. Tu equipo juega.") }}</h2></div>
+<div class="g2 roles">
+<div class="card"><span class="tag">Ludus Sales</span><h3>{{ translate("Lo que hacemos") }}</h3><ul><li>{{ translate("Diseñamos el sistema de gamificación") }}</li><li>{{ translate("Lo implementamos y configuramos") }}</li><li>{{ translate("Hacemos seguimiento durante todo el proceso") }}</li></ul></div>
+<div class="card"><span class="tag">{{ translate("Tu empresa") }}</span><h3>{{ translate("Lo que necesitamos") }}</h3><ul><li>{{ translate("Información del equipo y sus datos de venta") }}</li><li>{{ translate("Validar las propuestas") }}</li><li>{{ translate("Comunicar la iniciativa al equipo") }}</li></ul></div>
+</div>
+</div></div>
+<div class="wrap"><div class="band cta-band">
+<div><h2>{{ translate("Pruébalo con tu equipo durante 30 días.") }}</h2><p>{{ translate("Gratis para las empresas del Programa Fundadores.") }}</p></div>
+<div class="ctas"><a class="btn btn-gold" routerLink="/contacto" [queryParams]="{ founder: &apos;1&apos; }">{{ translate("Solicitar piloto gratuito") }}</a></div>
+</div></div>
+</section>
+}
+@if (page() === 'pilot-campaign') {
+<section class="page">
+<div class="page-hero"><div class="wrap ph-grid"><div>
+<p class="crumb"><a routerLink="/">{{ translate("Inicio") }}</a> / {{ translate(&apos;Planes&apos;) }}</p>
+<p class="eyebrow">{{ translate("Programa Fundadores") }}</p>
+<h1>{{ translate("Tu primera campaña de 30 días,") }} <em class="hl">{{ translate("gratis") }}</em>.</h1>
+<p class="lead">{{ translate("Buscamos a las primeras empresas que quieran probar la gamificación con su equipo comercial. Nosotros ponemos el diseño, el portal y el seguimiento. Tú, los datos y el permiso para contar los resultados.") }}</p>
+<div class="ctas" style="margin-top:28px"><a class="btn btn-gold" routerLink="/contacto" [queryParams]="{ founder: &apos;1&apos; }">{{ translate("Solicitar mi plaza") }}</a><a class="btn btn-soft" fragment="piloto-incluye" routerLink="/piloto">{{ translate("Qué incluye") }}</a></div>
+</div><div class="ph-art"><img [attr.alt]='translate("Portal Ludus: ranking global, información de la campaña y ranking en directo")' height="722" ngSrc="assets/pages/landing/designer/portal.webp" width="1280"/><span class="ph-tag"><i></i>{{ translate("Tu equipo lo sigue en directo") }}</span></div></div></div>
+<div class="sec alt" id="piloto-incluye"><div class="wrap">
+<div class="plans">
+<div class="plan hot"><span class="badge">{{ translate("Plazas limitadas") }}</span><h3>{{ translate("Piloto Fundador") }}</h3><span class="dur">{{ translate("30 días · una parte o todo el equipo") }}</span><div class="price"><small>{{ translate("Precio") }}</small>0 €</div><p>{{ translate("A cambio de publicar el caso de éxito y, si funciona, tu testimonio.") }}</p><ul><li>{{ translate("Análisis del equipo y objetivos") }}</li><li>{{ translate("3 propuestas de gamificación") }}</li><li>{{ translate("Portal de la campaña") }}</li><li>{{ translate("Material visual") }}</li><li>{{ translate("Seguimiento semanal y ajustes") }}</li><li>{{ translate("Informe final de resultados") }}</li></ul><a class="btn btn-gold" routerLink="/contacto" [queryParams]="{ founder: &apos;1&apos; }">{{ translate("Solicitar mi plaza") }}</a></div>
+<div class="plan"><h3>{{ translate("Gamificación completa") }}</h3><span class="dur">{{ translate("Campaña de 30 días") }}</span><div class="price"><small>{{ translate("Precio") }}</small>{{ translate("A medida") }}</div><p>{{ translate("Experiencia completa y personalizada, con dashboard de seguimiento y soporte prioritario.") }}</p><ul><li>{{ translate("Todo lo del piloto") }}</li><li>{{ translate("Dashboard de seguimiento") }}</li><li>{{ translate("Ajustes durante la campaña") }}</li><li>{{ translate("Soporte prioritario") }}</li></ul><a class="btn btn-soft" routerLink="/contacto">{{ translate("Pedir propuesta") }}</a></div>
+<div class="plan"><h3>{{ translate("Continuidad mensual") }}</h3><span class="dur">{{ translate("Nuevas dinámicas cada mes") }}</span><div class="price"><small>{{ translate("Precio") }}</small>{{ translate("A medida") }}</div><p>{{ translate("Mantén la motivación con un sistema ya integrado y nuevas dinámicas para que no se agote.") }}</p><ul><li>{{ translate("Nueva campaña cada mes") }}</li><li>{{ translate("Material visual") }}</li><li>{{ translate("Seguimiento y soporte") }}</li><li>{{ translate("Informe de resultados") }}</li></ul><a class="btn btn-soft" routerLink="/contacto">{{ translate("Hablar con nosotros") }}</a></div>
+</div>
+<p class="disclose" style="margin-top:20px">{{ translate("El precio de los planes depende del tamaño del equipo y los objetivos. Te lo damos cerrado antes de empezar.") }}</p>
+</div></div>
+<div class="sec"><div class="wrap split">
+<div class="head" style="margin:0"><p class="eyebrow">{{ translate("A quién buscamos") }}</p><h2>{{ translate("El piloto encaja si tu empresa…") }}</h2><p class="lead">{{ translate("Revisamos cada solicitud y te respondemos en menos de 48 horas.") }}</p></div>
+<ol class="criteria">
+<li>{{ translate("Tiene un equipo comercial de al menos 8 personas.") }}</li>
+<li>{{ translate("Puede compartir datos de venta con regularidad (Excel, Sheets o CRM).") }}</li>
+<li>{{ translate("Quiere mover un objetivo concreto: captación, producto, ticket o constancia.") }}</li>
+<li>{{ translate("Tiene una persona interna que haga de enlace durante 30 días.") }}</li>
+<li>{{ translate("Acepta que publiquemos los resultados como caso de éxito.") }}</li>
+</ol>
+</div></div>
+<div class="sec alt"><div class="wrap">
+<div class="head"><p class="eyebrow">{{ translate("Preguntas frecuentes") }}</p><h2>{{ translate("Dudas sobre el piloto") }}</h2></div>
+<div class="faq">
+<details open=""><summary>{{ translate("¿De verdad no tiene coste?") }}</summary><p>{{ translate("El diseño, el portal, el material visual y el seguimiento de la campaña piloto son gratuitos. Lo único que pedimos es poder publicar los resultados y tu opinión sobre la experiencia.") }}</p></details>
+<details><summary>{{ translate("¿Qué pasa después de los 30 días?") }}</summary><p>{{ translate("Te entregamos el informe de resultados con recomendaciones. Si quieres continuar, te proponemos un plan a medida. Si no, no hay ningún compromiso.") }}</p></details>
+<details><summary>{{ translate("¿Podemos probarlo solo con una parte del equipo?") }}</summary><p>{{ translate("Sí. Muchas veces es la mejor forma de medir el impacto: un grupo con gamificación frente al mismo periodo anterior.") }}</p></details>
+<details><summary>{{ translate("¿Qué datos publicaréis?") }}</summary><p>{{ translate("Los que acordemos contigo antes de empezar. Podemos publicar el caso con el nombre de tu empresa o de forma anónima, indicando solo el sector y el tamaño del equipo.") }}</p></details>
+</div>
+</div></div>
+</section>
+}
+@if (page() === 'about-us') {
+<section class="page">
+<div class="page-hero"><div class="wrap">
+<p class="crumb"><a routerLink="/">{{ translate("Inicio") }}</a> {{ translate("/ Nosotros") }}</p>
+<p class="eyebrow">{{ translate("Quiénes somos") }}</p>
+<h1>{{ translate("Los equipos no fallan por falta de capacidad.") }}</h1>
+</div></div>
+<div class="sec story-sec"><div class="wrap story2">
+<div class="txt">
+<p class="eyebrow">{{ translate("Nuestra historia") }}</p>
+<h2>{{ translate("Cambiamos el sistema, no a las personas.") }}</h2>
+<p>{{ translate("Ludus Sales nace de una idea simple: el rendimiento comercial depende de cómo está diseñado el sistema de motivación. Incluso con buenos productos y buenas comisiones, muchos equipos viven entre meses buenos, meses flojos y cierres a la carrera.") }}</p>
+<p>{{ translate("Por eso nos dedicamos solo a una cosa: diseñar gamificaciones para equipos comerciales que hagan visibles los objetivos, mantengan la motivación todo el mes y faciliten el seguimiento. Sin formación genérica ni charlas de motivación.") }}</p>
+<div class="sfacts">
+<div><b>{{ translate("Solo ventas") }}</b><span>{{ translate("Trabajamos únicamente con equipos comerciales") }}</span></div>
+<div><b>{{ translate("De principio a fin") }}</b><span>{{ translate("Diseñamos, lanzamos y seguimos cada campaña") }}</span></div>
+<div><b>{{ translate("Medible") }}</b><span>{{ translate("Cada campaña acaba con un informe de resultados") }}</span></div>
+</div>
+</div>
+<div class="logo-stage">
+<div class="logo-anim"><picture><source media="(prefers-reduced-motion: reduce)" srcset="assets/pages/landing/designer/logo-anim-end.png"/><img [attr.alt]='translate("Animación del logotipo de Ludus Sales")' height="520" ngSrc="assets/pages/landing/designer/logo-anim.webp" width="520"/></picture></div>
+<p class="motto2">{{ translate("JUEGA · MEJORA · GANA") }}</p>
+</div>
+</div></div>
+<div class="sec alt"><div class="wrap">
+<blockquote class="ceo" style="margin:0"><p>{{ translate("Queremos ayudar a los responsables comerciales a sacar el rendimiento que sus equipos ya llevan dentro, con claridad, motivación y un sistema que haga que ganar sea lo natural.") }}</p><div class="who"><span class="av">JM</span><div><b>Juan Manuel Mateo</b><small>{{ translate("CEO de Ludus Sales") }}</small></div></div></blockquote>
+</div></div>
+<div class="sec"><div class="wrap">
+<div class="head"><p class="eyebrow">{{ translate("Cómo pensamos") }}</p><h2>{{ translate("Cuatro principios en cada campaña.") }}</h2></div>
+<div class="g4">
+<div class="card"><span class="tag">{{ translate("Foco") }}</span><h3>{{ translate("Solo ventas") }}</h3><p>{{ translate("No gamificamos RR. HH. ni formación. Solo equipos comerciales y sus KPIs.") }}</p></div>
+<div class="card"><span class="tag">{{ translate("Servicio") }}</span><h3>{{ translate("Hecho para ti") }}</h3><p>{{ translate("Diseñamos, lanzamos y seguimos la campaña. Tu equipo solo juega.") }}</p></div>
+<div class="card"><span class="tag">{{ translate("Datos") }}</span><h3>{{ translate("Todo se mide") }}</h3><p>{{ translate("Cada campaña termina con un informe de resultados frente al punto de partida.") }}</p></div>
+<div class="card"><span class="tag">{{ translate("A medida") }}</span><h3>{{ translate("Sin moldes") }}</h3><p>{{ translate("Competición, colaboración, progresión o logros: elegimos lo que encaja con tu equipo.") }}</p></div>
+</div>
+</div></div>
+<div class="sec dark"><div class="wrap">
+<div class="head"><p class="eyebrow">{{ translate("Experiencia previa a Ludus") }}</p><h2>{{ translate("Lo que ya ha funcionado antes.") }}</h2></div>
+<div class="exp">
+<div class="case">
+<div>
+<span class="tag">{{ translate("Caso real · 30 días") }}</span>
+<h3>{{ translate("Distribuidor regional de telecomunicaciones con 18 comerciales") }}</h3>
+<p>{{ translate("Actividad irregular, baja motivación en la venta diaria y dependencia de pocos clientes a final de mes.") }}</p>
+<ul><li>{{ translate("Puntos por llamadas, ventas y cierres") }}</li><li>{{ translate("Ranking visible actualizado a diario") }}</li><li>{{ translate("Retos semanales y recompensas alineadas con el negocio") }}</li></ul>
+</div>
+<div>
+<div class="res"><strong>+32%</strong><span>{{ translate("ventas mensuales") }}</span></div>
+<div class="res"><strong>+18%</strong><span>{{ translate("ticket medio") }}</span></div>
+<div class="res"><strong>+45%</strong><span>{{ translate("participación del equipo") }}</span></div>
+</div>
+</div>
+<div class="next-case">
+<div><span class="tag">{{ translate("Próximo caso") }}</span><h3>{{ translate("El siguiente caso de éxito puede ser el de tu equipo.") }}</h3></div>
+<p>{{ translate("Las empresas del Programa Fundadores prueban la gamificación 30 días sin coste. A cambio, contamos juntos sus resultados.") }}</p>
+<div><a class="btn btn-gold" routerLink="/contacto" [queryParams]="{ founder: &apos;1&apos; }">{{ translate("Quiero ser el próximo") }}</a></div>
+</div>
+</div>
+<p class="disclose">{{ translate("Proyecto realizado antes de la creación de Ludus Sales.") }}</p>
+</div></div>
+<div class="wrap"><div class="band bigplay">
+<p class="huge">{{ translate("¿Jugamos") }}<span>?</span></p>
+<div class="bp-row"><p>{{ translate("Sé uno de nuestros primeros casos de éxito. Piloto de 30 días gratis para las empresas del Programa Fundadores.") }}</p>
+<div class="ctas"><a class="btn btn-gold" routerLink="/contacto" [queryParams]="{ founder: &apos;1&apos; }">{{ translate("Solicitar mi plaza") }}</a><a class="btn btn-soft" routerLink="/piloto">{{ translate("Ver condiciones") }}</a></div></div>
+</div></div>
+</section>
+}
+@if (page() === 'contact') {
+<section class="page">
+<div class="page-hero"><div class="wrap">
+<p class="crumb"><a routerLink="/">{{ translate("Inicio") }}</a> {{ translate("/ Contacto") }}</p>
+<p class="eyebrow">{{ translate("Comienza el cambio") }}</p>
+<h1>{{ translate("¿Hablamos de") }} <em class="hl">{{ translate("tu equipo") }}</em>?</h1>
+<p class="lead">{{ translate("Cuéntanos cómo es tu equipo y qué quieres mejorar. Preparamos la primera reunión con una idea de gamificación pensada para vosotros.") }}</p>
+<div class="hchips"><span>{{ translate("Reunión de 30 min") }}</span><span>{{ translate("Respuesta en 48 h") }}</span><span>{{ translate("Sin compromiso") }}</span></div>
+</div></div>
+<div class="sec alt"><div class="wrap contact">
+<div>
+<p class="eyebrow">{{ translate("Otras formas de contactar") }}</p>
+<h2 style="margin-top:12px;font-size:clamp(26px,3vw,34px)">{{ translate("Escríbenos o síguenos.") }}</h2>
+<div style="margin-top:18px">
+<div class="cline"><div><small>Email</small><a href="mailto:contacto&#64;ludusales.com" id="c-email">contacto&#64;ludusales.com</a></div><button class="copy" type="button" (click)="copy(&apos;contacto&#64;ludusales.com&apos;)">{{ translate("Copiar") }}</button></div>
+<div class="cline"><div><small>{{ translate("Teléfono") }}</small><a href="tel:+34640620236" id="c-tel">+34 640 620 236</a></div><button class="copy" type="button" (click)="copy(&apos;+34 640 620 236&apos;)">{{ translate("Copiar") }}</button></div>
+<div class="cline"><div><small>{{ translate("Síguenos") }}</small><div class="social"><a [attr.aria-label]='translate("LinkedIn de Ludus Sales")' href="https://www.linkedin.com/company/ludus-sales" rel="noopener" target="_blank"><svg [size]="18" aria-hidden="true" lucideLink></svg></a><a [attr.aria-label]='translate("Instagram de Ludus Sales")' href="https://www.instagram.com/ludussales" rel="noopener" target="_blank"><svg [size]="28" aria-hidden="true" lucideCamera></svg></a><a [attr.aria-label]='translate("Facebook de Ludus Sales")' href="https://www.facebook.com/ludussales" rel="noopener" target="_blank"><svg [size]="28" aria-hidden="true" lucideUsers></svg></a></div></div></div>
+</div>
+<p role="status">{{ copyStatus() }}</p>
+</div>
+<app-contact-form variant="light" [submitLabel]="translate(&apos;Solicitar reunión&apos;)" contactEmail="contacto&#64;ludusales.com" />
+</div></div>
+</section>
+}

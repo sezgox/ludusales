@@ -8,6 +8,12 @@ export type ContactRequest = {
   email: string;
   company: string;
   teamSize: string;
+  role?: string;
+  phone?: string;
+  goals?: string[];
+  founderInterest?: string;
+  source?: string;
+  message?: string;
 };
 
 @Injectable({

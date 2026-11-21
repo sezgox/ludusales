@@ -2,6 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
+import { registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
 
 import { Landing } from './landing';
 
@@ -10,6 +12,7 @@ describe('Landing', () => {
   let fixture: ComponentFixture<Landing>;
 
   beforeEach(async () => {
+    registerLocaleData(localeEs, 'es-ES');
     await TestBed.configureTestingModule({
       imports: [Landing],
       providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
@@ -22,5 +25,20 @@ describe('Landing', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('recalculates the estimated impact when inputs change', () => {
+    expect(component.monthlyImpact()).toBe(9000);
+    component.reps.set(20);
+    component.average.set(10000);
+    component.uplift.set(10);
+    expect(component.monthlyImpact()).toBe(20000);
+  });
+
+  it('switches visible copy to English', async () => {
+    component.i18n.language.set('en');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(fixture.nativeElement.textContent).toContain('Turn your sales targets');
   });
 });

@@ -1,31 +1,19 @@
-<header class="landing-header">
-    <div class="landing-header__side">
-        <a routerLink="/" class="landing-header__brand" aria-label="Volver al inicio">
-            <img ngSrc="assets/pages/landing/home/brand.png" width="234" height="52" alt="Ludus Sales" class="landing-header__wordmark" priority>
-        </a>
-    </div>
-
-    <nav class="landing-header__nav" aria-label="Principal">
-        <a routerLink="/gamificacion" routerLinkActive="landing-header__link--active" class="landing-header__link">Gamificación de ventas</a>
-        <a routerLink="/funcionamiento" routerLinkActive="landing-header__link--active" class="landing-header__link">Funcionamiento</a>
-        <a routerLink="/piloto" routerLinkActive="landing-header__link--active" class="landing-header__link">Piloto 30-Días</a>
-        <a routerLink="/nosotros" routerLinkActive="landing-header__link--active" class="landing-header__link">Nosotros</a>
-    </nav>
-
-    <div class="landing-header__side landing-header__side--end">
-        <div class="landing-header__actions">
-            <a routerLink="/nosotros" fragment="contact" class="landing-header__cta hover-button active-button">Agendar reunión</a>
-            <a routerLink="/login" class="landing-header__access hover-button active-button" aria-label="Acceso">
-                <span class="landing-header__access-label">Acceso</span>
-                <svg lucideLogIn [size]="18" class="landing-header__access-icon" aria-hidden="true"></svg>
-            </a>
-        </div>
-    </div>
+<div class="promo"><div class="wrap"><b>{{ i18n.text('PROGRAMA FUNDADORES', 'FOUNDERS PROGRAM') }}</b><span>{{ i18n.text('Piloto de 30 días gratis para las primeras empresas, a cambio de su caso de éxito.', 'Free 30-day pilot for our first companies, in exchange for their success story.') }}</span><a routerLink="/piloto">{{ i18n.text('Ver condiciones', 'See terms') }}</a></div></div>
+<header class="top" [class.dark]="theme.dark()">
+  <nav class="wrap nav" [attr.aria-label]="i18n.text('Navegación principal', 'Main navigation')">
+    <a class="brand" routerLink="/" [attr.aria-label]="i18n.text('Ludus Sales, inicio', 'Ludus Sales, home')"><img ngSrc="assets/pages/landing/home/mark.png" alt="" width="32" height="32" priority><span><b>Ludus</b> <i>Sales</i></span></a>
+    <button class="burger" type="button" aria-controls="landing-menu" [attr.aria-expanded]="menuOpen()" (click)="menuOpen.set(!menuOpen())">{{ i18n.text('Menú', 'Menu') }}</button>
+    <ul class="menu" id="landing-menu" [class.open]="menuOpen()">
+      <li><a routerLink="/funcionamiento" routerLinkActive="current" ariaCurrentWhenActive="page" (click)="menuOpen.set(false)">{{ i18n.text('Cómo funciona', 'How it works') }}</a></li>
+      <li><a routerLink="/gamificacion" routerLinkActive="current" ariaCurrentWhenActive="page" (click)="menuOpen.set(false)">{{ i18n.text('Gamificación comercial', 'Sales gamification') }}</a></li>
+      <li><a routerLink="/piloto" routerLinkActive="current" ariaCurrentWhenActive="page" (click)="menuOpen.set(false)">{{ i18n.text('Planes', 'Plans') }}</a></li>
+      <li><a routerLink="/nosotros" routerLinkActive="current" ariaCurrentWhenActive="page" (click)="menuOpen.set(false)">{{ i18n.text('Nosotros', 'About us') }}</a></li>
+      <li><a routerLink="/contacto" routerLinkActive="current" ariaCurrentWhenActive="page" (click)="menuOpen.set(false)">{{ i18n.text('Contacto', 'Contact') }}</a></li>
+      <li class="m-cta"><a class="m-login" routerLink="/login" (click)="menuOpen.set(false)">{{ i18n.text('Acceso clientes', 'Client login') }}</a></li>
+      <li class="m-cta"><a routerLink="/contacto" (click)="menuOpen.set(false)">{{ i18n.text('Agendar reunión', 'Book a meeting') }}</a></li>
+    </ul>
+    <div class="lang" role="group" [attr.aria-label]="i18n.text('Idioma', 'Language')"><button type="button" [attr.aria-pressed]="i18n.language() === 'es'" (click)="i18n.language.set('es')">ES</button><button type="button" [attr.aria-pressed]="i18n.language() === 'en'" (click)="i18n.language.set('en')">EN</button></div>
+    <button type="button" class="theme-btn" [attr.aria-label]="i18n.text('Modo claro / oscuro', 'Light / dark mode')" [attr.aria-pressed]="theme.dark()" (click)="theme.toggle()">@if (theme.dark()) { <svg lucideSun [size]="16" aria-hidden="true"></svg> } @else { <svg lucideMoon [size]="16" aria-hidden="true"></svg> }</button>
+    <div class="nav-btns"><a class="btn btn-green" routerLink="/login">{{ i18n.text('Acceso clientes', 'Client login') }}</a><a class="btn btn-gold" routerLink="/contacto">{{ i18n.text('Agendar reunión', 'Book a meeting') }}</a></div>
+  </nav>
 </header>
-
-<nav class="landing-header__mobile-nav" aria-label="Secciones">
-    <a routerLink="/gamificacion" routerLinkActive="landing-header__mobile-link--active" class="landing-header__mobile-link">Gamificación</a>
-    <a routerLink="/funcionamiento" routerLinkActive="landing-header__mobile-link--active" class="landing-header__mobile-link">Funcionamiento</a>
-    <a routerLink="/piloto" routerLinkActive="landing-header__mobile-link--active" class="landing-header__mobile-link">Piloto 30-Días</a>
-    <a routerLink="/nosotros" routerLinkActive="landing-header__mobile-link--active" class="landing-header__mobile-link">Nosotros</a>
-</nav>
