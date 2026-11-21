@@ -248,7 +248,7 @@
 <div style="margin-top:18px">
 <div class="cline"><div><small>Email</small><a href="mailto:contacto&#64;ludusales.com" id="c-email">contacto&#64;ludusales.com</a></div><button class="copy" type="button" (click)="copy(&apos;contacto&#64;ludusales.com&apos;)">{{ translate("Copiar") }}</button></div>
 <div class="cline"><div><small>{{ translate("Teléfono") }}</small><a href="tel:+34640620236" id="c-tel">+34 640 620 236</a></div><button class="copy" type="button" (click)="copy(&apos;+34 640 620 236&apos;)">{{ translate("Copiar") }}</button></div>
-<div class="cline"><div><small>{{ translate("Síguenos") }}</small><div class="social"><a [attr.aria-label]='translate("LinkedIn de Ludus Sales")' href="https://www.linkedin.com/company/ludus-sales" rel="noopener" target="_blank"><svg [size]="18" aria-hidden="true" lucideLink></svg></a><a [attr.aria-label]='translate("Instagram de Ludus Sales")' href="https://www.instagram.com/ludussales" rel="noopener" target="_blank"><svg [size]="28" aria-hidden="true" lucideCamera></svg></a><a [attr.aria-label]='translate("Facebook de Ludus Sales")' href="https://www.facebook.com/ludussales" rel="noopener" target="_blank"><svg [size]="28" aria-hidden="true" lucideUsers></svg></a></div></div></div>
+<div class="cline"><div><small>{{ translate("Síguenos") }}</small><app-landing-social /></div></div>
 </div>
 <p role="status">{{ copyStatus() }}</p>
 </div>

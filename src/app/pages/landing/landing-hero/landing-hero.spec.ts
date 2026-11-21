@@ -43,7 +43,7 @@ describe('LandingHero', () => {
     fixture.detectChanges();
     expect(fixture.nativeElement.textContent).toContain('First sale');
     expect(fixture.nativeElement.querySelector('a.offer').getAttribute('href')).toBe('/piloto');
-    expect(fixture.nativeElement.querySelector('.btn-gold').getAttribute('href')).toBe('/contacto');
+    expect(fixture.nativeElement.querySelector('.btn-gold').getAttribute('href')).toBe('/contacto?founder=1');
     expect(fixture.nativeElement.querySelector('.btn-soft').getAttribute('href')).toBe('/funcionamiento');
   });
 });

@@ -1,14 +1,15 @@
 import { NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { LucideCamera, LucideChartColumn, LucideDatabase, LucideFileSpreadsheet, LucideLink, LucideSparkles, LucideTarget, LucideTrendingUp, LucideUsers } from '@lucide/angular';
+import { LucideChartColumn, LucideDatabase, LucideFileSpreadsheet, LucideSparkles, LucideTarget, LucideTrendingUp, LucideUsers } from '@lucide/angular';
+import { LandingSocial } from '../../../components/landing-social/landing-social';
 import { ContactForm } from '../../../components/contact-form/contact-form';
 import { LandingLanguage } from '../../../services/landing-language.service';
 import { translations } from './translations';
 
 @Component({
   selector: 'app-landing-subpages',
-  imports: [NgOptimizedImage, RouterLink, ContactForm, LucideTarget, LucideUsers, LucideChartColumn, LucideTrendingUp, LucideSparkles, LucideFileSpreadsheet, LucideLink, LucideCamera, LucideDatabase],
+  imports: [NgOptimizedImage, RouterLink, ContactForm, LandingSocial, LucideTarget, LucideUsers, LucideChartColumn, LucideTrendingUp, LucideSparkles, LucideFileSpreadsheet, LucideDatabase],
   templateUrl: './landing-subpages.html',
   styleUrls: ['./landing-subpages.css', './landing-subpages-extra.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -34,6 +34,16 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/landing/landing').then((module) => module.Landing),
   },
   {
+    path: 'blog',
+    data: { landingPage: 'blog' },
+    loadComponent: () => import('./pages/landing/landing').then((module) => module.Landing),
+  },
+  {
+    path: 'blog/:slug',
+    data: { landingPage: 'blog' },
+    loadComponent: () => import('./pages/landing/landing').then((module) => module.Landing),
+  },
+  {
     path: 'login',
     loadComponent: () => import('./pages/login/login').then((module) => module.Login),
   },

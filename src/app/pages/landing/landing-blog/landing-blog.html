@@ -1,0 +1,33 @@
+@if (post(); as article) {
+  <section class="blog wrap article">
+    <p class="crumb"><a routerLink="/">{{ i18n.text('Inicio', 'Home') }}</a> / <a routerLink="/blog">Blog</a> / {{ category(article.cat) }}</p>
+    <p class="eyebrow">{{ category(article.cat) }}</p>
+    <h1>{{ i18n.text(article.title, article.titleEn) }}</h1>
+    <div class="meta"><span>Juan Manuel Mateo</span><span>{{ article.date }}</span><span>{{ article.min }} {{ i18n.text('min de lectura', 'min read') }}</span></div>
+    <div class="article-body" [innerHTML]="i18n.text(article.body, article.bodyEn)"></div>
+    <div class="article-cta"><div><h2>{{ i18n.text('¿Quieres probarlo con tu equipo?', 'Want to try it with your team?') }}</h2><p>{{ i18n.text('Piloto de 30 días gratis para las empresas del Programa Fundadores.', 'A free 30-day pilot for Founders Program companies.') }}</p></div><a class="button" routerLink="/contacto" [queryParams]="{ founder: '1' }">{{ i18n.text('Solicitar piloto gratuito', 'Request a free pilot') }}</a></div>
+    <h2 class="read-more">{{ i18n.text('Sigue leyendo', 'Keep reading') }}</h2>
+    <div class="posts related">
+      @for (item of relatedPosts(); track item.id) { <ng-container *ngTemplateOutlet="card; context: { $implicit: item }" /> }
+    </div>
+  </section>
+} @else {
+  <section class="blog wrap">
+    <p class="crumb"><a routerLink="/">{{ i18n.text('Inicio', 'Home') }}</a> / Blog</p>
+    <p class="eyebrow">Blog Ludus</p>
+    <h1>{{ i18n.text('Ideas para equipos que venden jugando.', 'Ideas for teams that sell by playing.') }}</h1>
+    <p class="lead">{{ i18n.text('Artículos prácticos sobre motivación comercial, diseño de incentivos y gamificación para responsables de ventas.', 'Practical articles on sales motivation, incentive design and gamification for sales leaders.') }}</p>
+    <div class="filters" role="group" [attr.aria-label]="i18n.text('Filtrar por categoría', 'Filter by category')">
+      @for (cat of categories; track cat) { <button type="button" [attr.aria-pressed]="selectedCategory() === cat" (click)="selectedCategory.set(cat)">{{ category(cat) }}</button> }
+    </div>
+    <div class="posts">
+      @for (item of filteredPosts(); track item.id; let first = $first) { <ng-container *ngTemplateOutlet="card; context: { $implicit: item, featured: first && selectedCategory() === 'Todos' }" /> }
+    </div>
+  </section>
+}
+<ng-template #card let-item let-featured="featured">
+  <a class="post" [class.featured]="featured" [routerLink]="['/blog', item.id]">
+    <div class="cover" [style.--c1]="item.c1" [style.--c2]="item.c2"><span>{{ item.num }}</span></div>
+    <div class="post-body"><div class="meta"><b>{{ category(item.cat) }}</b><span>{{ item.date }}</span><span>{{ item.min }} min</span></div><h3>{{ i18n.text(item.title, item.titleEn) }}</h3><p>{{ i18n.text(item.ex, item.exEn) }}</p></div>
+  </a>
+</ng-template>

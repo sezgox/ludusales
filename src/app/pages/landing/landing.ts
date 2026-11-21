@@ -11,6 +11,8 @@ import { LandingIntro } from './landing-intro/landing-intro';
 import { LandingSubpages } from './landing-subpages/landing-subpages';
 import { LandingLanguage } from '../../services/landing-language.service';
 import { LandingTheme } from '../../services/landing-theme.service';
+import { HOME_GOALS } from './home-goals';
+import { LandingBlog } from './landing-blog/landing-blog';
 
 @Component({
   selector: 'app-landing',
@@ -20,6 +22,7 @@ import { LandingTheme } from '../../services/landing-theme.service';
     LandingHero,
     LandingIntro,
     LandingSubpages,
+    LandingBlog,
     RouterLink,
     CurrencyPipe,
     LucideCheck,
@@ -46,93 +49,60 @@ export class Landing {
     [['Seguimiento', 'Follow-up'], ['Informe mensual', 'Monthly report'], ['Dashboard en autoservicio', 'Self-service dashboard'], ['Seguimiento semanal, ajustes e informe final', 'Weekly follow-up, adjustments and final report']],
     [['Cómo empezar', 'How to start'], ['Cambiar el plan de comisiones', 'Change the commission plan'], ['Licencia y periodo de implantación', 'License and rollout period'], ['Piloto de 30 días, gratis para fundadores', '30-day pilot, free for founders']],
   ];
-  readonly goals = [
-    {
-      es: 'Captar nuevos clientes',
-      en: 'Win new customers',
-      descriptionEs: 'Más clientes nuevos cada semana, no solo a final de mes.',
-      descriptionEn: 'More new customers every week, not just at the end of the month.',
-      detailEs: 'Los nuevos clientes suman más puntos y cada semana hay un reto de captación.',
-      detailEn: 'New customers earn more points and each week brings a prospecting challenge.',
-    },
-    {
-      es: 'Impulsar un producto',
-      en: 'Promote a product',
-      descriptionEs: 'Pon el foco en los productos que quieres impulsar.',
-      descriptionEn: 'Focus on the products you want to promote.',
-      detailEs: 'Premiamos las ventas de productos estratégicos y el progreso del equipo.',
-      detailEn: 'Reward strategic product sales and team progress.',
-    },
-    {
-      es: 'Subir el ticket medio',
-      en: 'Increase average order value',
-      descriptionEs: 'Haz que cada oportunidad cuente más.',
-      descriptionEn: 'Make every opportunity count for more.',
-      detailEs: 'Recompensamos el valor añadido y las ventas complementarias.',
-      detailEn: 'Reward added value and complementary sales.',
-    },
-    {
-      es: 'Constancia todo el mes',
-      en: 'Build consistency',
-      descriptionEs: 'Mantén el ritmo durante todo el mes.',
-      descriptionEn: 'Keep momentum throughout the month.',
-      detailEs: 'Los retos semanales reconocen los hábitos que llevan al resultado.',
-      detailEn: 'Weekly challenges recognise the habits that lead to results.',
-    },
-    {
-      es: 'Activar a todo el equipo',
-      en: 'Engage the whole team',
-      descriptionEs: 'Cada persona tiene una forma de avanzar.',
-      descriptionEn: 'Everyone has a way to progress.',
-      detailEs: 'Combinamos objetivos individuales, logros y retos de equipo.',
-      detailEn: 'Combine individual goals, achievements and team challenges.',
-    },
-  ];
+  readonly goals = HOME_GOALS;
   readonly faqs = [
     {
       q: ['¿Ludus Sales es un software?', 'Is Ludus Sales software?'],
       a: [
-        'No. Es un servicio hecho para ti. Diseñamos la competición, la ponemos en marcha y la seguimos contigo.',
-        'No. It is a service built for you. We design, launch and support your competition.',
+        'No. Es un servicio hecho para ti. Diseñamos la competición, la ponemos en marcha y la seguimos contigo. Tu equipo accede a un portal online para ver retos, ranking y premios, pero tú no tienes que configurar nada.',
+        'No. It is a service built for you. We design, launch and support your competition. Your team can access challenges, rankings and rewards online, with nothing for you to configure.',
       ],
     },
     {
       q: ['¿Para qué empresas es?', 'Which companies is it for?'],
       a: [
-        'Para empresas que quieren motivar a su equipo comercial y medir sus resultados.',
-        'For companies that want to motivate their sales team and measure results.',
+        'Para empresas con un equipo comercial, de cualquier sector, que quieran más constancia y más resultados. Funciona especialmente bien a partir de unos 8 comerciales.',
+        'For companies in any sector that want more consistency and better results from their sales team. It works especially well with around eight or more salespeople.',
       ],
     },
     {
       q: ['¿Qué necesitáis de nosotros?', 'What do you need from us?'],
       a: [
-        'Datos de ventas con regularidad, una persona de contacto y la validación de las propuestas.',
-        'Regular sales data, a point of contact and approval of the proposals.',
+        'El tamaño del equipo, los objetivos que queréis impulsar y los datos de venta (Excel, Google Sheets o una exportación de vuestro CRM) con la frecuencia que acordemos. Además, validar las propuestas y comunicar la iniciativa al equipo.',
+        'Your team size, goals and sales data (Excel, Google Sheets or a CRM export) at the agreed frequency. We also need you to approve the proposals and tell your team about the initiative.',
       ],
     },
     {
       q: ['¿Cuánto cuesta?', 'How much does it cost?'],
       a: [
-        'El piloto es gratuito para empresas fundadoras. Los planes posteriores se preparan a medida.',
-        'The pilot is free for founding companies. Subsequent plans are tailored to your needs.',
+        'Para las empresas del Programa Fundadores, el piloto de 30 días es gratuito a cambio de poder publicar el caso de éxito. Después, cada propuesta se calcula según el tamaño del equipo y los objetivos, y te la damos cerrada antes de empezar.',
+        'For Founders Program companies, the 30-day pilot is free in exchange for permission to publish the success story. Later proposals are priced by team size and goals, with a fixed quote before you start.',
       ],
     },
     {
       q: ['¿Y si el ranking desmotiva a los últimos?', 'What if a ranking discourages people?'],
       a: [
-        'Diseñamos mecánicas y reconocimientos para que todos tengan oportunidades de progresar.',
-        'We design mechanics and recognition so everyone has opportunities to progress.',
+        'Lo diseñamos para que no pase: ligas o grupos por nivel, rankings semanales que se reinician, logros por mejora personal y puntos por actividad, no solo por cierres.',
+        'We design against that: leagues or groups by level, weekly rankings that reset, personal improvement achievements and points for activity, not just closed deals.',
       ],
     },
     {
       q: ['¿Cuánto tarda en arrancar?', 'How long does it take to launch?'],
       a: [
-        'Del análisis al lanzamiento, aproximadamente tres semanas.',
-        'Approximately three weeks from analysis to launch.',
+        'Unas 3 semanas desde la primera reunión: análisis en la semana 0, diseño y preparación en las semanas 1 y 2, y lanzamiento en la semana 3.',
+        'About 3 weeks from the first meeting: analysis in week 0, design and preparation in weeks 1 and 2, and launch in week 3.',
       ],
     },
   ];
   rangeValue(event: Event): number {
     return Number((event.target as HTMLInputElement).value);
+  }
+
+  onGoalKey(event: KeyboardEvent): void {
+    if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+    event.preventDefault();
+    const next = (this.selectedGoal() + (event.key === 'ArrowRight' ? 1 : this.goals.length - 1)) % this.goals.length;
+    this.selectedGoal.set(next);
+    (event.currentTarget as HTMLElement).querySelectorAll<HTMLButtonElement>('button')[next]?.focus();
   }
 }

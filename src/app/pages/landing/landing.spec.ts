@@ -41,4 +41,18 @@ describe('Landing', () => {
     await fixture.whenStable();
     expect(fixture.nativeElement.textContent).toContain('Turn your sales targets');
   });
+
+  it('switches goal details and passes the chosen goal to contact', () => {
+    component.i18n.language.set('es');
+    fixture.detectChanges();
+    const tabs: NodeListOf<HTMLButtonElement> = fixture.nativeElement.querySelectorAll('.goal-tabs button');
+    tabs[1].click();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.goal-panel').textContent).toContain('producto estratégico');
+    expect(fixture.nativeElement.querySelector('.goal-cta').getAttribute('href')).toBe('/contacto?goal=1');
+    tabs[1].dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+    fixture.detectChanges();
+    expect(tabs[2].getAttribute('aria-selected')).toBe('true');
+    expect(fixture.nativeElement.querySelector('.goal-panel').textContent).toContain('venta cruzada');
+  });
 });

@@ -3,7 +3,7 @@
   @if (page === 'home') {
     <app-landing-hero />
     <app-landing-intro />
-    <section class="section tinted">
+    <section class="section" id="objetivos">
       <div class="wrap">
         <p class="eyebrow">{{ i18n.text('ELIGE TU OBJETIVO', 'CHOOSE YOUR GOAL') }}</p>
         <h2>
@@ -17,45 +17,39 @@
         <p class="lead">
           {{
             i18n.text(
-              'Cada objetivo pide una mecánica distinta.',
-              'Each goal calls for a different game mechanic.'
+              'Cada objetivo pide una mecánica distinta. Estos son los cinco que más nos piden los directores comerciales.',
+              'Each goal calls for a different game mechanic. These are the five most requested by sales directors.'
             )
           }}
         </p>
-        <div class="goal-tabs" [attr.aria-label]="i18n.text('Objetivos', 'Goals')">
-          @for (goal of goals; track goal.es; let idx = $index) {
+        <div class="goal-tabs" role="tablist" (keydown)="onGoalKey($event)" [attr.aria-label]="i18n.text('Objetivos', 'Goals')">
+          @for (goal of goals; track goal.label[0]; let idx = $index) {
             <button
               type="button"
+              role="tab"
+              [id]="'goal-tab-' + idx"
+              aria-controls="goal-panel"
+              [attr.aria-selected]="selectedGoal() === idx"
+              [attr.tabindex]="selectedGoal() === idx ? 0 : -1"
               [class.active]="selectedGoal() === idx"
-              [attr.aria-pressed]="selectedGoal() === idx"
               (click)="selectedGoal.set(idx)"
             >
-              {{ i18n.text(goal.es, goal.en) }}
+              {{ i18n.text(goal.label[0], goal.label[1]) }}
             </button>
           }
         </div>
-        <div class="goal-panel">
-          <div>
-            <p class="eyebrow">{{ i18n.text('OBJETIVO', 'GOAL') }}</p>
-            <h3>
-              {{
-                i18n.text(goals[selectedGoal()].descriptionEs, goals[selectedGoal()].descriptionEn)
-              }}
-            </h3>
-            <p>{{ i18n.text(goals[selectedGoal()].detailEs, goals[selectedGoal()].detailEn) }}</p>
-            <a routerLink="/contacto"
-              >{{ i18n.text('Quiero este reto', 'I want this challenge') }} →</a
-            >
+        <div class="goal-panel" id="goal-panel" role="tabpanel" [attr.aria-labelledby]="'goal-tab-' + selectedGoal()">
+          <p class="eyebrow">{{ i18n.text('OBJETIVO', 'GOAL') }}</p>
+          <h3>{{ i18n.text(goals[selectedGoal()].title[0], goals[selectedGoal()].title[1]) }}</h3>
+          <div class="goal-details">
+            <div><h4>{{ i18n.text('PARA QUIÉN', 'WHO IT IS FOR') }}</h4><p>{{ i18n.text(goals[selectedGoal()].audience[0], goals[selectedGoal()].audience[1]) }}</p></div>
+            <div><h4>{{ i18n.text('CÓMO LO GAMIFICAMOS', 'HOW WE GAMIFY IT') }}</h4><p>{{ i18n.text(goals[selectedGoal()].mechanic[0], goals[selectedGoal()].mechanic[1]) }}</p></div>
+            <div><h4>{{ i18n.text('QUÉ BUSCAMOS', 'WHAT WE AIM FOR') }}</h4><p>{{ i18n.text(goals[selectedGoal()].outcome[0], goals[selectedGoal()].outcome[1]) }}</p></div>
           </div>
           <div class="goal-points">
-            <span
-              >+200 <small>{{ i18n.text('nuevo cliente', 'new customer') }}</small></span
-            ><span
-              >+50 <small>{{ i18n.text('primera reunión', 'first meeting') }}</small></span
-            ><span
-              >+300 <small>{{ i18n.text('reto semanal', 'weekly challenge') }}</small></span
-            >
+            @for (point of goals[selectedGoal()].points; track point[0]) { <span>{{ i18n.text(point[0], point[1]) }}</span> }
           </div>
+          <a class="button goal-cta" routerLink="/contacto" [queryParams]="{ goal: selectedGoal() }">{{ i18n.text('Quiero este reto', 'I want this challenge') }} →</a>
         </div>
       </div>
     </section>
@@ -96,8 +90,8 @@
         <p class="lead">
           {{
             i18n.text(
-              'Mueve los valores con los datos de tu equipo.',
-              'Adjust the values to match your team.'
+              'Mueve los valores con los datos de tu equipo. Incluso una mejora prudente suele justificar sobradamente la campaña.',
+              'Adjust the values to match your team. Even a modest improvement can more than justify the campaign.'
             )
           }}
         </p>
@@ -108,8 +102,8 @@
               <b>{{ reps() }}</b
               ><input
                 type="range"
-                min="1"
-                max="100"
+                min="3"
+                max="200"
                 [value]="reps()"
                 (input)="reps.set(rangeValue($event))" /></label
             ><label
@@ -129,7 +123,7 @@
               }}</b
               ><input
                 type="range"
-                min="1000"
+                min="2000"
                 max="100000"
                 step="1000"
                 [value]="average()"
@@ -140,12 +134,13 @@
               ><input
                 type="range"
                 min="1"
-                max="50"
+                max="30"
                 [value]="uplift()"
                 (input)="uplift.set(rangeValue($event))"
             /></label>
+            <p class="calculator-hint">{{ i18n.text('Como referencia, en el caso del distribuidor de telecomunicaciones las ventas subieron un 32 % en 30 días.', 'For reference, sales rose by 32% in 30 days in the telecommunications distributor case.') }}</p>
           </div>
-          <div class="result">
+          <div class="result" aria-live="polite">
             <p>{{ i18n.text('FACTURACIÓN ADICIONAL ESTIMADA', 'ESTIMATED ADDITIONAL REVENUE') }}</p>
             <strong>{{
               monthlyImpact()
@@ -154,28 +149,32 @@
             ><span>{{
               i18n.text('al mes con tu equipo actual', 'per month with your current team')
             }}</span
-            ><small>{{
+            ><div class="result-rows">
+              <div><span>{{ i18n.text('Por comercial y mes', 'Per salesperson per month') }}</span><b>{{ average() * uplift() / 100 | currency:'EUR':'symbol':'1.0-0':(i18n.language() === 'es' ? 'es-ES' : 'en') }}</b></div>
+              <div><span>{{ i18n.text('En 3 meses', 'In 3 months') }}</span><b>{{ monthlyImpact() * 3 | currency:'EUR':'symbol':'1.0-0':(i18n.language() === 'es' ? 'es-ES' : 'en') }}</b></div>
+              <div><span>{{ i18n.text('En un año', 'In one year') }}</span><b>{{ monthlyImpact() * 12 | currency:'EUR':'symbol':'1.0-0':(i18n.language() === 'es' ? 'es-ES' : 'en') }}</b></div>
+            </div><small>{{
               i18n.text(
-                'Estimación orientativa. No es una promesa de resultados.',
-                'Indicative estimate. This is not a promise of results.'
+                'Estimación orientativa calculada con tus datos. No es una promesa de resultados: el piloto sirve para medir el impacto real en tu equipo.',
+                'An indicative estimate based on your data. This is not a promise of results: the pilot measures the real impact on your team.'
               )
             }}</small
-            ><a class="button primary" routerLink="/contacto"
-              >{{ i18n.text('Medirlo con un piloto gratis', 'Measure it with a free pilot') }} →</a
+            ><a class="button primary" routerLink="/contacto" [queryParams]="{ founder: '1' }"
+              >{{ i18n.text('Medirlo con un piloto gratis', 'Measure it with a free pilot') }}</a
             >
           </div>
         </div>
       </div>
     </section>
-    <section class="wrap section">
+    <section class="section founder-section"><div class="wrap founder-layout"><div>
       <p class="eyebrow">{{ i18n.text('PROGRAMA FUNDADORES', 'FOUNDERS PROGRAMME') }}</p>
       <h2>
         {{
           i18n.text(
-            'Tu primer piloto, gratis. A cambio, tu caso de éxito.',
-            'Your first pilot, free. In return, your success story.'
+            'Tu primer piloto, gratis.',
+            'Your first pilot, free.'
           )
-        }}
+        }} <em>{{ i18n.text('A cambio, tu caso de éxito.', 'In return, your success story.') }}</em>
       </h2>
       <p class="lead">
         {{
@@ -185,37 +184,30 @@
           )
         }}
       </p>
-      <div class="cards three">
-        <article class="card">
-          <h3>{{ i18n.text('Lo que recibes', 'What you receive') }}</h3>
-          <p>
-            ✓ {{ i18n.text('Análisis, propuestas y portal', 'Analysis, proposals and portal') }}
-          </p>
-          <p>✓ {{ i18n.text('Seguimiento e informe final', 'Support and final report') }}</p>
-        </article>
-        <article class="card">
-          <h3>{{ i18n.text('Lo que te pedimos', 'What we ask') }}</h3>
-          <p>
-            ✓
-            {{
-              i18n.text('Datos de venta y contacto interno', 'Sales data and a point of contact')
-            }}
-          </p>
-          <p>
-            ✓ {{ i18n.text('Permiso para publicar resultados', 'Permission to publish results') }}
-          </p>
-        </article>
-        <article class="card highlight">
-          <span>{{ i18n.text('INVERSIÓN', 'INVESTMENT') }}</span>
-          <h2>0 €</h2>
-          <p>{{ i18n.text('30 días, sin permanencia.', '30 days, no commitment.') }}</p>
-          <a class="button primary" routerLink="/piloto"
-            >{{ i18n.text('Ver condiciones', 'See details') }} →</a
-          >
-        </article>
+      <div class="founder-lists">
+        <div><h3>{{ i18n.text('Lo que recibes', 'What you receive') }}</h3><ul>
+          <li>{{ i18n.text('Análisis del equipo y objetivos', 'Team and goals analysis') }}</li>
+          <li>{{ i18n.text('3 propuestas de gamificación', '3 gamification proposals') }}</li>
+          <li>{{ i18n.text('Portal y material visual', 'Portal and visual materials') }}</li>
+          <li>{{ i18n.text('Seguimiento semanal', 'Weekly follow-up') }}</li>
+          <li>{{ i18n.text('Informe final de resultados', 'Final results report') }}</li>
+        </ul></div>
+        <div><h3>{{ i18n.text('Lo que te pedimos', 'What we ask') }}</h3><ul>
+          <li>{{ i18n.text('Datos de venta con regularidad', 'Regular sales data') }}</li>
+          <li>{{ i18n.text('Una persona de contacto interna', 'An internal point of contact') }}</li>
+          <li>{{ i18n.text('Permiso para publicar los resultados', 'Permission to publish results') }}</li>
+          <li>{{ i18n.text('Tu testimonio si funciona', 'Your testimonial if it works') }}</li>
+        </ul></div>
       </div>
+      </div><div class="founder-card">
+        <span>{{ i18n.text('INVERSIÓN', 'INVESTMENT') }}</span><strong>0 €</strong>
+        <p>{{ i18n.text('Diseño, puesta en marcha y seguimiento de una campaña de 30 días, sin coste para las empresas fundadoras.', 'Design, launch and follow-up of a 30-day campaign, free for founding companies.') }}</p>
+        <ul><li>{{ i18n.text('Plazas limitadas', 'Limited places') }}</li><li>{{ i18n.text('Sin permanencia', 'No commitment') }}</li></ul>
+        <a class="button primary" routerLink="/contacto" [queryParams]="{ founder: '1' }">{{ i18n.text('Solicitar mi plaza', 'Request my place') }}</a>
+        <a class="founder-terms" routerLink="/piloto">{{ i18n.text('Ver condiciones', 'See terms') }} →</a>
+      </div></div>
     </section>
-    <section class="section tinted">
+    <section class="section">
       <div class="wrap faq-layout">
         <div>
           <p class="eyebrow">
@@ -224,21 +216,24 @@
           <h2>{{ i18n.text('Lo que suelen preguntarnos.', 'What people ask us.') }}</h2>
           <p>
             {{
-              i18n.text('¿Tienes otra duda? Escríbenos.', 'Have another question? Get in touch.')
+              i18n.text('¿Tienes otra duda? Escríbenos y te respondemos en menos de 48 horas.', 'Have another question? Write to us and we will reply within 48 hours.')
             }}
           </p>
-          <a routerLink="/contacto">{{ i18n.text('Hacer una pregunta', 'Ask a question') }} →</a>
+          <a class="button faq-button" routerLink="/contacto">{{ i18n.text('Hacer una pregunta', 'Ask a question') }}</a>
         </div>
         <div>
-          @for (faq of faqs; track faq.q[0]) {
-            <details>
+          @for (faq of faqs; track faq.q[0]; let first = $first) {
+            <details [open]="first">
               <summary>{{ i18n.text(faq.q[0], faq.q[1]) }}</summary>
               <p>{{ i18n.text(faq.a[0], faq.a[1]) }}</p>
             </details>
           }
         </div>
       </div>
+      <div class="wrap"><div class="next-section"><div><h3>{{ i18n.text('¿Cómo funciona por dentro?', 'How does it work inside?') }}</h3><p>{{ i18n.text('Del análisis al lanzamiento en 3 semanas: metodología, portal y todo lo que recibirás.', 'From analysis to launch in 3 weeks: methodology, portal and everything you receive.') }}</p></div><a class="button faq-button" routerLink="/funcionamiento">{{ i18n.text('Ver cómo funciona', 'See how it works') }} →</a></div></div>
     </section>
+  } @else if (page === 'blog') {
+    <app-landing-blog />
   } @else {
     <app-landing-subpages [page]="page" />
   }

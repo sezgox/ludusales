@@ -22,27 +22,6 @@
   font-weight: 300;
 }
 
-.social {
-  display: flex;
-  gap: 10px;
-  margin-top: 14px;
-}
-.social a {
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
-  display: grid;
-  place-items: center;
-  background: var(--sunk);
-  color: var(--fg);
-  transition:
-    background 0.15s,
-    color 0.15s;
-}
-.social a:hover {
-  background: var(--brand);
-  color: #fff;
-}
 footer {
   padding-block: 40px;
   font-size: 14px;
@@ -123,14 +102,6 @@ footer .motto {
 }
 footer .copyline {
   border-color: rgba(255, 255, 255, 0.12);
-}
-footer .social a {
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
-}
-footer .social a:hover {
-  background: var(--gold);
-  color: var(--gold-ink);
 }
 @media (max-width: 760px) {
   .foot { grid-template-columns: 1fr 1fr; }

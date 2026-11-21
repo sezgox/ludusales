@@ -54,6 +54,10 @@ export class ContactForm {
     if (this.route?.snapshot.queryParamMap.get('founder') === '1') {
       this.form.controls.founderInterest.setValue('Sí, quiero optar al piloto gratuito');
     }
+    const goal = this.route?.snapshot.queryParamMap.get('goal');
+    if (goal !== null && goal !== undefined && /^[0-4]$/.test(goal)) {
+      this.form.controls.goals.setValue([this.goals[Number(goal)][0]]);
+    }
   }
 
   toggleGoal(goal: string, event: Event): void {
