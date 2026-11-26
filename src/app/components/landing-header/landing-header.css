@@ -227,7 +227,7 @@ header.top {
 }
 .menu a[aria-current="page"] {
   background: none;
-  color: var(--brand);
+  color: var(--fg);
   border-radius: 0;
 }
 .nav .btn {
