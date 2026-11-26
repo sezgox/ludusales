@@ -29,8 +29,8 @@ describe('Dashboard', () => {
       imports: [Dashboard],
       providers: [
         provideRouter([
-          { path: 'dashboard/:section', component: Dashboard },
-          { path: 'dashboard/:section/:companyPublicId', component: Dashboard },
+          { path: 'admin/:section', component: Dashboard },
+          { path: 'admin/:section/:companyPublicId', component: Dashboard },
         ]),
         provideHttpClient(),
         provideHttpClientTesting(),
@@ -54,14 +54,14 @@ describe('Dashboard', () => {
   });
 
   it('loads the authenticated company and detects the route section', async () => {
-    await setupCompany('/dashboard/informacion', []);
+    await setupCompany('/admin/informacion', []);
     expect(component.activeSection()).toBe('informacion');
     expect(fixture.nativeElement.querySelector('.dashboard-company-switcher')).toBeNull();
   });
 
   it('selects an explicit gamification from the query string', async () => {
     await setupSuperuser(
-      `/dashboard/ranking/${betaCompany.public_id}?gamification=${draftGamification.publicId}`,
+      `/admin/ranking/${betaCompany.public_id}?gamification=${draftGamification.publicId}`,
       betaCompany.public_id,
       [activeGamification, draftGamification],
       draftGamification,
@@ -87,7 +87,7 @@ describe('Dashboard', () => {
 
   it('defaults to the active gamification and preserves it in navigation links', async () => {
     await setupSuperuser(
-      `/dashboard/premios/${demoCompany.public_id}`,
+      `/admin/premios/${demoCompany.public_id}`,
       demoCompany.public_id,
       [draftGamification, activeGamification],
       activeGamification,
@@ -102,7 +102,7 @@ describe('Dashboard', () => {
   });
 
   it('allows information editing only for superusers', async () => {
-    await setupCompany('/dashboard/informacion', [activeGamification], activeGamification);
+    await setupCompany('/admin/informacion', [activeGamification], activeGamification);
     expect(fixture.debugElement.query(By.directive(InformationSection)).componentInstance.canEdit()).toBe(false);
     fixture.destroy();
 
@@ -110,14 +110,14 @@ describe('Dashboard', () => {
     authService.company.set(null);
     authService.role.set('superuser');
     authService.companies.set([demoCompany, betaCompany]);
-    await router.navigateByUrl(`/dashboard/informacion/${demoCompany.public_id}`);
+    await router.navigateByUrl(`/admin/informacion/${demoCompany.public_id}`);
     createComponent();
     await flushGamifications(demoCompany.public_id, [activeGamification], activeGamification);
     expect(fixture.debugElement.query(By.directive(InformationSection)).componentInstance.canEdit()).toBe(true);
   });
 
   it('refreshes prize data when entering the prizes section', async () => {
-    await setupCompany('/dashboard/informacion', [activeGamification], activeGamification);
+    await setupCompany('/admin/informacion', [activeGamification], activeGamification);
     const staleDetail = { ...detail(activeGamification), prizes: [prize('first-prize', 'Premio antiguo', 1)] };
     const cachePromise = gamificationStore.ensureDetail(demoCompany.public_id, activeGamification.publicId, true);
     httpMock.expectOne(`http://localhost:8787/companies/${demoCompany.public_id}/gamifications/${activeGamification.publicId}`)
@@ -125,7 +125,7 @@ describe('Dashboard', () => {
     await cachePromise;
     fixture.destroy();
 
-    await router.navigateByUrl(`/dashboard/premios?gamification=${activeGamification.publicId}`);
+    await router.navigateByUrl(`/admin/premios?gamification=${activeGamification.publicId}`);
     createComponent();
     const detailRequest = await waitForRequest(
       `http://localhost:8787/companies/${demoCompany.public_id}/gamifications/${activeGamification.publicId}`,
@@ -150,7 +150,7 @@ describe('Dashboard', () => {
   });
 
   it('changes company through the selector and clears the previous gamification context', async () => {
-    await setupSuperuser(`/dashboard/gamificacion/${demoCompany.public_id}`, demoCompany.public_id, []);
+    await setupSuperuser(`/admin/gamificacion/${demoCompany.public_id}`, demoCompany.public_id, []);
     const select: HTMLSelectElement = fixture.nativeElement.querySelector('#dashboard-company-select');
     select.value = betaCompany.public_id;
     select.dispatchEvent(new Event('change'));
@@ -160,11 +160,11 @@ describe('Dashboard', () => {
     request.flush({ ok: true, gamifications: [] });
     await fixture.whenStable();
     fixture.detectChanges();
-    expect(router.url).toBe(`/dashboard/gamificacion/${betaCompany.public_id}`);
+    expect(router.url).toBe(`/admin/gamificacion/${betaCompany.public_id}`);
   });
 
   it('creates a company account and navigates to its empty dashboard', async () => {
-    await setupSuperuser(`/dashboard/informacion/${demoCompany.public_id}`, demoCompany.public_id, []);
+    await setupSuperuser(`/admin/informacion/${demoCompany.public_id}`, demoCompany.public_id, []);
     component.createCompanyForm.setValue({
       companyName: 'Ludus Sales Nueva',
       email: 'nueva@ludusales.local',
@@ -186,7 +186,7 @@ describe('Dashboard', () => {
     );
     listRequest.flush({ ok: true, gamifications: [] });
     expect(closeSpy).toHaveBeenCalledOnce();
-    expect(router.url).toBe('/dashboard/informacion/33333333-3333-4333-8333-333333333333');
+    expect(router.url).toBe('/admin/informacion/33333333-3333-4333-8333-333333333333');
   });
 
   function createComponent(): void {

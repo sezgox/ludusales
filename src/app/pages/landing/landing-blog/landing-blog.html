@@ -1,33 +1,70 @@
-@if (post(); as article) {
+@if (slug()) {
+  @let state = detail();
+  @if (state && state.status === 'ready') {
+  @let article = state.value;
   <section class="blog wrap article">
-    <p class="crumb"><a routerLink="/">{{ i18n.text('Inicio', 'Home') }}</a> / <a routerLink="/blog">Blog</a> / {{ category(article.cat) }}</p>
-    <p class="eyebrow">{{ category(article.cat) }}</p>
+    <p class="crumb"><a routerLink="/">{{ i18n.text('Inicio', 'Home') }}</a> / <a routerLink="/blog">Blog</a> / {{ i18n.text(article.category, article.categoryEn) }}</p>
+    <p class="eyebrow">{{ i18n.text(article.category, article.categoryEn) }}</p>
     <h1>{{ i18n.text(article.title, article.titleEn) }}</h1>
-    <div class="meta"><span>Juan Manuel Mateo</span><span>{{ article.date }}</span><span>{{ article.min }} {{ i18n.text('min de lectura', 'min read') }}</span></div>
+    <div class="meta"><span>{{ article.author }}</span><ng-container *ngTemplateOutlet="date; context: { $implicit: article.publishedAt }" /><span>{{ article.readingMinutes }} {{ i18n.text('min de lectura', 'min read') }}</span></div>
     <div class="article-body" [innerHTML]="i18n.text(article.body, article.bodyEn)"></div>
     <div class="article-cta"><div><h2>{{ i18n.text('¿Quieres probarlo con tu equipo?', 'Want to try it with your team?') }}</h2><p>{{ i18n.text('Piloto de 30 días gratis para las empresas del Programa Fundadores.', 'A free 30-day pilot for Founders Program companies.') }}</p></div><a class="button" routerLink="/contacto" [queryParams]="{ founder: '1' }">{{ i18n.text('Solicitar piloto gratuito', 'Request a free pilot') }}</a></div>
-    <h2 class="read-more">{{ i18n.text('Sigue leyendo', 'Keep reading') }}</h2>
-    <div class="posts related">
-      @for (item of relatedPosts(); track item.id) { <ng-container *ngTemplateOutlet="card; context: { $implicit: item }" /> }
-    </div>
+    @if (relatedPosts().length) {
+      <h2 class="read-more">{{ i18n.text('Sigue leyendo', 'Keep reading') }}</h2>
+      <div class="posts related">
+        @for (item of relatedPosts(); track item.slug) { <ng-container *ngTemplateOutlet="card; context: { $implicit: item }" /> }
+      </div>
+    }
   </section>
+  } @else {
+    <section class="blog wrap article">
+      <p class="crumb"><a routerLink="/blog">{{ i18n.text('Volver al blog', 'Back to the blog') }}</a></p>
+      @if (state?.status === 'missing') {
+        <h1>{{ i18n.text('Artículo no encontrado', 'Article not found') }}</h1>
+      } @else {
+        <ng-container *ngTemplateOutlet="status; context: { $implicit: state?.status === 'error' }" />
+      }
+    </section>
+  }
 } @else {
   <section class="blog wrap">
     <p class="crumb"><a routerLink="/">{{ i18n.text('Inicio', 'Home') }}</a> / Blog</p>
     <p class="eyebrow">Blog Ludus</p>
     <h1>{{ i18n.text('Ideas para equipos que venden jugando.', 'Ideas for teams that sell by playing.') }}</h1>
     <p class="lead">{{ i18n.text('Artículos prácticos sobre motivación comercial, diseño de incentivos y gamificación para responsables de ventas.', 'Practical articles on sales motivation, incentive design and gamification for sales leaders.') }}</p>
-    <div class="filters" role="group" [attr.aria-label]="i18n.text('Filtrar por categoría', 'Filter by category')">
-      @for (cat of categories; track cat) { <button type="button" [attr.aria-pressed]="selectedCategory() === cat" (click)="selectedCategory.set(cat)">{{ category(cat) }}</button> }
-    </div>
-    <div class="posts">
-      @for (item of filteredPosts(); track item.id; let first = $first) { <ng-container *ngTemplateOutlet="card; context: { $implicit: item, featured: first && selectedCategory() === 'Todos' }" /> }
-    </div>
+    @if (list().status === 'ready') {
+      @if (categories().length) {
+        <div class="filters" role="group" [attr.aria-label]="i18n.text('Filtrar por categoría', 'Filter by category')">
+          <button type="button" [attr.aria-pressed]="selectedCategory() === null" (click)="selectedCategory.set(null)">{{ i18n.text('Todos', 'All') }}</button>
+          @for (cat of categories(); track cat[0]) { <button type="button" [attr.aria-pressed]="selectedCategory() === cat[0]" (click)="selectedCategory.set(cat[0])">{{ i18n.text(cat[0], cat[1]) }}</button> }
+        </div>
+      }
+      <div class="posts">
+        @for (item of filteredPosts(); track item.slug) {
+          <ng-container *ngTemplateOutlet="card; context: { $implicit: item, featured: item.featured && selectedCategory() === null }" />
+        } @empty {
+          <p>{{ i18n.text('No hay artículos disponibles.', 'No articles available.') }}</p>
+        }
+      </div>
+    } @else {
+      <ng-container *ngTemplateOutlet="status; context: { $implicit: list().status !== 'loading' }" />
+    }
   </section>
 }
 <ng-template #card let-item let-featured="featured">
-  <a class="post" [class.featured]="featured" [routerLink]="['/blog', item.id]">
-    <div class="cover" [style.--c1]="item.c1" [style.--c2]="item.c2"><span>{{ item.num }}</span></div>
-    <div class="post-body"><div class="meta"><b>{{ category(item.cat) }}</b><span>{{ item.date }}</span><span>{{ item.min }} min</span></div><h3>{{ i18n.text(item.title, item.titleEn) }}</h3><p>{{ i18n.text(item.ex, item.exEn) }}</p></div>
+  <a class="post" [class.featured]="featured" [routerLink]="['/blog', item.slug]">
+    <div class="cover" [style.--c1]="item.coverColor" [style.--c2]="item.coverStripe" aria-hidden="true"><span>{{ item.coverLabel }}</span></div>
+    <div class="post-body"><div class="meta"><b>{{ i18n.text(item.category, item.categoryEn) }}</b><ng-container *ngTemplateOutlet="date; context: { $implicit: item.publishedAt }" /><span>{{ item.readingMinutes }} min</span></div><h3>{{ i18n.text(item.title, item.titleEn) }}</h3><p>{{ i18n.text(item.excerpt, item.excerptEn) }}</p></div>
   </a>
+</ng-template>
+<ng-template #date let-value>
+  <time [attr.datetime]="value">{{ value | date:i18n.text('d MMM yyyy', 'MMM d, yyyy'):undefined:i18n.text('es-ES', 'en-US') }}</time>
+</ng-template>
+<ng-template #status let-error>
+  @if (error) {
+    <p role="alert">{{ i18n.text('No se pudo cargar el blog.', 'The blog could not be loaded.') }}</p>
+    <button class="button" type="button" (click)="retry()">{{ i18n.text('Reintentar', 'Try again') }}</button>
+  } @else {
+    <p role="status">{{ i18n.text('Cargando…', 'Loading…') }}</p>
+  }
 </ng-template>

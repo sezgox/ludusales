@@ -1,12 +1,12 @@
-import { DOCUMENT } from '@angular/common';
+import { DatePipe, DOCUMENT } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { FormArray, FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
-import { GamificationDetail, RankingEntry } from '../../../models/gamification';
+import { GamificationDetail, RankingEntry, RankingPublication } from '../../../models/gamification';
 import { apiErrorMessage } from '../../../services/api-error';
 import { GamificationApiService } from '../../../services/gamification-api.service';
 import { ImageProcessingService } from '../../../services/image-processing.service';
-import { RankingExcelImportService } from '../../../services/ranking-excel-import.service';
+import { RankingExcelImportService, type ImportedRanking } from '../../../services/ranking-excel-import.service';
 import { decimalValidator } from '../dashboard-form.utils';
 
 type CustomFieldControls = { name: FormControl<string>; value: FormControl<string> };
@@ -14,7 +14,7 @@ type CustomFieldGroup = FormGroup<CustomFieldControls>;
 
 @Component({
   selector: 'app-ranking-management-section',
-  imports: [ReactiveFormsModule],
+  imports: [DatePipe, ReactiveFormsModule],
   templateUrl: './ranking-management-section.html',
   styleUrl: './ranking-management-section.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -35,7 +35,14 @@ export class RankingManagementSection {
   readonly feedback = signal<string | null>(null);
   readonly createPicture = signal<File | null>(null);
   readonly importFile = signal<File | null>(null);
-  readonly canEdit = computed(() => this.isSuperuser());
+  readonly preview = signal<{ gamificationId: string; ranking: ImportedRanking } | null>(null);
+  readonly publications = signal<RankingPublication[]>([]);
+  readonly showPublications = signal(false);
+  readonly publicationsLoading = signal(false);
+  readonly publicationsError = signal(false);
+  readonly latestPublication = computed(() => this.publications().find(({ status }) => status === 'published'));
+  readonly canRevert = computed(() => this.publications().filter(({ status }) => status === 'published').length > 1);
+  readonly canEdit = computed(() => this.isSuperuser() && !this.gamification().challengeInfo?.rules.length);
   readonly isFull = computed(() => this.gamification().ranking.length >= 1000);
   readonly podiumEntries = computed(() => this.gamification().ranking.slice(0, 3));
   readonly remainingEntries = computed(() => this.gamification().ranking.slice(3));
@@ -56,6 +63,11 @@ export class RankingManagementSection {
   });
 
   constructor() {
+    const gamificationId = computed(() => this.gamification().publicId);
+    effect(() => {
+      const id = gamificationId();
+      if (this.showPublications()) void this.loadPublications(id);
+    });
     effect(() => {
       const gamification = this.gamification();
       const headers = gamification.rankingFieldHeaders ?? [];
@@ -205,32 +217,52 @@ export class RankingManagementSection {
   selectImportFile(event: Event): void {
     const inputElement = event.target;
     this.importFile.set(inputElement instanceof HTMLInputElement ? (inputElement.files?.[0] ?? null) : null);
+    this.preview.set(null);
+    if (inputElement instanceof HTMLInputElement) inputElement.value = '';
   }
 
-  async importRanking(): Promise<void> {
+  async previewRanking(): Promise<void> {
     const file = this.importFile();
-    if (!file) {
-      this.feedback.set('Selecciona un fichero Excel .xlsx.');
-      return;
-    }
+    if (!file || this.isSaving()) return;
+    const { publicId, valuePrecision } = this.gamification();
     this.isSaving.set(true);
     this.feedback.set(null);
     try {
-      const imported = await this.excelImport.parse(file);
+      const ranking = await this.excelImport.parse(file);
+      const isInvalid = decimalValidator(valuePrecision);
+      const invalidEntry = ranking.entries.find(({ score }) => isInvalid(new FormControl(score)));
+      if (invalidEntry) throw new Error(`Puntuación no válida para ${invalidEntry.fullName}. ${this.validationMessage()}`);
+      if (this.gamification().publicId === publicId) this.preview.set({ gamificationId: publicId, ranking });
+    } catch (error) {
+      this.feedback.set(apiErrorMessage(error, 'No se pudo leer el Excel.'));
+    } finally {
+      this.isSaving.set(false);
+    }
+  }
+
+  async importRanking(): Promise<void> {
+    const preview = this.preview();
+    if (!preview || preview.gamificationId !== this.gamification().publicId || this.isSaving()) return;
+    const { gamificationId, ranking: imported } = preview;
+    this.isSaving.set(true);
+    this.feedback.set(null);
+    try {
       const entries = imported.entries.map(({ image: _image, ...entry }) => entry);
-      await firstValueFrom(this.api.replaceRanking(this.gamification().publicId, entries, imported.fieldHeaders));
+      await firstValueFrom(this.api.replaceRanking(gamificationId, entries, imported.fieldHeaders));
       let failedPictures = 0;
       for (const entry of imported.entries) {
         if (!entry.image) continue;
         try {
           const webp = await this.imageProcessing.toUploadableWebp(entry.image);
-          await firstValueFrom(this.api.uploadRankingParticipantPicture(this.gamification().publicId, entry.participantCode, webp));
+          await firstValueFrom(this.api.uploadRankingParticipantPicture(gamificationId, entry.participantCode, webp));
         } catch {
           failedPictures += 1;
         }
       }
       this.importFile.set(null);
+      this.preview.set(null);
       this.changed.emit();
+      if (this.showPublications()) void this.loadPublications(gamificationId);
       this.feedback.set(failedPictures
         ? `Ranking actualizado: ${entries.length} participantes. ${failedPictures} fotos no se pudieron importar.`
         : `Ranking actualizado: ${entries.length} participantes.`);
@@ -241,12 +273,58 @@ export class RankingManagementSection {
     }
   }
 
+  async loadPublications(gamificationId = this.gamification().publicId): Promise<void> {
+    this.publications.set([]);
+    this.publicationsError.set(false);
+    this.publicationsLoading.set(true);
+    try {
+      const items = await firstValueFrom(this.api.rankingPublications(gamificationId));
+      if (this.gamification().publicId === gamificationId) this.publications.set(items);
+    } catch {
+      if (this.gamification().publicId === gamificationId) this.publicationsError.set(true);
+    } finally {
+      if (this.gamification().publicId === gamificationId) this.publicationsLoading.set(false);
+    }
+  }
+
+  async revertPublication(publication: RankingPublication, dialog: HTMLDialogElement): Promise<void> {
+    const gamificationId = this.gamification().publicId;
+    if (publication.publicId !== this.latestPublication()?.publicId || this.isSaving()) return;
+    this.isSaving.set(true);
+    this.feedback.set(null);
+    try {
+      await firstValueFrom(this.api.revertRankingPublication(gamificationId, publication.publicId));
+      dialog.close();
+      this.changed.emit();
+      this.feedback.set('Se restauró la publicación anterior.');
+      await this.loadPublications(gamificationId);
+    } catch (error) {
+      dialog.close();
+      this.feedback.set(apiErrorMessage(error, 'No se pudo deshacer la publicación.'));
+    } finally {
+      this.isSaving.set(false);
+    }
+  }
+
   async downloadTemplate(): Promise<void> {
     const blob = await this.excelImport.template();
+    this.saveBlob(blob, 'plantilla-ranking.xlsx');
+  }
+
+  async downloadWorkbook(publication: RankingPublication): Promise<void> {
+    try {
+      const blob = await firstValueFrom(this.api.publicationWorkbook(this.gamification().publicId, publication.publicId));
+      this.saveBlob(blob, publication.sourceName ?? 'excel-maestro.xlsx');
+    } catch {
+      this.feedback.set('No se pudo descargar el Excel original.');
+    }
+  }
+
+  private saveBlob(blob: Blob, name: string): void {
     const url = globalThis.URL.createObjectURL(blob);
     const link = this.document.createElement('a');
     link.href = url;
-    link.download = 'plantilla-ranking.xlsx';
+    link.download = name;
     link.click();
     globalThis.URL.revokeObjectURL(url);
   }

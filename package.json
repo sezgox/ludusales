@@ -6,6 +6,7 @@
     "start": "ng serve",
     "build": "ng build",
     "deploy": "wrangler deploy",
+    "deploy:staging": "wrangler deploy --env staging",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "check": "npm run build && npm test -- --watch=false",

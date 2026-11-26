@@ -1,15 +1,15 @@
-import { CurrencyPipe } from '@angular/common';
+import { CurrencyPipe, NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
-import { GamificationDetail, Prize, PrizePayload } from '../../../models/gamification';
+import { GamificationDetail, Prize, PrizePayload, prizeLabels, type PrizeKind } from '../../../models/gamification';
 import { apiErrorMessage } from '../../../services/api-error';
 import { GamificationApiService } from '../../../services/gamification-api.service';
 import { ImageProcessingService } from '../../../services/image-processing.service';
 
 @Component({
   selector: 'app-prizes-section',
-  imports: [CurrencyPipe, ReactiveFormsModule],
+  imports: [CurrencyPipe, NgTemplateOutlet, ReactiveFormsModule],
   templateUrl: './prizes-section.html',
   styleUrl: './prizes-section.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -28,16 +28,21 @@ export class PrizesSection {
   readonly createPicture = signal<File | null>(null);
   readonly feedback = signal<string | null>(null);
   readonly canEdit = computed(() => this.isSuperuser());
-  readonly createForm = this.formBuilder.group({
+  readonly prizeKinds = Object.keys(prizeLabels) as PrizeKind[];
+  readonly labels = prizeLabels;
+  readonly createForm = this.prizeForm();
+  readonly editForm = this.prizeForm();
+
+  private prizeForm() { return this.formBuilder.group({
     name: ['', [Validators.required, Validators.maxLength(160)]],
+    kind: this.formBuilder.control<PrizeKind>('position'),
+    description: [''],
+    parameter: [''],
     rankingPosition: [1, [Validators.required, Validators.min(1), Validators.max(1000)]],
     estimatedValue: ['', Validators.pattern(/^\d+(?:\.\d{1,2})?$/)],
-  });
-  readonly editForm = this.formBuilder.group({
-    name: ['', [Validators.required, Validators.maxLength(160)]],
-    rankingPosition: [1, [Validators.required, Validators.min(1), Validators.max(1000)]],
-    estimatedValue: ['', Validators.pattern(/^\d+(?:\.\d{1,2})?$/)],
-  });
+  }); }
+
+  showKind(prize: Prize): string { return this.labels[prize.kind ?? 'position']; }
 
   selectCreatePicture(event: Event): void {
     const inputElement = event.target;
@@ -59,7 +64,7 @@ export class PrizesSection {
         this.api.createPrize(this.gamification().publicId, this.prizePayload(this.createForm.getRawValue())),
       );
       const picture = this.createPicture();
-      this.createForm.reset({ name: '', rankingPosition: 1, estimatedValue: '' });
+      this.createForm.reset();
       this.createPicture.set(null);
       this.changed.emit();
 
@@ -83,7 +88,10 @@ export class PrizesSection {
 
   editPrize(prize: Prize): void {
     this.editForm.controls.name.setValue(prize.name);
-    this.editForm.controls.rankingPosition.setValue(prize.rankingPosition);
+    this.editForm.controls.rankingPosition.setValue(prize.rankingPosition ?? 1);
+    this.editForm.controls.kind.setValue(prize.kind ?? 'position');
+    this.editForm.controls.description.setValue(prize.description ?? '');
+    this.editForm.controls.parameter.setValue(prize.parameter ?? '');
     this.editForm.controls.estimatedValue.setValue(prize.estimatedValue === null ? '' : String(prize.estimatedValue));
     this.feedback.set(null);
     this.editingPrizeId.set(prize.publicId);
@@ -148,6 +156,10 @@ export class PrizesSection {
     await this.runPrizeOperation(prize.publicId, () => firstValueFrom(this.api.deletePrize(prize.publicId)), 'No se pudo eliminar el premio.');
   }
 
+  async confirmPrize(prize: Prize): Promise<void> {
+    await this.runPrizeOperation(prize.publicId, () => firstValueFrom(this.api.confirmPrize(prize.publicId)), 'No se pudo confirmar el premio.');
+  }
+
   private async runPrizeOperation(prizeId: string, operation: () => Promise<unknown>, fallback: string): Promise<void> {
     this.pendingPrizeId.set(prizeId);
     this.feedback.set(null);
@@ -162,10 +174,13 @@ export class PrizesSection {
     }
   }
 
-  private prizePayload(value: { name: string; rankingPosition: number; estimatedValue: string }): PrizePayload {
+  private prizePayload(value: ReturnType<ReturnType<PrizesSection['prizeForm']>['getRawValue']>): PrizePayload {
     return {
       name: value.name.trim(),
-      rankingPosition: value.rankingPosition,
+      kind: value.kind,
+      description: value.description?.trim() ?? '',
+      parameter: value.parameter?.trim() ?? '',
+      rankingPosition: value.kind === 'position' ? value.rankingPosition : null,
       estimatedValue: value.estimatedValue === '' ? null : Number(value.estimatedValue),
     };
   }

@@ -1,6 +1,6 @@
-import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { ApiUrlService } from './api-url.service';
 
 export type ContactRequest = {
   firstName: string;
@@ -21,22 +21,10 @@ export type ContactRequest = {
 })
 export class ContactService {
   private readonly http = inject(HttpClient);
-  private readonly platformId = inject(PLATFORM_ID);
+  private readonly apiUrl = inject(ApiUrlService);
 
   sendContactRequest(payload: ContactRequest) {
-    return this.http.post<void>(this.contactEndpoint(), payload);
-  }
-
-  private contactEndpoint(): string {
-    if (isPlatformBrowser(this.platformId)) {
-      const hostname = globalThis.location?.hostname;
-
-      if (hostname === 'localhost' || hostname === '127.0.0.1') {
-        return 'http://localhost:8787/contact';
-      }
-    }
-
-    return 'https://api.ludusales.com/contact';
+    return this.http.post<void>(this.apiUrl.endpoint('/contact'), payload);
   }
 }
 

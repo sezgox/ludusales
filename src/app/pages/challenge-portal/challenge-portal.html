@@ -1,0 +1,426 @@
+<div class="portal" [class.tv-mode]="tvMode()">
+  <a class="skip-link" href="#contenido-reto">Ir al contenido</a>
+  <aside class="sidebar">
+    <a class="brand" routerLink="/dashboard/inicio" aria-label="Ludus Sales, inicio del reto">
+      <img ngSrc="assets/pages/landing/home/mark.png" width="32" height="32" alt="" priority>
+      <strong>Ludus Sales</strong>
+    </a>
+    <p class="company">{{ company()?.name }}</p>
+    <nav aria-label="Portal del reto">
+      @for (item of nav(); track item.path) {
+        <a [class.mobile-tab]="mobilePaths.has(item.path)" [class.mobile-only]="item.path === 'mas'" [routerLink]="['/dashboard', item.path]" [queryParams]="query()"
+           [attr.aria-current]="section === item.path ? 'page' : null">
+          <svg [lucideIcon]="item.icon" [size]="21" aria-hidden="true"></svg>
+          <span>{{ item.title }}</span>
+        </a>
+      }
+    </nav>
+    <button class="logout" type="button" (click)="logout()">
+      <svg lucideIcon="log-out" [size]="19" aria-hidden="true"></svg>
+      <span>Cerrar sesión</span>
+    </button>
+    @if (sessionError()) { <p class="session-error" role="alert">No se pudo cerrar la sesión.</p> }
+  </aside>
+
+  <main class="page" id="contenido-reto" tabindex="-1" #portalContent>
+    @if (error()) {
+      <div class="card feedback"><p role="alert">{{ error() }}</p><button type="button" class="button" (click)="refresh()">Reintentar</button></div>
+    }
+    @if (loading() && (section !== 'historico' || !gamifications().length)) {
+      <p class="card" role="status">Cargando el reto…</p>
+    } @else if (section === 'historico') {
+      <header class="page-heading"><h1>Histórico</h1><p>Retos finalizados de {{ company()?.name }}.</p></header>
+      @if (companyHistory()?.records?.length) {
+        <section aria-labelledby="records-title"><h2 id="records-title">Salón de la fama</h2><div class="challenge-grid">
+          @for (record of companyHistory()?.records; track record.title) {
+            <article class="card"><p class="label">{{ record.title }}</p><h3>{{ record.name }}</h3><p>{{ record.value | number:'1.0-6' }} {{ record.unit }}</p></article>
+          }
+        </div></section>
+      }
+      <div class="history-list">
+        @for (item of completed(); track item.publicId) {
+          <article class="card history-item">
+            <div><p class="label">Finalizado · {{ (item.actualEndAt ?? item.endAt).slice(0, 10) | date:'d MMM yyyy' }}</p><h2>{{ item.title }}</h2></div>
+            @if (item.outcome === 'achieved') { <span class="chip">Meta conseguida</span> }
+            @if (item.outcome === 'missed') { <span class="chip">Meta no alcanzada</span> }
+            <a class="button" routerLink="/dashboard/inicio" [queryParams]="{ gamification: item.publicId }">Ver resultado</a>
+            @if (companyHistory()?.podiums?.[item.publicId]; as finalPodium) {
+              <ol class="final-podium" aria-label="Podio final">@for (place of finalPodium; track $index) {<li>{{ place.position }}.º {{ place.name }} · {{ place.score | number:'1.0-6' }} {{ item.rankingUnit }}</li>}</ol>
+            }
+          </article>
+        } @empty { <p class="card">Aún no hay retos finalizados.</p> }
+      </div>
+    } @else if (challenge(); as current) {
+      @if (current.rankingPublishedAt && section !== 'tv') {
+        <p class="muted update-stamp">Actualizado el {{ current.rankingPublishedAt | date:'d MMM, HH:mm' }}
+          @if (nextUpdate(); as date) { · Siguiente {{ date | date:'EEEE d MMM' }}}
+        </p>
+      }
+      @switch (section) {
+        @case ('inicio') {
+          @if (current.imageUrl; as cover) {
+            <div class="challenge-cover"><img [ngSrc]="cover" fill alt="" sizes="(max-width: 760px) 100vw, 1120px" priority></div>
+          }
+          <section class="card hero" aria-labelledby="challenge-title">
+            <div class="hero-copy">
+              <p class="label">{{ company()?.name }}</p><h1 id="challenge-title">{{ current.title }}</h1>
+              <p class="countdown">{{ timerLabel() }}</p>
+              <div class="actions">
+                <a class="button primary" routerLink="/dashboard/ranking" [queryParams]="query()">Ver ranking</a>
+                <a class="button" routerLink="/dashboard/reto" [queryParams]="query()">Reto y reglas</a>
+                @if (tvAvailable()) { <a class="button" routerLink="/dashboard/tv" [queryParams]="query()">Modo TV</a> }
+              </div>
+            </div>
+            <div class="hero-podium">
+              <h2>{{ current.status === 'active' ? 'Podio actual' : 'Podio final' }}</h2>
+              <ng-container *ngTemplateOutlet="podiumCards; context: { $implicit: current.rankingUnit }" />
+            </div>
+          </section>
+          @if (current.goal; as goal) {
+            <section class="card goal" aria-labelledby="goal-title">
+              <div class="section-heading"><div><p class="label">Entre todos</p><h2 id="goal-title">Meta colectiva</h2></div><strong class="percentage">{{ goalPercentage() }} %</strong></div>
+              <p>{{ calculatedGoal() | number:scoreDigits() }} de {{ goal | number:scoreDigits() }} {{ current.goalUnit }}</p>
+              <progress [value]="goalBar()" max="100" aria-labelledby="goal-title"></progress>
+            </section>
+          }
+          @if (featuredMissions().length) {
+            <section aria-labelledby="featured-missions-title">
+              <div class="section-heading"><h2 id="featured-missions-title">Misiones de esta semana</h2><a class="button" routerLink="/dashboard/misiones" [queryParams]="query()">Ver misiones</a></div>
+              <div class="mission-strip">@for (mission of featuredMissions(); track mission.id) {<ng-container *ngTemplateOutlet="missionCard; context: { $implicit: mission }" />}</div>
+            </section>
+          }
+          @if (projection()?.news?.length || highlights().length) {
+            <section class="card" aria-labelledby="news-title">
+              <h2 id="news-title">Novedades de la última actualización</h2>
+              <ul class="news">
+                @for (item of projection()?.news?.slice(0, 4); track $index) {
+                  <li>{{ item.text }}</li>
+                } @empty {
+                  @for (entry of highlights(); track entry.participantCode) {
+                    <li><a [routerLink]="['/dashboard/ficha', entry.participantCode]" [queryParams]="query()">{{ entry.fullName }}</a> subió {{ entry.positionChange === 1 ? '1 puesto' : entry.positionChange + ' puestos' }}.</li>
+                  }
+                }
+              </ul>
+            </section>
+          }
+        }
+        @case ('ranking') {
+          <header class="page-heading">
+            <p class="label">{{ current.title }}</p><h1>Ranking</h1>
+            <p>{{ ranking().length }} {{ ranking().length === 1 ? 'participante' : 'participantes' }} · Los empates comparten puesto.</p>
+          </header>
+          <section class="card" aria-labelledby="ranking-title">
+            <div class="section-heading ranking-tools">
+              <h2 id="ranking-title">Clasificación</h2>
+              <div class="ranking-filters">
+                <label><span>Vista</span><select #viewSelect [value]="rankingView()" (change)="setRankingView(viewSelect.value)"><option value="individual">Individual</option>@if (projection()?.teams?.length) {<option value="zones">Zonas</option>}<option value="improved">Más mejorados</option></select></label>
+                @if (projection() && rankingView() !== 'zones') {
+                  <label><span>Periodo</span><select #periodSelect (change)="weekly.set(periodSelect.value === 'weekly')"><option value="total">Total</option><option value="weekly">Esta semana</option></select></label>
+                }
+                @if (zones().length) {
+                  <label><span>Zona</span><select #zoneFilter [value]="selectedZone()" (change)="selectedZone.set(zoneFilter.value)"><option value="">Todas</option>@for (zone of zones(); track zone) {<option [value]="zone">{{ zone }}</option>}</select></label>
+                }
+                <label><span>Buscar participante</span><input #participantSearch type="search" [value]="search()" (input)="search.set(participantSearch.value)"></label>
+              </div>
+            </div>
+            @if (rankingView() === 'zones') {
+              <ng-container *ngTemplateOutlet="teamTable" />
+            } @else {
+            <div class="table-wrap">
+              <table class="portal-ranking" role="table">
+                <thead><tr><th scope="col">Puesto</th><th scope="col">Participante</th><th scope="col" class="numeric">{{ current.rankingUnit }}</th><th scope="col" class="numeric">Cambio</th>@if (projection()) {<th scope="col">Opta a premio</th><th scope="col" class="numeric">Racha</th>}</tr></thead>
+                <tbody>
+                  @for (entry of filteredRanking(); track entry.participantCode) {
+                    <tr>
+                      <td><span class="place" [class.leader]="entry.position === 1">{{ entry.position }}.º</span></td>
+                      <th scope="row"><a class="person" [routerLink]="['/dashboard/ficha', entry.participantCode]" [queryParams]="query()"><ng-container *ngTemplateOutlet="avatar; context: { $implicit: entry }" /><span>{{ entry.fullName }}@if (zoneField(); as field) {<small class="muted">{{ entry.customFields?.[field] }}</small>}</span></a></th>
+                      <td class="numeric score" [attr.data-caption]="current.rankingUnit">{{ (weekly() ? entry.calculation?.weekPoints : entry.score) | number:scoreDigits() }}</td>
+                      <td class="numeric">
+                        @if (entry.positionChange; as change) {
+                          <span class="sr-only">{{ change > 0 ? 'Sube ' + change + ' puestos' : 'Baja ' + -change + ' puestos' }}</span>
+                          <strong aria-hidden="true" [class.up]="change > 0" [class.down]="change < 0">{{ change > 0 ? '▲ ' + change : '▼ ' + -change }}</strong>
+                        }
+                        @else { <span class="muted">—</span> }
+                      </td>
+                      @if (projection()) {
+                        <td class="eligibility" data-caption="Opta a premio"><span [class.up]="entry.calculation?.eligible">{{ entry.calculation?.eligible ? 'Sí' : entry.calculation?.minimumsMissing?.join(' · ') || '—' }}</span></td>
+                        <td class="numeric streak" data-caption="Racha">{{ entry.calculation?.streak || '—' }}</td>
+                      }
+                    </tr>
+                  } @empty { <tr><td [attr.colspan]="projection() ? 6 : 4">{{ ranking().length ? 'Sin coincidencias.' : 'Aún no hay puntuaciones publicadas.' }}</td></tr> }
+                </tbody>
+              </table>
+            </div>
+            }
+          </section>
+        }
+        @case ('misiones') {
+          <header class="page-heading"><p class="label">{{ current.title }}</p><h1>Misiones</h1></header>
+          <div class="actions" role="group" aria-label="Filtrar por tipo de misión">
+            <button class="button" type="button" [attr.aria-pressed]="missionFilter() === ''" (click)="missionFilter.set('')">Todas</button>
+            @for (kind of missionKinds; track kind) {<button class="button" type="button" [attr.aria-pressed]="missionFilter() === kind" (click)="missionFilter.set(kind)">{{ missionLabels[kind] }}</button>}
+          </div>
+          <div class="challenge-grid">
+            @for (mission of missions(); track mission.id) {<ng-container *ngTemplateOutlet="missionCard; context: { $implicit: mission }" />}
+            @empty {<p class="card">Aún no hay misiones para esta selección.</p>}
+          </div>
+        }
+        @case ('insignias') {
+          <header class="page-heading"><p class="label">{{ current.title }}</p><h1>Colección de insignias</h1><p>{{ unlockedBadges().size }} de {{ info()?.badges?.length ?? 0 }} desbloqueadas por el equipo</p></header>
+          <div class="actions" role="group" aria-label="Filtrar por rareza">
+            <button class="button" type="button" [attr.aria-pressed]="badgeFilter() === ''" (click)="badgeFilter.set('')">Todas</button>
+            @for (rarity of rarities; track rarity) {<button class="button" type="button" [attr.aria-pressed]="badgeFilter() === rarity" (click)="badgeFilter.set(rarity)">{{ rarityLabels[rarity] }}</button>}
+          </div>
+          <div class="challenge-grid">
+            @for (badge of badges(); track badge.id) {
+              <button type="button" class="card badge-card" (click)="showBadge(badge, badgeDialog)">
+                <span [class]="'medal ' + badge.rarity"><svg lucideIcon="award" [size]="28" aria-hidden="true"></svg></span>
+                <strong>{{ badge.title }}</strong><span>{{ rarityLabels[badge.rarity] }} · {{ badge.points | number:scoreDigits() }} {{ current.rankingUnit }}</span>
+                <span>{{ participantsWithBadge(badge).length ? participantsWithBadge(badge).length + ' participantes' : 'Bloqueada' }}</span>
+              </button>
+            } @empty {<p class="card">Aún no hay insignias para esta selección.</p>}
+          </div>
+        }
+        @case ('equipos') {
+          <header class="page-heading"><p class="label">{{ current.title }}</p><h1>Ranking por equipos</h1></header>
+          <section class="card" aria-label="Ranking por equipos">
+            @if (info()?.showTeams) {<ng-container *ngTemplateOutlet="teamTable" />}
+            @else {<p>El ranking por equipos no está activado para este reto.</p>}
+          </section>
+        }
+        @case ('enfrentamientos') {
+          <header class="page-heading"><p class="label">{{ current.title }}</p><h1>Enfrentamientos</h1></header>
+          @if (info()?.showDuels) {
+            <div class="history-list">
+              @for (duel of projection()?.duels; track duel.id) {
+                <article class="card duel">
+                  <div class="section-heading"><div><p class="label">{{ duel.round }} · {{ duel.format === 'solo' ? '1 contra 1' : 'Por parejas' }}</p><h2>{{ duel.title }}</h2></div>
+                    <span class="chip">{{ duel.status === 'closed' ? 'Finalizado' : duel.status === 'active' ? 'En juego' : 'Próximamente' }}</span></div>
+                  <div class="versus">
+                    <div [class.winning]="duel.winner === 'left'"><strong>{{ duel.left.join(' · ') || 'Pendiente del cruce anterior' }}</strong><span class="percentage">{{ duel.leftScore | number:'1.0-3' }}</span>@if (duel.winner === 'left') {<span>Ganador</span>}</div>
+                    <span class="label">VS</span>
+                    <div [class.winning]="duel.winner === 'right'"><strong>{{ duel.right.join(' · ') || 'Pendiente del cruce anterior' }}</strong><span class="percentage">{{ duel.rightScore | number:'1.0-3' }}</span>@if (duel.winner === 'right') {<span>Ganador</span>}</div>
+                  </div>
+                  <p>{{ duel.start | date:'d MMM yyyy' }} – {{ duel.end | date:'d MMM yyyy' }} @if (duel.stake) { · {{ duel.stake }} }</p>
+                </article>
+              } @empty {<p class="card">Todavía no hay enfrentamientos publicados.</p>}
+            </div>
+          } @else {<p class="card">Los enfrentamientos no están activados para este reto.</p>}
+        }
+        @case ('mas') {
+          <header class="page-heading"><h1>Más</h1></header>
+          <div class="challenge-grid">
+            @for (item of moreLinks(); track item.path) {<a class="card more-link" [routerLink]="['/dashboard', item.path]" [queryParams]="query()"><svg [lucideIcon]="item.icon" [size]="22" aria-hidden="true"></svg>{{ item.title }}</a>}
+            @if (tvAvailable()) {<a class="card more-link" routerLink="/dashboard/tv" [queryParams]="query()">Modo TV</a>}
+          </div>
+        }
+        @case ('premios') {
+          <header class="page-heading"><p class="label">{{ current.title }}</p><h1>Premios</h1></header>
+          @if (positionPrizes().length) {
+            <section aria-labelledby="prize-podium-title"><h2 id="prize-podium-title">Podio final</h2><div class="prizes">
+              @for (prize of positionPrizes(); track prize.publicId) {<ng-container *ngTemplateOutlet="prizeCard; context: { $implicit: prize }" />}
+            </div></section>
+          }
+          @if (extraPrizes().length) {
+            <section aria-labelledby="extra-prizes-title"><h2 id="extra-prizes-title">Y además</h2><div class="prizes">
+              @for (prize of extraPrizes(); track prize.publicId) {<ng-container *ngTemplateOutlet="prizeCard; context: { $implicit: prize }" />}
+            </div></section>
+          }
+          @if (!current.prizes.length) {<p class="card">Aún no se han publicado premios para este reto.</p>}
+        }
+        @case ('reto') {
+          <header class="page-heading"><p class="label">Reto y reglas</p><h1>{{ current.title }}</h1><p>Del {{ current.startAt | date:'d MMM yyyy' }} al {{ current.endAt | date:'d MMM yyyy' }}.</p></header>
+          <section class="card rules" aria-labelledby="description-title"><h2 id="description-title">Descripción</h2><div [innerHTML]="current.description"></div></section>
+          @if (info(); as calculated) {
+            @if (calculated.rules.length) {
+              <section class="card rules" aria-labelledby="points-title">
+                <h2 id="points-title">Cómo se ganan puntos</h2>
+                <ul class="rules-list">@for (rule of calculated.rules; track $index) {<li><strong>{{ rule.label }}</strong> · {{ rule.multiplier === null ? (rule.rate | number:scoreDigits()) + ' por unidad' : '×' + (rule.multiplier | number:'1.0-3') }}</li>}</ul>
+              </section>
+              <section class="card" aria-labelledby="simulator-title">
+                <h2 id="simulator-title">¿Cuántos puntos sumarías?</h2>
+                <div class="ranking-filters">@for (metric of simulatorMetrics(); track metric.key) {<label>{{ metric.label }}<input #measure type="number" min="0" step="any" value="0" (input)="setSimulator(metric.key, measure)"></label>}</div>
+                <p class="percentage" aria-live="polite">{{ simulatedPoints() | number:scoreDigits() }} {{ current.rankingUnit }}</p>
+              </section>
+            }
+            @if (calculated.minimums.length) {
+              <section class="card" aria-labelledby="minimums-title"><h2 id="minimums-title">Para optar a premio</h2>
+                <ul>@for (rule of calculated.minimums; track $index) {<li>{{ rule.label }}</li>}</ul>
+              </section>
+            }
+          }
+          @if (current.rules.length) {
+            <section class="card rules" aria-labelledby="rules-title">
+              <h2 id="rules-title">Cómo funciona</h2>
+              <ul class="rules-list">
+                @for (rule of current.rules; track rule.position) { <li><h3>{{ rule.title }}</h3><p>{{ rule.description }}</p></li> }
+              </ul>
+            </section>
+          }
+        }
+        @case ('tv') {
+          @if (tvMode()) {
+            <header class="page-heading tv-heading">
+              <div><p class="label">{{ company()?.name }}</p><h1>{{ current.title }}</h1></div>
+              <div class="actions">
+                <button class="button" type="button" [attr.aria-pressed]="tvPaused()" (click)="tvPaused.set(!tvPaused())">Pausar rotación</button>
+                <button class="button" type="button" (click)="previousTv()">Vista anterior</button>
+                <button class="button" type="button" (click)="advanceTv()">Siguiente vista</button>
+                <button class="button primary" type="button" (click)="toggleFullscreen(portalContent)">Pantalla completa</button>
+                <a class="button" routerLink="/dashboard/inicio" [queryParams]="query()">Volver al portal</a>
+              </div>
+              @if (fullscreenError()) {<p role="alert">El navegador no permitió cambiar a pantalla completa.</p>}
+            </header>
+            <section class="card tv-card" aria-labelledby="tv-slide-title">
+              <h2 id="tv-slide-title">{{ tvTitle() }}</h2>
+              @switch (tvSlide()) {
+                @case (0) {
+                  <ol class="tv-ranking">
+                    @for (entry of tvRanking(); track entry.participantCode) {
+                      <li><span class="place">{{ entry.position }}.º</span><strong>{{ entry.fullName }}</strong><span>{{ entry.score | number:scoreDigits() }} {{ current.rankingUnit }}</span></li>
+                    } @empty {<li>Aún no hay puntuaciones publicadas.</li>}
+                  </ol>
+                }
+                @case (1) {
+                  @if (current.goal) {
+                  <p class="percentage">{{ goalPercentage() }} %</p>
+                  <p>{{ calculatedGoal() | number:scoreDigits() }} de {{ current.goal | number:scoreDigits() }} {{ current.goalUnit }}</p>
+                  <progress [value]="goalBar()" max="100" aria-labelledby="tv-slide-title"></progress>
+                  }
+                  @if (projection()?.teams?.length) {<ng-container *ngTemplateOutlet="teamTable" />}
+                }
+                @case (2) { <ul class="news">@for (item of projection()?.news?.slice(0, 4); track $index) {<li>{{ item.text }}</li>} @empty {<li>Aún no hay novedades publicadas.</li>}</ul> }
+              }
+            </section>
+          } @else {
+            <section class="card empty"><h1>Modo TV desactivado</h1><a class="button" routerLink="/dashboard/inicio" [queryParams]="query()">Volver al portal</a></section>
+          }
+        }
+        @case ('ficha') {
+          <a class="back-link" routerLink="/dashboard/ranking" [queryParams]="query()">← Volver al ranking</a>
+          @if (participant(); as entry) {
+            <header class="card profile">
+              <ng-container *ngTemplateOutlet="avatar; context: { $implicit: entry }" />
+              <div><p class="label">{{ current.title }}</p><h1>{{ entry.fullName }}</h1></div>
+            </header>
+            <div class="profile-stats">
+              <section class="card"><h2>Puesto</h2><p class="percentage">{{ entry.position }}.º</p></section>
+              <section class="card"><h2>{{ current.rankingUnit }}</h2><p class="percentage">{{ entry.score | number:scoreDigits() }}</p></section>
+              @if (pointsToNext(); as distance) {
+                <section class="card"><h2>Distancia al siguiente puesto</h2><p class="percentage">{{ distance | number:scoreDigits() }} {{ current.rankingUnit }}</p></section>
+              }
+              @if (entry.scoreChange != null) {
+                <section class="card"><h2>Desde la última actualización</h2><p class="percentage">{{ +entry.scoreChange > 0 ? '+' : '' }}{{ entry.scoreChange | number:scoreDigits() }}</p></section>
+              }
+            </div>
+            @if (entry.calculation; as result) {
+              <div class="challenge-grid">
+                <section class="card"><h2>De dónde salen tus puntos</h2><dl class="profile-fields">@for (line of result.breakdown; track $index) {<div><dt>{{ line.label }}</dt><dd>{{ line.points | number:scoreDigits() }}</dd></div>}</dl></section>
+                <section class="card"><h2>Elegibilidad y racha</h2><p>{{ result.eligible ? 'Opta a premio' : result.minimumsMissing.join(' · ') }}</p><p>{{ result.streak }} actualizaciones seguidas sumando</p></section>
+              </div>
+              @if (ownBadges().length) {
+                <section class="card"><h2>Insignias conseguidas</h2><ul class="rules-list">@for (badge of ownBadges(); track badge.id) {<li>{{ badge.title }} · <button type="button" class="button" (click)="shareBadge(badge, entry)">Compartir logro</button></li>}</ul></section>
+              }
+            }
+            @if (current.rankingFieldHeaders?.length) {
+              <section class="card" aria-labelledby="fields-title">
+                <h2 id="fields-title">Datos del ranking</h2>
+                <dl class="profile-fields">
+                  @for (field of current.rankingFieldHeaders; track field) {
+                    @if (entry.customFields?.[field]; as value) { <div><dt>{{ field }}</dt><dd>{{ value }}</dd></div> }
+                  }
+                </dl>
+              </section>
+            }
+            <section class="card" aria-labelledby="history-title">
+              <h2 id="history-title">Evolución</h2>
+              @let state = history();
+              @if (state && state.status === 'ready') {
+                @if (positionChart(); as path) {
+                  <svg class="position-chart" viewBox="0 0 600 100" preserveAspectRatio="none" aria-hidden="true"><path d="M0 10H600 M0 50H600 M0 90H600" /><polyline [attr.points]="path" /></svg>
+                }
+                <div class="table-wrap"><table><thead><tr><th scope="col">Actualización</th><th scope="col" class="numeric">Puesto</th><th scope="col" class="numeric">{{ current.rankingUnit }}</th></tr></thead><tbody>
+                  @for (point of state.points; track point.publicId) {
+                    <tr><td><time [attr.datetime]="point.publishedAt">{{ point.publishedAt | date:'d MMM yyyy, HH:mm' }}</time></td><td class="numeric">{{ point.position }}.º</td><td class="numeric">{{ point.score | number:('1.0-' + point.valuePrecision) }}</td></tr>
+                  } @empty { <tr><td colspan="3">Aún no hay actualizaciones guardadas.</td></tr> }
+                </tbody></table></div>
+              } @else if (state?.status === 'error') { <p role="alert">No se pudo cargar la evolución.</p> }
+              @else { <p role="status">Cargando las actualizaciones…</p> }
+            </section>
+          } @else { <h1>Participante no encontrado</h1> }
+        }
+      }
+    } @else if (!error()) {
+      <section class="card empty"><h1>Sin reto activo</h1><p>Cuando se active un reto para tu empresa, aparecerá aquí.</p><a class="button" routerLink="/dashboard/historico">Ver histórico</a></section>
+    }
+  </main>
+</div>
+
+<dialog #badgeDialog class="badge-dialog" aria-labelledby="badge-detail-title" (close)="badgeDetail.set(null)">
+  @if (badgeDetail(); as badge) {
+    <form method="dialog"><button type="submit" class="button" autofocus>Cerrar</button></form>
+    <span [class]="'medal ' + badge.rarity"><svg lucideIcon="award" [size]="40" aria-hidden="true"></svg></span>
+    <h2 id="badge-detail-title">{{ badge.title }}</h2><p>{{ rarityLabels[badge.rarity] }} · {{ badge.points }} puntos</p><p>{{ badge.description }}</p>
+    <ul>@for (entry of participantsWithBadge(badge); track entry.participantCode) {<li><a [routerLink]="['/dashboard/ficha', entry.participantCode]" [queryParams]="query()" (click)="badgeDialog.close()">{{ entry.fullName }}</a></li>} @empty {<li>Aún no la ha conseguido nadie.</li>}</ul>
+  }
+</dialog>
+
+<ng-template #missionCard let-mission>
+  @let result = missionResult(mission);
+  <article class="card mission">
+    <p class="label">{{ missionKindLabel(mission) }} · {{ mission.end | date:'d MMM' }}</p>
+    <h3>{{ mission.title }}</h3><p>{{ mission.description }}</p>
+    @if (result) {
+      <p>{{ result.status === 'closed' ? 'Finalizada' : result.status === 'active' ? 'En juego' : 'Próximamente' }} · {{ result.winnerCount }} {{ result.winnerCount === 1 ? 'participante lo logró' : 'participantes lo lograron' }}</p>
+      @if (mission.kind === 'collective' && mission.threshold > 0) {<progress [value]="result.progress" [max]="mission.threshold" [attr.aria-label]="'Progreso de ' + mission.title"></progress>}
+      @if (mission.kind === 'first' || mission.kind === 'most' || mission.kind === 'zones') {
+        <ol>@for (leader of result.leaders; track $index) {<li>{{ leader.key }} · {{ leader.value | number:'1.0-2' }}</li>}</ol>
+      }
+    }
+    <strong>+{{ mission.reward }} puntos</strong>
+  </article>
+</ng-template>
+
+<ng-template #teamTable>
+  <div class="table-wrap"><table><thead><tr><th scope="col">Puesto</th><th scope="col">Equipo</th><th scope="col" class="numeric">Media por persona</th><th scope="col" class="numeric">Total</th><th scope="col" class="numeric">Cambio</th><th scope="col">MVP</th></tr></thead>
+    <tbody>@for (team of projection()?.teams; track team.name) {
+      <tr><td>{{ team.position }}.º</td><th scope="row">{{ team.name }} <small>{{ team.count }} participantes</small></th><td class="numeric">{{ team.average | number:'1.0-2' }}</td><td class="numeric">{{ team.total | number:scoreDigits() }}</td><td class="numeric">{{ team.change ?? '—' }}</td>
+        <td>@if (teamMvp(team.mvpCode); as mvp) {<a [routerLink]="['/dashboard/ficha', mvp.participantCode]" [queryParams]="query()">{{ mvp.fullName }}</a>} @else {—}</td></tr>
+    } @empty {<tr><td colspan="6">No hay resultados por zonas.</td></tr>}</tbody>
+  </table></div>
+</ng-template>
+
+<ng-template #prizeCard let-prize>
+  <article class="card prize">
+    @if (prize.pictureUrl; as url) { <div class="prize-image"><img [ngSrc]="url" fill alt="" sizes="(max-width: 660px) 100vw, 320px"></div> }
+    @else { <div class="prize-icon"><svg lucideIcon="gift" [size]="36" aria-hidden="true"></svg></div> }
+    <div class="prize-details">
+      <p class="label">{{ prizeLabel(prize) }}</p><h3>{{ prize.name }}</h3>
+      @if (prize.description) {<p>{{ prize.description }}</p>}
+      @if (prize.estimatedValue != null) {<p>Valor estimado: {{ prize.estimatedValue | currency:'EUR' }}</p>}
+      @if (prize.winners?.length) {<p>Ganadores: {{ prize.winners.join(', ') }}</p>}
+      @else if (prize.kind === 'raffle') {<p>{{ eligibleCount() }} participantes optan al sorteo.</p>}
+      @else if (prize.kind === 'milestone') {<p>Hito: {{ prize.parameter }} {{ challenge()?.rankingUnit }}</p>}
+      @else if (prizeCandidate(prize); as candidate) {<p>Puesto actual: {{ candidate.fullName }}</p>}
+    </div>
+  </article>
+</ng-template>
+
+<ng-template #avatar let-entry>
+  <span class="avatar" aria-hidden="true">
+    @if (entry.pictureUrl) { <img [ngSrc]="entry.pictureUrl" width="40" height="40" alt=""> }
+    @else { {{ initials(entry) }} }
+  </span>
+</ng-template>
+
+<ng-template #podiumCards let-unit>
+  <div class="podium">
+    @for (entry of podium(); track entry.participantCode) {
+      <a class="podium-place" [class.first-place]="entry.position === 1" [routerLink]="['/dashboard/ficha', entry.participantCode]" [queryParams]="query()">
+        <span class="place">{{ entry.position }}.º</span>
+        <ng-container *ngTemplateOutlet="avatar; context: { $implicit: entry }" />
+        <strong>{{ entry.fullName }}</strong><span>{{ entry.score | number:scoreDigits() }} {{ unit }}</span>
+      </a>
+    } @empty { <p>Aún no hay participantes en el ranking.</p> }
+  </div>
+</ng-template>

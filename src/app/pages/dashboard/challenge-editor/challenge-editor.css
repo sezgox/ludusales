@@ -1,0 +1,22 @@
+:host { display: grid; gap: 16px; color: #10261a; }
+.editor, .upload, details { min-width: 0; display: grid; gap: 12px; }
+details, .upload { background: #fff; border: 1px solid #c3cec2; border-radius: 12px; padding: 14px; }
+details[open] > summary { margin-bottom: 12px; }
+summary { cursor: pointer; font-weight: 800; min-height: 44px; align-content: center; }
+p, h3, h4 { margin: 0; }
+.fields { display: flex; flex-wrap: wrap; align-items: end; gap: 10px; margin-bottom: 10px; }
+label { display: grid; flex: 1 1 146px; gap: 4px; font-size: 14px; font-weight: 700; min-width: 0; }
+label.check { display: flex; align-items: center; min-height: 44px; }
+input, select, button { font: inherit; color: inherit; border-radius: 8px; border: 1px solid #67796b; background: #fff; padding: 8px 12px; min-height: 44px; }
+input, select { min-width: 0; width: 100%; }
+input[type='checkbox'] { min-height: auto; width: auto; }
+button { width: fit-content; font-weight: 700; cursor: pointer; }
+button:disabled { cursor: default; opacity: .6; }
+:focus-visible { outline: 3px solid #1e7a3c; outline-offset: 2px; }
+.primary { background: #10261a; color: white; }
+fieldset { margin: 10px 0; border: 1px solid #c3cec2; border-radius: 8px; }
+.error { color: #922a1b; }
+.table-wrap { overflow: auto; max-height: 380px; }
+table { width: 100%; border-collapse: collapse; }
+caption { text-align: left; font-weight: 700; }
+th, td { text-align: left; padding: 6px 10px; border-bottom: 1px solid #d9e2d9; }

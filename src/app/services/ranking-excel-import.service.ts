@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import ExcelJS from 'exceljs';
 import { RankingReplacementEntry } from '../models/gamification';
+import type { MasterSheet } from '../models/challenge';
 
 const requiredHeaders = ['participantCode', 'fullName', 'score'] as const;
 const optionalImageHeader = 'image';
@@ -61,6 +62,49 @@ export class RankingExcelImportService {
     ];
     const data = await workbook.xlsx.writeBuffer();
     return new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  }
+
+  async parseMaster(file: File): Promise<MasterSheet> {
+    if (!file.name.toLowerCase().endsWith('.xlsx')) throw new Error('Selecciona un fichero Excel .xlsx.');
+    if (file.size > 4 * 1024 * 1024) throw new Error('El Excel maestro admite archivos de hasta 4 MB.');
+    const bytes = await file.arrayBuffer();
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.load(bytes);
+    const sheet = workbook.worksheets[0];
+    if (!sheet || sheet.rowCount > maxEntries + 1 || sheet.columnCount > 80) {
+      throw new Error('La primera hoja admite hasta 1.000 filas de datos y 80 columnas.');
+    }
+    const columns: Array<{ header: string; column: number }> = [];
+    const headers = new Set<string>();
+    sheet.getRow(1).eachCell((cell, column) => {
+      const title = cell.text.trim();
+      if (!title || headers.has(title.toLocaleLowerCase('es'))) throw new Error(`Cabecera repetida o vacía en la columna ${column}.`);
+      columns.push({ header: title, column });
+      headers.add(title.toLocaleLowerCase('es'));
+    });
+    const rows: MasterSheet['rows'] = [];
+    sheet.eachRow((row, index) => {
+      if (index === 1) return;
+      const values = columns.map(({ header, column }) => {
+        const cell = row.getCell(column);
+        const raw = cell.result ?? cell.value;
+        const value = raw instanceof Date ? raw.toISOString().slice(0, 10) : typeof raw === 'number' ? raw : cell.text.trim();
+        return [header, value] as const;
+      });
+      if (values.some(([, value]) => value !== '')) rows.push(Object.fromEntries(values));
+    });
+    if (!rows.length) throw new Error('El Excel no contiene datos.');
+    const digest = new Uint8Array(await crypto.subtle.digest('SHA-256', bytes));
+    const sourceHash = Array.from(digest, (byte) => byte.toString(16).padStart(2, '0')).join('');
+    return { sourceName: file.name, sourceHash, headers: columns.map(({ header }) => header), rows };
+  }
+
+  async masterTemplate(headers: string[]): Promise<Blob> {
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet('Excel maestro');
+    sheet.columns = headers.map((header) => ({ header, width: Math.max(18, header.length + 3) }));
+    sheet.getRow(1).font = { bold: true };
+    return new Blob([await workbook.xlsx.writeBuffer()], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
   }
 
   private columnsFor(worksheet: ExcelJS.Worksheet): Columns {

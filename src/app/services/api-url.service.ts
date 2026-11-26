@@ -12,6 +12,9 @@ export class ApiUrlService {
       if (hostname === 'localhost' || hostname === '127.0.0.1') {
         return `http://localhost:8787${path}`;
       }
+      if (hostname !== 'ludusales.com' && hostname !== 'www.ludusales.com') {
+        return `/api${path}`;
+      }
     }
 
     return `https://api.ludusales.com${path}`;

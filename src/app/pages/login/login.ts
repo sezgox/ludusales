@@ -46,8 +46,8 @@ export class Login {
     this.status.set('submitting');
 
     try {
-      await firstValueFrom(this.authService.login(this.form.controls.accessCode.value));
-      await this.router.navigateByUrl('/dashboard');
+      const session = await firstValueFrom(this.authService.login(this.form.controls.accessCode.value));
+      await this.router.navigateByUrl(session.role === 'superuser' ? '/admin' : '/dashboard');
     } catch (error) {
       console.error('Unable to log in', error);
       this.status.set('error');

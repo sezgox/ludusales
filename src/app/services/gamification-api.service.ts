@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { map } from 'rxjs';
 import { BlockImage, BlockOneCard, BlockOneCardPayload, BlockTwoCard, BlockTwoCardPayload, Gamification, GamificationDetail, GamificationPayload, Prize, PrizePayload, RankingPayload, RankingReplacementEntry } from '../models/gamification';
 import { ApiUrlService } from './api-url.service';
+import type { RankingHistoryPoint, RankingPublication } from '../models/gamification';
 
 type OkResponse = { ok: true };
 
@@ -26,6 +27,33 @@ export class GamificationApiService {
       ),
       this.credentials,
     ).pipe(map((response) => ({ ...response, gamification: this.withEffectiveStatus(response.gamification) })));
+  }
+
+  confirmPrize(prizeId: string) {
+    return this.http.post<OkResponse>(this.endpoint(`/superuser/prizes/${encodeURIComponent(prizeId)}/confirm`), {}, this.credentials);
+  }
+
+  participantHistory(companyPublicId: string, gamificationPublicId: string, participantCode: string) {
+    return this.http.get<{ history: RankingHistoryPoint[] }>(this.endpoint(
+      `/companies/${encodeURIComponent(companyPublicId)}/gamifications/${encodeURIComponent(gamificationPublicId)}/ranking/${encodeURIComponent(participantCode)}/history`,
+    ), this.credentials).pipe(map(({ history }) => history));
+  }
+
+  rankingPublications(gamificationPublicId: string) {
+    return this.http.get<{ publications: RankingPublication[] }>(this.endpoint(
+      `/superuser/gamifications/${encodeURIComponent(gamificationPublicId)}/ranking-publications`,
+    ), this.credentials).pipe(map(({ publications }) => publications));
+  }
+
+  revertRankingPublication(gamificationPublicId: string, publicationId: string) {
+    return this.http.post<OkResponse>(this.endpoint(
+      `/superuser/gamifications/${encodeURIComponent(gamificationPublicId)}/ranking-publications/${encodeURIComponent(publicationId)}/revert`,
+    ), {}, this.credentials);
+  }
+
+  publicationWorkbook(gamificationPublicId: string, publicationId: string) {
+    return this.http.get(this.endpoint(`/superuser/gamifications/${encodeURIComponent(gamificationPublicId)}/ranking-publications/${encodeURIComponent(publicationId)}/workbook`),
+      { ...this.credentials, responseType: 'blob' });
   }
 
   create(companyPublicId: string, payload: GamificationPayload) {

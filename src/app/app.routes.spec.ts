@@ -1,4 +1,4 @@
-import { authGuard } from './guards/auth.guard';
+import { adminGuard, authGuard } from './guards/auth.guard';
 import { routes } from './app.routes';
 
 describe('app routes', () => {
@@ -9,15 +9,17 @@ describe('app routes', () => {
     expect(dashboardRoute?.canActivate).toContain(authGuard);
   });
 
-  it('redirects /dashboard to the main information section', () => {
+  it('redirects /dashboard to the challenge home', () => {
     const indexRoute = dashboardChildren.find((route) => route.path === '');
 
     expect(indexRoute?.pathMatch).toBe('full');
-    expect(indexRoute?.redirectTo).toBe('informacion');
+    expect(indexRoute?.redirectTo).toBe('inicio');
   });
 
-  it('registers dashboard section urls with and without company public ids', () => {
-    const sectionPaths = dashboardChildren
+  it('registers administration section urls under the superuser guard', () => {
+    const admin = routes.find((route) => route.path === 'admin');
+    expect(admin?.canActivate).toContain(adminGuard);
+    const sectionPaths = (admin?.children ?? [])
       .filter((route) => route.loadComponent)
       .map((route) => route.path);
 

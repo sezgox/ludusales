@@ -70,7 +70,7 @@
     <section class="ranking-disclaimer" aria-label="Actualización del ranking">
       <span class="disclaimer-icon" aria-hidden="true">i</span>
       <div><strong>Transparencia ante todo</strong><p>Los datos del ranking se actualizan diariamente. Consulta el ranking para ver tu posición actual.</p></div>
-      <a class="ranking-link" [routerLink]="['/dashboard', 'ranking', gamification().companyPublicId]">Ver ranking <span aria-hidden="true">→</span></a>
+      <a class="ranking-link" [routerLink]="['/admin', 'ranking', gamification().companyPublicId]" [queryParams]="{ gamification: gamification().publicId }">Ver ranking <span aria-hidden="true">→</span></a>
     </section>
   </div>
 

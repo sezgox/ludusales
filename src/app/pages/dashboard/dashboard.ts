@@ -171,7 +171,7 @@ export class Dashboard {
   }
 
   dashboardPath(section: DashboardSection, companyPublicId = this.selectedCompanyPublicId()): string {
-    return this.isSuperuser() && companyPublicId ? `/dashboard/${section}/${companyPublicId}` : `/dashboard/${section}`;
+    return companyPublicId ? `/admin/${section}/${companyPublicId}` : `/admin/${section}`;
   }
 
   selectCompany(event: Event): void {

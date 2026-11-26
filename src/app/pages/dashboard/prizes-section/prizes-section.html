@@ -11,10 +11,7 @@
       <span>Nombre del premio</span>
       <input type="text" formControlName="name" maxlength="160" placeholder="Ej. Viaje de fin de semana" required>
     </label>
-    <label>
-      <span>Posición del ranking</span>
-      <input type="number" min="1" max="1000" step="1" formControlName="rankingPosition" required>
-    </label>
+    <ng-container *ngTemplateOutlet="criteria; context: { $implicit: createForm }" />
     <label>
       <span>Valor estimado (€)</span>
       <input type="number" min="0" step="0.01" inputmode="decimal" formControlName="estimatedValue">
@@ -45,8 +42,7 @@
           <form class="edit-prize" [formGroup]="editForm" (ngSubmit)="savePrize(prize)">
             <label [for]="'prize-name-' + prize.publicId">Nombre</label>
             <input [id]="'prize-name-' + prize.publicId" type="text" formControlName="name" maxlength="160" required>
-            <label [for]="'prize-position-' + prize.publicId">Posición del ranking</label>
-            <input [id]="'prize-position-' + prize.publicId" type="number" min="1" max="1000" step="1" formControlName="rankingPosition" required>
+            <ng-container *ngTemplateOutlet="criteria; context: { $implicit: editForm }" />
             <label [for]="'prize-value-' + prize.publicId">Valor estimado (€)</label>
             <input [id]="'prize-value-' + prize.publicId" type="number" min="0" step="0.01" inputmode="decimal" formControlName="estimatedValue">
             <div class="card-actions">
@@ -56,10 +52,15 @@
           </form>
         } @else {
           <h3>{{ prize.name }}</h3>
-          <p class="prize-meta">Puesto {{ prize.rankingPosition }}</p>
+          <p class="prize-meta">{{ showKind(prize) }} @if (prize.rankingPosition) {· Puesto {{ prize.rankingPosition }}}</p>
+          @if (prize.description) { <p>{{ prize.description }}</p> }
+          @if (prize.winners?.length) { <p>Ganadores: {{ prize.winners?.join(', ') }}</p> }
           @if (hasEstimatedValue(prize)) {<p class="prize-meta">Valor estimado: {{ prize.estimatedValue | currency:'EUR':'symbol':'1.2-2':'es-ES' }}</p>}
           @if (canEdit()) {
             <div class="card-actions">
+              @if ((gamification().status === 'inactive' || gamification().status === 'closed') && !prize.winners?.length) {
+                <button class="primary-button" type="button" [disabled]="pendingPrizeId() === prize.publicId" (click)="confirmPrize(prize)">{{ prize.kind === 'raffle' ? 'Realizar sorteo' : 'Confirmar ganador' }}</button>
+              }
               <button class="secondary-button" type="button" (click)="editPrize(prize)">Editar</button>
               <label class="secondary-button file-button">
                 Imagen
@@ -88,3 +89,14 @@
     </div>
   }
 }
+
+<ng-template #criteria let-form>
+  <label [formGroup]="form"><span>Tipo</span><select aria-label="Tipo de premio" formControlName="kind" (change)="form.controls.rankingPosition.setValue(1)">@for (kind of prizeKinds; track kind) {<option [value]="kind">{{ labels[kind] }}</option>}</select></label>
+  <label [formGroup]="form"><span>Descripción</span><input formControlName="description" maxlength="900"></label>
+  @switch (form.controls.kind.value) {
+    @case ('position') {<label [formGroup]="form"><span>Posición del ranking</span><input type="number" min="1" max="1000" step="1" formControlName="rankingPosition" required></label>}
+    @case ('milestone') {<label [formGroup]="form"><span>Umbral en puntos</span><input inputmode="decimal" formControlName="parameter" required></label>}
+    @case ('zone') {<label [formGroup]="form"><span>Zona (vacío para premiar a la líder)</span><input formControlName="parameter" maxlength="80"></label>}
+    @case ('special') {<label [formGroup]="form"><span>Criterio</span><select formControlName="parameter" required><option value="">Selecciona</option><option value="improved">Mayor subida</option><option value="missions">Más misiones</option>@for (metric of gamification().challengeInfo?.metrics; track metric.key) {<option [value]="metric.key">{{ metric.label }}</option>}</select></label>}
+  }
+</ng-template>

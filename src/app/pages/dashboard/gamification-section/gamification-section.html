@@ -4,6 +4,19 @@
 </div>
 
 @if (gamification(); as current) {
+  @if (isSuperuser()) {
+    <div class="section-actions"><button class="secondary-button" type="button" [disabled]="isSaving()" [attr.aria-pressed]="current.tvEnabled ?? false" (click)="toggleTv(current)">Modo TV</button>
+      <button class="secondary-button" type="button" [attr.aria-expanded]="showChallengeEditor()" (click)="showChallengeEditor.set(!showChallengeEditor())">Configurar reto y Excel maestro</button></div>
+    @if (current.tvEnabled) {
+      <div class="section-actions">
+        <button type="button" class="secondary-button" [disabled]="isSaving()" (click)="shareTvLink(current)">Generar o renovar enlace TV</button>
+        <button type="button" class="secondary-button" [disabled]="isSaving()" (click)="revokeTvLink(current)">Revocar enlace TV</button>
+      </div>
+      @if (tvLink(); as link) { @if (link.id === current.publicId) {<label class="form-field">Enlace de pantalla de TV<input #tvUrl type="url" readonly [value]="link.url" (focus)="tvUrl.select()"></label>} }
+    }
+    @if (feedback()) {<p class="section-feedback" role="alert">{{ feedback() }}</p>}
+    @if (showChallengeEditor()) { <app-challenge-editor [challenge]="current" (changed)="refreshRanking()" /> }
+  }
   <app-gamification-blocks [gamification]="current" [isSuperuser]="isSuperuser()" (changed)="refreshRanking()">
     <app-ranking-management-section ranking [gamification]="current" [isSuperuser]="isSuperuser()" (changed)="refreshRanking()" />
   </app-gamification-blocks>

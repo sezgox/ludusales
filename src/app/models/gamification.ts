@@ -1,3 +1,5 @@
+import type { Calculation, ChallengeInfo } from './challenge';
+
 export type GamificationStatus = 'draft' | 'active' | 'inactive' | 'closed';
 export type GamificationOutcome = 'pending' | 'achieved' | 'missed' | 'not_applicable';
 export const defaultRankingUnit = 'Ludu Points';
@@ -15,6 +17,7 @@ export type Gamification = {
   goalUnit: string | null;
   rankingUnit: string;
   maxLiveRanking: number;
+  tvEnabled?: boolean;
   rankingFieldHeaders?: string[];
   status: GamificationStatus;
   outcome: GamificationOutcome;
@@ -25,12 +28,19 @@ export type Gamification = {
   closedAt?: string | null;
 };
 
+export type PrizeKind = 'position' | 'milestone' | 'zone' | 'special' | 'raffle';
+export const prizeLabels: Record<PrizeKind, string> = { position: 'Por puesto', milestone: 'Por hito', zone: 'Por zona', special: 'Especial', raffle: 'Sorteo' };
+
 export type Prize = {
   publicId: string;
   name: string;
   pictureUrl: string | null;
   sortOrder: number;
-  rankingPosition: number;
+  rankingPosition: number | null;
+  kind?: PrizeKind;
+  description?: string;
+  parameter?: string;
+  winners?: string[];
   estimatedValue: number | null;
   createdAt: string;
   updatedAt: string;
@@ -42,6 +52,9 @@ export type RankingEntry = {
   pictureUrl: string | null;
   position: number;
   score: string;
+  positionChange?: number | null;
+  scoreChange?: string | null;
+  calculation?: Calculation | null;
   customFields?: Record<string, string>;
   createdAt: string;
   updatedAt: string;
@@ -50,10 +63,16 @@ export type RankingEntry = {
 export type GamificationDetail = Gamification & {
   prizes: Prize[];
   ranking: RankingEntry[];
+  rankingTotal?: string;
+  rankingPublishedAt?: string | null;
+  challengeInfo?: ChallengeInfo | null;
   rules: GamificationRule[];
   blockOneCards: BlockOneCard[];
   blockTwoCards: BlockTwoCard[];
 };
+
+export type RankingHistoryPoint = { publicId: string; publishedAt: string; position: number; score: string; valuePrecision: number };
+export type RankingPublication = { publicId: string; publishedAt: string; status: 'published' | 'reverted'; sourceName?: string | null; hasWorkbook?: boolean };
 
 export type BlockOneCard = {
   publicId: string;
@@ -106,12 +125,16 @@ export type GamificationPayload = {
   goalUnit: string | null;
   rankingUnit: string;
   maxLiveRanking?: number;
+  tvEnabled?: boolean;
   rules?: GamificationRule[];
 };
 
 export type PrizePayload = {
   name: string;
-  rankingPosition: number;
+  rankingPosition: number | null;
+  kind?: PrizeKind;
+  description?: string;
+  parameter?: string;
   estimatedValue: number | null;
 };
 

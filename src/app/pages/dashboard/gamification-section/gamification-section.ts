@@ -9,6 +9,8 @@ import { apiErrorMessage } from '../../../services/api-error';
 import { GamificationApiService } from '../../../services/gamification-api.service';
 import { RankingManagementSection } from '../ranking-management-section/ranking-management-section';
 import { GamificationBlocks } from '../gamification-blocks/gamification-blocks';
+import { ChallengeEditor } from '../challenge-editor/challenge-editor';
+import { ChallengeDataService } from '../../../services/challenge-data.service';
 import {
   chronologicalDateRangeValidator,
   decimalValidator,
@@ -20,13 +22,14 @@ import {
 
 @Component({
   selector: 'app-gamification-section',
-  imports: [ReactiveFormsModule, RichTextEditor, RankingManagementSection, RuleEditor, GamificationBlocks],
+  imports: [ReactiveFormsModule, RichTextEditor, RankingManagementSection, RuleEditor, GamificationBlocks, ChallengeEditor],
   templateUrl: './gamification-section.html',
   styleUrl: './gamification-section.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GamificationSection {
   private readonly api = inject(GamificationApiService);
+  private readonly challengeData = inject(ChallengeDataService);
   private readonly formBuilder = inject(NonNullableFormBuilder);
 
   readonly companyPublicId = input.required<string>();
@@ -40,6 +43,8 @@ export class GamificationSection {
   readonly createAttempted = signal(false);
   readonly editAttempted = signal(false);
   readonly feedback = signal<string | null>(null);
+  readonly showChallengeEditor = signal(false);
+  readonly tvLink = signal<{ id: string; url: string } | null>(null);
   readonly createFeedback = signal<string | null>(null);
   readonly createRulesVersion = signal(0);
   readonly editRulesVersion = signal(0);
@@ -280,6 +285,20 @@ export class GamificationSection {
     if (gamification) this.changed.emit(gamification.publicId);
   }
 
+  async toggleTv(challenge: GamificationDetail): Promise<void> {
+    if (!this.isSuperuser() || this.isSaving()) return;
+    this.isSaving.set(true);
+    this.feedback.set(null);
+    try {
+      await firstValueFrom(this.api.update(challenge.publicId, { tvEnabled: !challenge.tvEnabled }));
+      this.changed.emit(challenge.publicId);
+    } catch (error) {
+      this.feedback.set(apiErrorMessage(error, 'No se pudo cambiar el modo TV.'));
+    } finally {
+      this.isSaving.set(false);
+    }
+  }
+
   private async runTransition(operation: () => Promise<unknown>, fallback: string): Promise<void> {
     this.isTransitioning.set(true);
     this.feedback.set(null);
@@ -291,6 +310,32 @@ export class GamificationSection {
       this.feedback.set(apiErrorMessage(error, fallback));
     } finally {
       this.isTransitioning.set(false);
+    }
+  }
+
+  async shareTvLink(challenge: GamificationDetail): Promise<void> {
+    this.feedback.set(null);
+    this.isSaving.set(true);
+    try {
+      const { token } = await firstValueFrom(this.challengeData.createTvLink(challenge.publicId));
+      this.tvLink.set({ id: challenge.publicId, url: new URL(`/tv#${token}`, location.origin).href });
+    } catch (error) {
+      this.feedback.set(apiErrorMessage(error, 'No se pudo generar el enlace de TV.'));
+    } finally {
+      this.isSaving.set(false);
+    }
+  }
+
+  async revokeTvLink(challenge: GamificationDetail): Promise<void> {
+    this.feedback.set(null);
+    this.isSaving.set(true);
+    try {
+      await firstValueFrom(this.challengeData.revokeTvLink(challenge.publicId));
+      this.tvLink.set(null);
+    } catch (error) {
+      this.feedback.set(apiErrorMessage(error, 'No se pudo revocar el enlace de TV.'));
+    } finally {
+      this.isSaving.set(false);
     }
   }
 

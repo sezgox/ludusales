@@ -28,9 +28,53 @@
   <section class="ranking-import" aria-labelledby="ranking-import-title">
     <button class="secondary-button small-button ranking-import__add" type="button" [disabled]="isSaving() || isFull()" (click)="participantDialog.showModal()">Añadir participante</button>
     <div><h3 id="ranking-import-title">Actualizar desde Excel</h3><p>La primera hoja requiere <code>participantCode</code>, <code>fullName</code> y <code>score</code>. Cualquier otra columna se añade al ranking; <code>image</code> es opcional y contiene fotos ancladas a cada fila.</p></div>
-    <div class="ranking-import__actions"><button class="secondary-button small-button" type="button" [disabled]="isSaving()" (click)="downloadTemplate()">Descargar plantilla</button><label class="secondary-button small-button file-button">Elegir Excel<input type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.xlsx" [disabled]="isSaving()" (change)="selectImportFile($event)"></label><button class="primary-button small-button" type="button" [disabled]="isSaving() || !importFile()" (click)="importRanking()">Importar y reemplazar</button></div>
+    <div class="ranking-import__actions"><button class="secondary-button small-button" type="button" [disabled]="isSaving()" (click)="downloadTemplate()">Descargar plantilla</button><label class="secondary-button small-button file-button">Elegir Excel<input type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.xlsx" [disabled]="isSaving()" (change)="selectImportFile($event)"></label><button class="primary-button small-button" type="button" [disabled]="isSaving() || !importFile()" (click)="previewRanking()">Validar y previsualizar</button></div>
     @if (importFile()) {<p class="ranking-import__file">{{ importFile()!.name }}</p>}
+    @if (preview(); as candidate) {
+      @if (candidate.gamificationId === gamification().publicId) {
+        <div class="ranking-table-wrap">
+          <table><caption>Vista previa del Excel · {{ candidate.ranking.entries.length }} participantes</caption>
+            <thead><tr><th scope="col">Código</th><th scope="col">Participante</th><th scope="col">{{ gamification().rankingUnit }}</th></tr></thead>
+            <tbody>@for (entry of candidate.ranking.entries.slice(0, 10); track entry.participantCode) {<tr><td>{{ entry.participantCode }}</td><td>{{ entry.fullName }}</td><td>{{ entry.score }}</td></tr>}</tbody>
+          </table>
+        </div>
+        @if (candidate.ranking.entries.length > 10) {<p>Se muestran las primeras 10 filas.</p>}
+        <div class="ranking-import__actions"><button class="secondary-button small-button" type="button" [disabled]="isSaving()" (click)="preview.set(null)">Cancelar</button><button class="primary-button small-button" type="button" [disabled]="isSaving()" (click)="importRanking()">Publicar ranking</button></div>
+      }
+    }
   </section>
+
+}
+
+@if (isSuperuser()) {
+  <details class="ranking-import" #publicationPanel (toggle)="showPublications.set(publicationPanel.open)">
+    <summary>Historial de publicaciones</summary>
+    @if (publicationsLoading()) {<p role="status">Cargando publicaciones…</p>}
+    @else if (publicationsError()) {<p role="alert">No se pudo cargar el historial.</p><button class="secondary-button" type="button" (click)="loadPublications()">Reintentar</button>}
+    @else {
+      <ul>
+        @for (publication of publications(); track publication.publicId) {
+          <li><time [attr.datetime]="publication.publishedAt">{{ publication.publishedAt | date:'d MMM yyyy, HH:mm:ss' }}</time> · {{ publication.status === 'published' ? 'Publicada' : 'Revertida' }}
+            @if (publication.sourceName) { · {{ publication.sourceName }} }
+            @if (publication.hasWorkbook) { <button class="secondary-button small-button" type="button" (click)="downloadWorkbook(publication)">Descargar Excel original</button> }
+          </li>
+        } @empty {<li>Aún no hay publicaciones.</li>}
+      </ul>
+      @if (canRevert() && latestPublication()) {
+        <button class="secondary-button small-button" type="button" [disabled]="isSaving()" (click)="revertDialog.showModal()">Deshacer última publicación</button>
+      }
+    }
+  </details>
+  <dialog #revertDialog class="participant-dialog" aria-labelledby="revert-title">
+    @if (latestPublication(); as publication) {
+      <form class="participant-dialog__form" (submit)="$event.preventDefault(); revertPublication(publication, revertDialog)">
+        <h3 id="revert-title">Deshacer la última publicación</h3>
+        <p>El portal volverá a mostrar la clasificación anterior.</p>
+        <div class="participant-dialog__actions"><button class="secondary-button" type="button" [disabled]="isSaving()" (click)="revertDialog.close()">Cancelar</button><button class="danger-button" type="submit" [disabled]="isSaving()">Deshacer publicación</button></div>
+      </form>
+    }
+  </dialog>
+}
 
   <dialog #participantDialog class="participant-dialog" aria-labelledby="participant-dialog-title">
     <form class="participant-dialog__form" [formGroup]="participantForm" (ngSubmit)="addParticipant(participantDialog)">
@@ -44,7 +88,6 @@
       <div class="participant-dialog__actions"><button class="secondary-button" type="button" [disabled]="isSaving()" (click)="participantDialog.close()">Cancelar</button><button class="primary-button" type="submit" [disabled]="isSaving() || isFull()">Añadir participante</button></div>
     </form>
   </dialog>
-}
 @if (feedback()) {<p class="section-feedback" role="alert">{{ feedback() }}</p>}
 
 @if (gamification().ranking.length) {
