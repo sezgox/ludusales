@@ -6,7 +6,7 @@
     "start": "ng serve",
     "build": "ng build",
     "deploy": "wrangler deploy",
-    "deploy:staging": "wrangler deploy --env staging",
+    "preview:staging": "node ./cloudflare/deploy-preview.mjs",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "check": "npm run build && npm test -- --watch=false",
@@ -50,6 +50,6 @@
     "tailwindcss": "^4.1.12",
     "typescript": "~5.9.2",
     "vitest": "^4.0.8",
-    "wrangler": "^4.100.0"
+    "wrangler": "^4.168.0"
   }
 }
